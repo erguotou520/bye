@@ -1,49 +1,54 @@
 <template>
-  <div class="flex">
-    <config-list></config-list>
-    <option-field></option-field>
+  <div class="flex" style="width:100%">
+    <config-list :configs="configs"></config-list>
+    <option-field class="flex-1"></option-field>
+    <qr-code></qr-code>
   </div>
 </template>
 <script>
 import ConfigList from './components/ConfigList'
 import OptionField from './components/OptionField'
+import QrCode from './components/QRCode'
+import { getConfigs } from './storage'
 export default {
+  data () {
+    return {
+      configs: [],
+      selectedConfig: undefined
+    }
+  },
   components: {
     ConfigList,
-    OptionField
+    OptionField,
+    QrCode
+  },
+  created () {
+    try {
+      this.configs = getConfigs() || []
+    } catch (e) {
+      console.error(e)
+    }
   }
 }
 </script>
-<style>
-  @import url(https://fonts.googleapis.com/css?family=Lato:300);
+<style lang="stylus">
+  html
+  body
+    height 100%
 
-  * {
-    margin: 0;
-    padding: 0;
-  }
+  body
+    display flex
+    justify-content center
+    text-align center
+    font-family "Helvetica Neue", Helvetica, Tahoma, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "微软雅黑", "WenQuanYi Micro Hei", Arial, sans-serif
+    font-size 12px
+    background-color #f0f0f0
 
-  html,
-  body { height: 100%; }
+  .flex
+    display flex
+  .flex-1
+    flex 1
 
-  body {
-    align-items: center;
-    background:
-      radial-gradient(
-        ellipse at center,
-        rgba(255, 255, 255, 1) 0%,
-        rgba(229, 229, 229, .85) 100%
-      );
-    background-position: center;
-    display: flex;
-    font-family: Lato, Helvetica, sans-serif;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .flex {
-    display: flex;
-  }
-  .flex-1 {
-    flex: 1;
-  }
+  input[type=checkbox]
+    margin-right .5rem
 </style>

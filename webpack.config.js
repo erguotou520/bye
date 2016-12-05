@@ -85,8 +85,7 @@ let config = {
   target: 'electron-renderer',
   vue: {
     loaders: {
-      sass: 'vue-style-loader!css-loader!sass-loader?indentedSyntax=1',
-      scss: 'vue-style-loader!css-loader!sass-loader'
+      stylus: 'vue-style-loader!css-loader!stylus-loader'
     }
   }
 }
