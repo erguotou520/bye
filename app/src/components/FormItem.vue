@@ -26,7 +26,6 @@ export default {
   input
   select
     flex 1
-    box-sizing border-box
     padding 0 4px
     height 1.5rem
     line-height @height

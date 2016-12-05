@@ -98,5 +98,5 @@ export default {
 .app-option-field
   fieldset
     padding .5rem
-    text-align center
+    text-align left
 </style>
