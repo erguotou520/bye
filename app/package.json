@@ -4,6 +4,8 @@
   "description": "Shadowsocksr client using electron",
   "main": "electron.js",
   "dependencies": {
+    "js-base64": "^2.1.9",
+    "qrcodesvg": "^1.0.2",
     "vue": "^2.0.1",
     "vue-electron": "^1.0.0"
   },

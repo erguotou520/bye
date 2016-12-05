@@ -55,7 +55,7 @@
         <input type="text" v-model="form.remark">
       </form-item>
       <form-item label="链接">
-        <input type="text">
+        <input type="text" v-model="ssrLink">
       </form-item>
       <form-item label="高级选项">
         <span>以下选项不是所有服务端都支持</span>
@@ -71,6 +71,7 @@
 </template>
 <script>
 import FormItem from './FormItem'
+import { Base64 } from 'js-base64'
 export default {
   data () {
     return {
@@ -87,6 +88,20 @@ export default {
         udp_over_tcp: false
       },
       showPassword: false
+    }
+  },
+  computed: {
+    ssrLink: {
+      get () {
+        const link = 'ssr://' + Base64.encode(`ssr://${this.form.method}[-auth]:${this.form.password}@${this.form.server}:${this.form.port}`)
+        this.$emit('config-change', this.form, link)
+        return link
+      },
+      set (val) {
+        // const decoded = Base64.decode(val.substring(5))
+        // TODO
+        // this.form.method = decoded.replace(/ss\:\/\//)
+      }
     }
   },
   components: {

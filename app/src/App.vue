@@ -1,8 +1,8 @@
 <template>
   <div class="flex" style="width:100%">
     <config-list :configs="configs"></config-list>
-    <option-field class="flex-1"></option-field>
-    <qr-code></qr-code>
+    <option-field class="flex-1" @config-change="onConfigChange"></option-field>
+    <qr-code :link="currentLink"></qr-code>
   </div>
 </template>
 <script>
@@ -14,13 +14,21 @@ export default {
   data () {
     return {
       configs: [],
-      selectedConfig: undefined
+      currentConfig: undefined,
+      currentLink: ''
     }
   },
   components: {
     ConfigList,
     OptionField,
     QrCode
+  },
+  methods: {
+    onConfigChange (...args) {
+      this.currentConfig = args[0]
+      this.currentLink = args[1]
+      console.log(this.currentLink)
+    }
   },
   created () {
     try {
@@ -39,6 +47,7 @@ export default {
     height 100%
   body
     display flex
+    align-items center
     justify-content center
     text-align center
     margin 0
