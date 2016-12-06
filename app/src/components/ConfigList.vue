@@ -3,13 +3,13 @@
     <div class="list-wrapper flex-1">
       <ul>
         <li v-for="config in configs" @click="selected=config" :class="{selected:selected===config}">
-          {{config.remark}}（{{config.server}}:{{config.port}}）
+          {{config.remark||config.host}}（{{config.host}}:{{config.port}}）
         </li>
       </ul>
     </div>
     <div class="buttons flex">
-      <button type="button" class="flex-1">添加</button>
-      <button type="button" class="flex-1">删除</button>
+      <button type="button" class="flex-1" @click="add">添加</button>
+      <button type="button" class="flex-1" @click="remove">删除</button>
     </div>
   </div>
 </template>
@@ -24,11 +24,17 @@ export default {
     }
   },
   methods: {
+    getSelected () {
+      return this.selected
+    },
     add () {
+      this.selected = undefined
       this.$emit('add')
     },
-    remove (config) {
-      this.$emit('remove', config)
+    remove () {
+      if (this.selected) {
+        this.$emit('remove', this.selected)
+      }
     }
   }
 }
@@ -47,9 +53,13 @@ export default {
       padding 0
       list-style none
       > li
-        color normal
+        display block
+        padding 2px 1px
+        text-align left
+        cursor default
         &.selected
-          background-color blur
+          background rgb(51, 153, 255)
+          color #fff
   > .buttons
     button
       margin 2px

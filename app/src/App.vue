@@ -1,15 +1,18 @@
 <template>
   <div class="flex" style="width:100%">
-    <config-list :configs="configs"></config-list>
-    <option-field class="flex-1" @config-change="onConfigChange"></option-field>
-    <qr-code :link="currentLink"></qr-code>
+    <config-list ref="list" :configs="configs" @add="$refs.option&&$refs.option.cancel"
+      @remove="configs.splice(configs.indexOf(arguments[0]),1)"></config-list>
+    <option-field class="flex-1" ref="option" @config-change="onConfigChange"
+      @save="save"></option-field>
+    <qr-code :link="currentLink" ref="qrcode" @cancel="$refs.option&&$refs.option.cancel()"
+      @ok="$refs.option&&$refs.option.save()"></qr-code>
   </div>
 </template>
 <script>
 import ConfigList from './components/ConfigList'
 import OptionField from './components/OptionField'
 import QrCode from './components/QRCode'
-import { getConfigs } from './storage'
+import { getConfigs, saveConfigs } from './storage'
 export default {
   data () {
     return {
@@ -27,7 +30,17 @@ export default {
     onConfigChange (...args) {
       this.currentConfig = args[0]
       this.currentLink = args[1]
-      console.log(this.currentLink)
+    },
+    save (config) {
+      const selected = this.$refs.list.getSelected()
+      // update selected
+      if (selected) {
+        Object.assign(selected, config)
+      } else {
+        // create new one
+        this.configs.push(config)
+      }
+      saveConfigs(this.configs)
     }
   },
   created () {

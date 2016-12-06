@@ -3,7 +3,7 @@
     <fieldset>
       <legend>服务器(截图注意打码)</legend>
       <form-item label="服务器 IP">
-        <input type="text" v-model="form.server">
+        <input type="text" v-model="form.host">
       </form-item>
       <form-item label="服务器端口">
         <input type="number" v-model="form.port">
@@ -37,7 +37,7 @@
         </select>
       </form-item>
       <form-item label="混淆协议">
-        <select v-model="form.mix">
+        <select v-model="form.obfs" @change="form.obfsparam=''">
           <option value="plain">plain</option>
           <option value="http_simple">http_simple</option>
           <option value="tls_simple">tls_simple</option>
@@ -46,7 +46,7 @@
         </select>
       </form-item>
       <form-item label="混淆插件参数">
-        <input type="text" v-model="form.mixArgs" :disabled="form.mix!=='http_simple'">
+        <input type="text" v-model="form.obfsparam" :disabled="form.obfs!=='http_simple'">
       </form-item>
       <form-item>
         <span slot="label">
@@ -61,10 +61,10 @@
         <span>以下选项不是所有服务端都支持</span>
       </form-item>
       <form-item label="TCP over UDP">
-        <span><input type="checkbox" v-model="form.tcp_over_udp">不打勾使用原生 TCP</span>
+        <span><input type="checkbox" v-model="form.udpport" :true-value="1" :false-value="0">不打勾使用原生 TCP</span>
       </form-item>
       <form-item label="UDP over TCP">
-        <span><input type="checkbox" v-model="form.udp_over_tcp">不打勾使用原生 UDP</span>
+        <span><input type="checkbox" v-model="form.uot" :true-value="1" :false-value="0">不打勾使用原生 UDP</span>
       </form-item>
     </fieldset>
   </div>
@@ -76,36 +76,75 @@ export default {
   data () {
     return {
       form: {
-        server: '127.0.0.1',
+        host: '127.0.0.1',
         port: '8388',
         password: '0',
         method: 'aes-256-cfb',
         protocol: 'origin',
-        mix: 'plain',
-        mixArgs: '',
+        obfs: 'plain',
+        obfsparam: '',
         remark: '',
-        tcp_over_udp: false,
-        udp_over_tcp: false
+        udpport: false,
+        uot: false
       },
+      bak: undefined,
       showPassword: false
     }
   },
   computed: {
     ssrLink: {
       get () {
-        const link = 'ssr://' + Base64.encode(`ssr://${this.form.method}[-auth]:${this.form.password}@${this.form.server}:${this.form.port}`)
+        const form = this.form
+        const required = [form.host, form.port, form.protocol, form.method, form.obfs, Base64.encode(form.password)]
+        const others = [`obfsparam=${Base64.encode(form.obfsparam)}`, `remarks=${Base64.encode(form.remark)}`, `udpport=${form.udpport}`, `uot=${form.uot}`]
+        const link = 'ssr://' + Base64.encode(required.join(':') + '/?' + others.join('&'))
         this.$emit('config-change', this.form, link)
         return link
       },
       set (val) {
-        // const decoded = Base64.decode(val.substring(5))
-        // TODO
-        // this.form.method = decoded.replace(/ss\:\/\//)
+        if (val) {
+          try {
+            const body = val.substring(6)
+            const decoded = Base64.decode(body)
+            const _split = decoded.split('/?')
+            const required = _split[0]
+            const others = _split[1]
+            const requiredSplit = required.split(':')
+            let otherSplit = {}
+            others.split('&').forEach(item => {
+              const _params = item.split('=')
+              otherSplit[_params[0]] = _params[1]
+            })
+            this.form.host = requiredSplit[0]
+            this.form.port = requiredSplit[1]
+            this.form.protocol = requiredSplit[2]
+            this.form.method = requiredSplit[3]
+            this.form.obfs = requiredSplit[4]
+            this.form.password = requiredSplit[5]
+            this.form.obfsparam = otherSplit.obfsparam
+            this.form.remark = otherSplit.remarks
+            this.form.udpport = otherSplit.udpport
+            this.form.uot = otherSplit.uot
+          } catch (e) {
+            console.error(e)
+          }
+        }
       }
     }
   },
   components: {
     FormItem
+  },
+  methods: {
+    cancel () {
+      Object.assign(this.form, this.bak)
+    },
+    save () {
+      this.$emit('save', this.form)
+    }
+  },
+  created () {
+    this.bak = JSON.parse(JSON.stringify(this.form))
   }
 }
 </script>
