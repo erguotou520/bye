@@ -30,6 +30,8 @@ export default {
     height 1.5rem
     line-height @height
     outline none
+    &:disabled
+      background #e8e8e8
   input[type=checkbox]
     display inline-block
     width 1rem

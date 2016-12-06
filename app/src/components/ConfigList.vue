@@ -2,7 +2,7 @@
   <div class="app-config-list flex flex-column">
     <div class="list-wrapper flex-1">
       <ul>
-        <li v-for="config in configs" @click="selected=config" :class="{selected:selected===config}">
+        <li v-for="config in configs" @click="select(config)" :class="{selected:selected===config}">
           {{config.remark||config.host}}（{{config.host}}:{{config.port}}）
         </li>
       </ul>
@@ -27,6 +27,10 @@ export default {
     getSelected () {
       return this.selected
     },
+    select (config) {
+      this.selected = config
+      console.log(config)
+    },
     add () {
       this.selected = undefined
       this.$emit('add')
@@ -34,6 +38,7 @@ export default {
     remove () {
       if (this.selected) {
         this.$emit('remove', this.selected)
+        this.selected = undefined
       }
     }
   }
@@ -57,6 +62,7 @@ export default {
         padding 2px 1px
         text-align left
         cursor default
+        -webkit-user-select none
         &.selected
           background rgb(51, 153, 255)
           color #fff

@@ -37,8 +37,12 @@ export default {
       if (selected) {
         Object.assign(selected, config)
       } else {
-        // create new one
-        this.configs.push(config)
+        if (this.configs.some(conf => conf.host === config.host && conf.port === config.port)) {
+          alert('该条记录已存在')
+        } else {
+          // create new one
+          this.configs.push(config)
+        }
       }
       saveConfigs(this.configs)
     }
@@ -75,8 +79,10 @@ input[type=checkbox]
   margin 0
   margin-right .5rem
 button
+  padding 0
   height 2rem
   line-height @height
   background #e1e1e1
   border 1px solid #aaa
+  outline none
 </style>

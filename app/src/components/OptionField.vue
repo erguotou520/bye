@@ -72,6 +72,7 @@
 <script>
 import FormItem from './FormItem'
 import { Base64 } from 'js-base64'
+import { clone } from '../util'
 export default {
   data () {
     return {
@@ -140,11 +141,11 @@ export default {
       Object.assign(this.form, this.bak)
     },
     save () {
-      this.$emit('save', this.form)
+      this.$emit('save', clone(this.form))
     }
   },
   created () {
-    this.bak = JSON.parse(JSON.stringify(this.form))
+    this.bak = clone(this.form)
   }
 }
 </script>
@@ -153,4 +154,5 @@ export default {
   fieldset
     padding .5rem
     text-align left
+    border 1px solid #aaa
 </style>

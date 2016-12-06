@@ -1,15 +1,12 @@
 'use strict'
 
-const electron = require('electron')
+const { app, Menu, Tray, BrowserWindow} = require('electron')
 const path = require('path')
-const app = electron.app
-const Menu = electron.Menu
-const Tray = electron.Tray
-const BrowserWindow = electron.BrowserWindow
 
 let mainWindow
 let config = {}
 let appIcon = null
+let tray = null
 
 if (process.env.NODE_ENV === 'development') {
   config = require('../config')
