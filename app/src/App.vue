@@ -40,34 +40,30 @@ export default {
 }
 </script>
 <style lang="stylus">
-  *
-    box-sizing border-box
-  html
-  body
-    height 100%
-  body
-    display flex
-    align-items center
-    justify-content center
-    text-align center
-    margin 0
-    padding 0
-    font-family "Helvetica Neue", Helvetica, Tahoma, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "微软雅黑", "WenQuanYi Micro Hei", Arial, sans-serif
-    font-size 12px
-    background-color #f0f0f0
-    overflow hidden
-  .flex
-    display flex
-  .flex-1
-    flex 1
-  .flex-column
-    flex-direction column
+@import "./assets/flex"
+*
+  box-sizing border-box
+html
+body
+  height 100%
+body
+  display flex
+  align-items center
+  justify-content center
+  text-align center
+  margin 0
+  padding 0
+  font-family "Helvetica Neue", Helvetica, Tahoma, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "微软雅黑", "WenQuanYi Micro Hei", Arial, sans-serif
+  font-size 12px
+  background-color #f0f0f0
+  overflow hidden
 
-  input[type=checkbox]
-    margin-right .5rem
-  button
-    height 2rem
-    line-height @height
-    background #e1e1e1
-    border 1px solid #aaa
+input[type=checkbox]
+  margin 0
+  margin-right .5rem
+button
+  height 2rem
+  line-height @height
+  background #e1e1e1
+  border 1px solid #aaa
 </style>

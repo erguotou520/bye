@@ -5,7 +5,7 @@ const path = require('path')
 let config = {
   // Name of electron app
   // Will be used in production builds
-  name: 'electron-ssr',
+  name: 'ShadowsocksR客户端',
 
   // Use ESLint (extends `standard`)
   // Further changes can be made in `.eslintrc.js`
