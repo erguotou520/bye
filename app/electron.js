@@ -1,12 +1,13 @@
 'use strict'
 
-const { app, Menu, Tray, BrowserWindow} = require('electron')
+const { app, BrowserWindow, nativeImage } = require('electron')
 const path = require('path')
+const tray = require('./tray')
 
 let mainWindow
 let config = {}
+let trayEvent
 let appIcon = null
-let tray = null
 
 if (process.env.NODE_ENV === 'development') {
   config = require('../config')
@@ -21,9 +22,14 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 440,
-    width: 800
+    height: 420,
+    width: 800,
+    resizable: false,
+    minimizable: false,
+    maximizable: false
   })
+
+  mainWindow.setMenu(null)
 
   mainWindow.loadURL(config.url)
 
@@ -44,7 +50,20 @@ function createWindow () {
   console.log('mainWindow opened')
 }
 
-app.on('ready', createWindow)
+function showWindow() {
+  mainWindow.show()
+}
+
+function closeHandle() {
+  mainWindow.destroy()
+  tray.destroy()
+  app.quit()
+}
+
+app.on('ready', () => {
+  createWindow()
+  trayEvent = tray.setup()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

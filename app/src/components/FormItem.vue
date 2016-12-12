@@ -32,6 +32,7 @@ export default {
     outline none
     &:disabled
       background #e8e8e8
+      border 1px solid #aaa
   input[type=checkbox]
     display inline-block
     width 1rem
