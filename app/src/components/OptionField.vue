@@ -48,10 +48,7 @@
       <form-item label="混淆插件参数">
         <input type="text" v-model="form.obfsparam" :disabled="form.obfs!=='http_simple'">
       </form-item>
-      <form-item>
-        <span slot="label">
-          <input type="checkbox" v-model="containsRemark">备注
-        </span>
+      <form-item label="备注">
         <input type="text" v-model="form.remark">
       </form-item>
       <form-item label="链接">
@@ -70,24 +67,13 @@
   </div>
 </template>
 <script>
+import Config from '../Config'
 import FormItem from './FormItem'
-import { Base64 } from 'js-base64'
 import { clone } from '../util'
 export default {
   data () {
     return {
-      form: {
-        host: '127.0.0.1',
-        port: '8388',
-        password: '0',
-        method: 'aes-256-cfb',
-        protocol: 'origin',
-        obfs: 'plain',
-        obfsparam: '',
-        remark: '',
-        udpport: false,
-        uot: false
-      },
+      form: new Config(),
       bak: undefined,
       showPassword: false
     }
@@ -95,41 +81,12 @@ export default {
   computed: {
     ssrLink: {
       get () {
-        const form = this.form
-        const required = [form.host, form.port, form.protocol, form.method, form.obfs, Base64.encode(form.password)]
-        const others = [`obfsparam=${Base64.encode(form.obfsparam)}`, `remarks=${Base64.encode(form.remark)}`, `udpport=${form.udpport}`, `uot=${form.uot}`]
-        const link = 'ssr://' + Base64.encode(required.join(':') + '/?' + others.join('&'))
+        const link = this.form.getSSRLink()
         this.$emit('config-change', this.form, link)
         return link
       },
       set (val) {
-        if (val) {
-          try {
-            const body = val.substring(6)
-            const decoded = Base64.decode(body)
-            const _split = decoded.split('/?')
-            const required = _split[0]
-            const others = _split[1]
-            const requiredSplit = required.split(':')
-            let otherSplit = {}
-            others.split('&').forEach(item => {
-              const _params = item.split('=')
-              otherSplit[_params[0]] = _params[1]
-            })
-            this.form.host = requiredSplit[0]
-            this.form.port = requiredSplit[1]
-            this.form.protocol = requiredSplit[2]
-            this.form.method = requiredSplit[3]
-            this.form.obfs = requiredSplit[4]
-            this.form.password = requiredSplit[5]
-            this.form.obfsparam = otherSplit.obfsparam
-            this.form.remark = otherSplit.remarks
-            this.form.udpport = otherSplit.udpport
-            this.form.uot = otherSplit.uot
-          } catch (e) {
-            console.error(e)
-          }
-        }
+        this.form.setSSRLink(val)
       }
     }
   },
@@ -137,11 +94,11 @@ export default {
     FormItem
   },
   methods: {
-    cancel () {
+    reset () {
       Object.assign(this.form, this.bak)
     },
-    save () {
-      this.$emit('save', clone(this.form))
+    setConfig (config) {
+      Object.assign(this.form, config)
     }
   },
   created () {

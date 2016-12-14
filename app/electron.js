@@ -1,13 +1,15 @@
 'use strict'
 
-const { app, BrowserWindow, nativeImage } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const tray = require('./tray')
+const storage = require('./storage')
 
 let mainWindow
 let config = {}
 let trayEvent
 let appIcon = null
+let storedConfigs
 
 if (process.env.NODE_ENV === 'development') {
   config = require('../config')
@@ -62,7 +64,22 @@ function closeHandle() {
 
 app.on('ready', () => {
   createWindow()
+  storedConfigs = storage.getConfigs()
+  // when loaded, init configs
+  mainWindow.webContents.once('did-finish-load', () => {
+    mainWindow.webContents.send('init-configs', storedConfigs.configs)
+  })
+  // init storage
+  storage.setup(app.getAppPath())
+  // init tray
   trayEvent = tray.setup()
+  // refresh tray hosts
+  tray.refreshConfigs(storedConfigs.configs)
+})
+
+app.on('close', (e) => {
+  mainWindow.hide()
+  e.preventDefault()
 })
 
 app.on('window-all-closed', () => {
@@ -75,4 +92,11 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
+})
+
+// ipc channels
+ipcMain.on('update-configs', (e, configs) => {
+  // save configs
+  storage.saveConfigs(configs)
+  tray.refreshConfigs(configs)
 })

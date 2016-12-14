@@ -1,18 +1,18 @@
 <template>
   <div class="flex" style="width:100%">
-    <config-list ref="list" :configs="configs" @add="$refs.option&&$refs.option.cancel"
-      @remove="configs.splice(configs.indexOf(arguments[0]),1)"></config-list>
-    <option-field class="flex-1" ref="option" @config-change="onConfigChange"
-      @save="save"></option-field>
-    <qr-code :link="currentLink" ref="qrcode" @cancel="$refs.option&&$refs.option.cancel()"
-      @ok="$refs.option&&$refs.option.save()"></qr-code>
+    <config-list ref="list" :configs="configs" @add="onAdd"
+      @remove="onRemove" @select="onSelect"></config-list>
+    <option-field class="flex-1" ref="option" @config-change="onConfigChange"></option-field>
+    <qr-code :link="currentLink" ref="qrcode" @cancel="onCancel"
+      @ok="save"></qr-code>
   </div>
 </template>
 <script>
+import { ipcRenderer } from 'electron'
+import Config from './Config'
 import ConfigList from './components/ConfigList'
 import OptionField from './components/OptionField'
 import QrCode from './components/QRCode'
-import { getConfigs, saveConfigs } from './storage'
 export default {
   data () {
     return {
@@ -26,33 +26,43 @@ export default {
     OptionField,
     QrCode
   },
+  watch: {
+    configs: {
+      deep: true,
+      handler (val) {
+        ipcRenderer.send('update-configs', val)
+      }
+    }
+  },
   methods: {
     onConfigChange (...args) {
       this.currentConfig = args[0]
       this.currentLink = args[1]
     },
+    onAdd () {
+      const newConfig = new Config()
+      this.onSelect(newConfig)
+      this.configs.push(newConfig)
+    },
+    onSelect (config) {
+      this.$refs.option.setConfig(config)
+    },
+    onRemove (...args) {
+      this.configs.splice(this.configs.indexOf(args[0]), 1)
+    },
+    onCancel () {
+      this.$refs.option.reset()
+      this.$refs.option.setConfig(this.$refs.list.getSelected())
+    },
     save (config) {
       const selected = this.$refs.list.getSelected()
-      // update selected
-      if (selected) {
-        Object.assign(selected, config)
-      } else {
-        if (this.configs.some(conf => conf.host === config.host && conf.port === config.port)) {
-          alert('该条记录已存在')
-        } else {
-          // create new one
-          this.configs.push(config)
-        }
-      }
-      saveConfigs(this.configs)
+      Object.assign(selected, this.currentConfig)
     }
   },
   created () {
-    try {
-      this.configs = getConfigs() || []
-    } catch (e) {
-      console.error(e)
-    }
+    ipcRenderer.on('init-configs', (e, configs) => {
+      this.configs = configs
+    })
   }
 }
 </script>
@@ -85,4 +95,6 @@ button
   background #e1e1e1
   border 1px solid #aaa
   outline none
+  &:active
+    background #ccc
 </style>

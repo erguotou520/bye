@@ -23,23 +23,35 @@ export default {
       selected: undefined
     }
   },
+  watch: {
+    selected: {
+      deep: true,
+      handler (val) {
+        this.$emit('select', val)
+      }
+    }
+  },
   methods: {
     getSelected () {
       return this.selected
     },
     select (config) {
       this.selected = config
-      console.log(config)
     },
     add () {
-      this.selected = undefined
       this.$emit('add')
+      this.selectLast()
     },
     remove () {
       if (this.selected) {
         this.$emit('remove', this.selected)
-        this.selected = undefined
+        this.selectLast()
       }
+    },
+    selectLast () {
+      this.$nextTick(() => {
+        this.selected = this.configs[this.configs.length - 1]
+      })
     }
   }
 }
