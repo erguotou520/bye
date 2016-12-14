@@ -6,6 +6,7 @@ let configPath = ''
 module.exports.setup = function (appPath) {
   try {
     configPath = path.join(appPath, '../shadowsocksr.json')
+    console.log('Config file\'s path: ' + configPath)
     fsExtra.ensureFileSync(configPath)
   } catch (e) {
     console.error('Error occured:\n' + JSON.stringify(e, null, 2))
@@ -13,11 +14,11 @@ module.exports.setup = function (appPath) {
 }
 
 module.exports.getConfigs = function () {
-  const content = fs.readFileSync(configPath)
+  const content = fs.readFileSync(configPath, 'utf8')
   if (content) {
     return JSON.parse(content)
   }
-  return []
+  return { configs: [], selected: -1 }
 }
 
 module.exports.saveConfigs = function (configs) {

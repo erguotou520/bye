@@ -1,14 +1,16 @@
 const { Menu, Tray, nativeImage } = require('electron')
 const EventEmitter = require('events').EventEmitter
 const path = require('path')
+const os = require('os')
 
 let tray = null
 let menu = null
 const event = new EventEmitter()
-let image = nativeImage.createFromPath(path.join(__dirname, './src/assets/images/tray.png'))
+const osTrayIcon = os.platform() === 'darwin' ? 'tray_mac.png' : 'tray_win.png'
+let image = nativeImage.createFromPath(path.join(__dirname, './src/assets/images/' + osTrayIcon))
 
 function power (e) {
-  e.checked = !e.checked
+  // e.checked = !e.checked
 }
 
 module.exports = {

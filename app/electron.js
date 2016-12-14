@@ -64,15 +64,16 @@ function closeHandle() {
 
 app.on('ready', () => {
   createWindow()
+  // init storage
+  storage.setup(app.getAppPath())
+  // init tray
+  trayEvent = tray.setup()
+  // get configs
   storedConfigs = storage.getConfigs()
   // when loaded, init configs
   mainWindow.webContents.once('did-finish-load', () => {
     mainWindow.webContents.send('init-configs', storedConfigs.configs)
   })
-  // init storage
-  storage.setup(app.getAppPath())
-  // init tray
-  trayEvent = tray.setup()
   // refresh tray hosts
   tray.refreshConfigs(storedConfigs.configs)
 })
