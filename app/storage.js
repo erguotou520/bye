@@ -1,6 +1,9 @@
 const path = require('path')
 const fs = require('fs')
 const fsExtra = require('fs-extra')
+
+const defaultConfig = { configs: [], selected: -1, autoLaunch: false, enable: false }
+let currentConfig
 let configPath = ''
 
 module.exports.setup = function (appPath) {
@@ -16,19 +19,13 @@ module.exports.setup = function (appPath) {
 module.exports.getConfigs = function () {
   const content = fs.readFileSync(configPath, 'utf8')
   if (content) {
-    return JSON.parse(content)
+    currentConfig = JSON.parse(content)
+  } else {
+    currentConfig = defaultConfig
   }
-  return { configs: [], selected: -1 }
+  return currentConfig
 }
 
-module.exports.saveConfigs = function (configs) {
-  const _configs = module.exports.getConfigs()
-  _configs.configs = configs
-  fsExtra.writeJSONSync(configPath, _configs)
-}
-
-module.exports.changeSelected = function (index) {
-  const _configs = module.exports.getConfigs()
-  _configs.selected = index
-  fsExtra.writeJSONSync(configPath, _configs)
+module.exports.saveConfig = function () {
+  fsExtra.writeJSONSync(configPath, currentConfig)
 }

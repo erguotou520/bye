@@ -1,6 +1,17 @@
-import { Base64 } from 'js-base64'
+const Base64 = require('urlsafe-base64')
 
-export default class Config {
+function encode (str) {
+  return Base64.encode(Buffer.from(str, 'utf-8'))
+}
+
+function decode (str) {
+  return Base64.decode(str).toString('utf-8')
+}
+
+global.encode = encode
+global.decode = decode
+
+module.exports = class Config {
   constructor (config) {
     this.host = '127.0.0.1'
     this.port = '8388'
@@ -10,15 +21,24 @@ export default class Config {
     this.obfs = 'plain'
     this.obfsparam = ''
     this.remark = ''
-    this.udpport = false
-    this.uot = false
+    // this.udpport = false
+    // this.uot = false
     Object.assign(this, config)
   }
 
+  isValid () {
+    return !!(this.host && this.port && this.password && this.method && this.protocol && this.obfs)
+  }
+
   getSSRLink () {
-    const required = [this.host, this.port, this.protocol, this.method, this.obfs, Base64.encode(this.password)]
-    const others = [`obfsparam=${Base64.encode(this.obfsparam)}`, `remarks=${Base64.encode(this.remark)}`, `udpport=${this.udpport}`, `uot=${this.uot}`]
-    const link = 'ssr://' + Base64.encode(required.join(':') + '/?' + others.join('&'))
+    const required = [this.host, this.port, this.protocol, this.method, this.obfs, encode(this.password)]
+    const others = []
+    this.obfsparam && others.push(`obfsparam=${encode(this.obfsparam)}`)
+    this.remark && others.push(`remarks=${encode(this.remark)}`)
+    this.udpport && others.push(`udpport=${this.udpport}`)
+    this.uot && others.push(`uot=${this.uot}`)
+    console.log(required, others)
+    const link = 'ssr://' + encode(required.join(':') + '/?' + others.join('&'))
     return link
   }
 
@@ -26,7 +46,7 @@ export default class Config {
     if (link) {
       try {
         const body = link.substring(6)
-        const decoded = Base64.decode(body)
+        const decoded = decode(body)
         const _split = decoded.split('/?')
         const required = _split[0]
         const others = _split[1]
@@ -41,11 +61,11 @@ export default class Config {
         this.protocol = requiredSplit[2]
         this.method = requiredSplit[3]
         this.obfs = requiredSplit[4]
-        this.password = Base64.decode(requiredSplit[5])
-        this.obfsparam = Base64.decode(otherSplit.obfsparam)
-        this.remark = Base64.decode(otherSplit.remarks)
-        this.udpport = otherSplit.udpport
-        this.uot = otherSplit.uot
+        this.password = decode(requiredSplit[5])
+        this.obfsparam = decode(otherSplit.obfsparam)
+        this.remark = decode(otherSplit.remarks)
+        // this.udpport = otherSplit.udpport
+        // this.uot = otherSplit.uot
       } catch (e) {
         console.error(e)
       }

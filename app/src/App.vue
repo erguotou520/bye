@@ -1,10 +1,8 @@
 <template>
   <div class="flex" style="width:100%">
-    <config-list ref="list" :configs="configs" @add="onAdd"
-      @remove="onRemove" @select="onSelect"></config-list>
+    <config-list ref="list" :configs="configs" @add="onAdd" @remove="onRemove" @select="onSelect"></config-list>
     <option-field class="flex-1" ref="option" @config-change="onConfigChange"></option-field>
-    <qr-code :link="currentLink" ref="qrcode" @cancel="onCancel"
-      @ok="save"></qr-code>
+    <qr-code :link="currentLink" ref="qrcode" @cancel="onCancel" @ok="save"></qr-code>
   </div>
 </template>
 <script>
@@ -56,12 +54,18 @@ export default {
     },
     save (config) {
       const selected = this.$refs.list.getSelected()
-      Object.assign(selected, this.currentConfig)
+      if (this.currentConfig && this.currentConfig.isValid()) {
+        Object.assign(selected, this.currentConfig)
+      } else {
+        global.alert('服务器配置信息不完整')
+      }
     }
   },
   created () {
     ipcRenderer.on('init-configs', (e, configs) => {
       this.configs = configs
+    }).on('exec-error', (e, arg) => {
+      global.alert(JSON.stringify(arg, null, 2), 'exec error')
     })
   }
 }

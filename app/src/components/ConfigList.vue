@@ -60,11 +60,13 @@ export default {
 .app-config-list
   width 15rem
   padding 1rem
+  overflow hidden
   .list-wrapper
     padding 1px
     border 1px solid #888
     margin-bottom 4px
     background #fff
+    overflow hidden
     > ul
       margin 0
       padding 0

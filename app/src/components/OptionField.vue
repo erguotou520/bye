@@ -57,12 +57,12 @@
       <form-item label="高级选项">
         <span>以下选项不是所有服务端都支持</span>
       </form-item>
-      <form-item label="TCP over UDP">
+      <!-- <form-item label="TCP over UDP">
         <span><input type="checkbox" v-model="form.udpport" :true-value="1" :false-value="0">不打勾使用原生 TCP</span>
       </form-item>
       <form-item label="UDP over TCP">
         <span><input type="checkbox" v-model="form.uot" :true-value="1" :false-value="0">不打勾使用原生 UDP</span>
-      </form-item>
+      </form-item> -->
     </fieldset>
   </div>
 </template>
