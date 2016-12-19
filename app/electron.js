@@ -1,7 +1,8 @@
 'use strict'
 
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, net } = require('electron')
 const AutoLaunch = require('auto-launch')
+const { crashReporter } = require('electron')
 const path = require('path')
 const tray = require('./tray')
 const client = require('./client')
@@ -29,7 +30,7 @@ if (process.env.NODE_ENV === 'development') {
   config.url = `file://${__dirname}/dist/index.html`
 }
 
-function createWindow () {
+function createWindow (configsLength) {
   /**
    * Initial window options
    */
@@ -55,6 +56,12 @@ function createWindow () {
       .catch((err) => console.log('An error occurred: ', err))
   }
 
+  // hide to tray when window closed
+  mainWindow.on('close', (e) => {
+    e.preventDefault()
+    mainWindow.hide()
+  })
+
   mainWindow.on('closed', () => {
     mainWindow = null
   })
@@ -78,11 +85,20 @@ function execHandler (args) {
 }
 
 app.on('ready', () => {
-  createWindow()
+  // crash report
+  crashReporter.start({
+    productName: 'ShadowsocksR Client',
+    companyName: 'erguotou520',
+    submitURL: 'https://ssr-crash-server.herokuapp.com/',
+    autoSubmit: true
+  })
+
   // init storage
   storage.setup(app.getAppPath())
   // get configs
   storedConfig = storage.getConfigs()
+  // create main window
+  createWindow(storedConfig.configs.length)
   // init tray
   trayEvent = tray.setup(storedConfig)
   // tray event
@@ -111,16 +127,21 @@ app.on('ready', () => {
 }).on('exit', quitHandler).on('click', showWindow)
   // when loaded, init configs
   mainWindow.webContents.once('did-finish-load', () => {
+    mainWindow.hide()
     // download ShadowsocksR python sources
     client.setup(app.getAppPath(), storedConfig, execHandler)
     // init gui configs
     mainWindow.webContents.send('init-configs', storedConfig.configs)
-  })
-
-  // hide to tray when window closed
-  mainWindow.on('close', (e) => {
-    e.preventDefault()
-    mainWindow.hide()
+    // version check
+    net.request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/app/package.json').on('response', (response) => {
+      response.on('data', (chunk) => {
+        const remotePkg = JSON.parse(chunk.toString())
+        const currentVersion = require('./package.json').version
+        if (remotePkg.version > currentVersion) {
+          mainWindow.webContents.send('new-version', currentVersion, remotePkg.version)
+        }
+      })
+    }).end()
   })
 })
 

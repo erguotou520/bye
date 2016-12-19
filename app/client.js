@@ -39,6 +39,8 @@ module.exports.run = function (enable, config) {
     const params = []
     params.push(`-s ${config.host}`)
     params.push(`-p ${config.port}`)
+    params.push(`-b ${config.localAddr}`)
+    params.push(`-l ${config.localPort}`)
     params.push(`-k ${config.password}`)
     params.push(`-m ${config.method}`)
     config.obfs && params.push(`-o ${config.obfs}`)
@@ -50,6 +52,7 @@ module.exports.run = function (enable, config) {
     })
     child.stderr.on('data', data => {
       console.log(`stderror: ${data}`)
+      // handler(data)
     })
     child.on('close', code => {
       console.log(`child process exist with code ${code}`)

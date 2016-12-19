@@ -1,6 +1,14 @@
 # electron-ssr
+Shadowsocksr client that coding with electron and vue
 
-> Shadowsocksr client using electron
+## Feature
+- Close to tray
+- Crash Reporting
+- Update and launched notification
+- Support all of the shadowsocksr python version's function
+
+## Prerequirement
+- [python](https://www.python.org/downloads/) to be installed
 
 ## Build Setup
 
@@ -25,3 +33,7 @@ More information can be found [here](https://simulatedgreg.gitbooks.io/electron-
 ---
 
 This project was generated from [electron-vue](https://github.com/SimulatedGREG/electron-vue) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about this project can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
+
+## Shadowsocksr Doc Reference
+- [Python client setup (Mult language)](https://github.com/breakwa11/shadowsocks-rss/wiki/Python-client-setup-(Mult-language))
+- [SSR QRcode scheme](https://github.com/breakwa11/shadowsocks-rss/wiki/SSR-QRcode-scheme)

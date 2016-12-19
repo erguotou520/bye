@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-import { ipcRenderer } from 'electron'
+import { shell, ipcRenderer } from 'electron'
 import Config from './Config'
 import ConfigList from './components/ConfigList'
 import OptionField from './components/OptionField'
@@ -64,6 +64,15 @@ export default {
   created () {
     ipcRenderer.on('init-configs', (e, configs) => {
       this.configs = configs
+      if (configs && configs.length > 0) {
+        new Notification('ShadowsocksR client has been launched.')
+      }
+    }).on('new-version', (e, oldVersion, newVersion) => {
+      new Notification('New version avaliable.', {
+        body: `New version v${newVersion}, click to download`
+      }).onclick = () => {
+        shell.openExternal('https://github.com/erguotou520/electron-ssr/releases')
+      }
     }).on('exec-error', (e, arg) => {
       global.alert(JSON.stringify(arg, null, 2), 'exec error')
     })

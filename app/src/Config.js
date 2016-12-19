@@ -21,6 +21,8 @@ module.exports = class Config {
     this.obfs = 'plain'
     this.obfsparam = ''
     this.remark = ''
+    this.localAddr = '127.0.0.1'
+    this.localPort = '1080'
     // this.udpport = false
     // this.uot = false
     Object.assign(this, config)

@@ -13,6 +13,8 @@ module.exports = {
     'html'
   ],
   'rules': {
+    // allow new object
+    'no-new': 0,
     // allow paren-less arrow functions
     'arrow-parens': 0,
     // allow async-await
