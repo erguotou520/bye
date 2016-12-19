@@ -6,9 +6,9 @@ const defaultConfig = { configs: [], selected: -1, autoLaunch: false, enable: fa
 let currentConfig
 let configPath = ''
 
-module.exports.setup = function (appPath) {
+module.exports.setup = function (storePath) {
   try {
-    configPath = path.join(appPath, '../shadowsocksr.json')
+    configPath = path.join(storePath, 'shadowsocksr.json')
     console.log('Config file\'s path: ' + configPath)
     fsExtra.ensureFileSync(configPath)
   } catch (e) {

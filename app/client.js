@@ -9,10 +9,10 @@ let localPyPath
 let child
 let handler
 
-module.exports.setup = function (appPath, config, execHandler) {
-  sourcePath = path.join(appPath, '../shadowsocksr_python')
+module.exports.setup = function (storePath, config, execHandler) {
+  sourcePath = path.join(storePath, 'shadowsocksr_python')
   localPyPath = path.join(sourcePath, 'shadowsocks/local.py')
-  if (fs.statSync(sourcePath).isDirectory()) {
+  if (fs.existsSync(sourcePath)) {
     console.log('exist, not need to download')
   } else {
     downloader({ user: 'breakwa11', repo: 'shadowsocks' }, sourcePath).on('end', () => {
@@ -44,7 +44,7 @@ module.exports.run = function (enable, config) {
     params.push(`-k ${config.password}`)
     params.push(`-m ${config.method}`)
     config.obfs && params.push(`-o ${config.obfs}`)
-    const command = `python ${localPyPath} ${params.join(' ')}`
+    const command = `python '${localPyPath}' ${params.join(' ')}`
     console.log(command)
     child = exec(command)
     child.stdout.on('data', data => {

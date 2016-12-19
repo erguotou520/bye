@@ -21,6 +21,7 @@ let config = {}
 let trayEvent
 let appIcon = null
 let storedConfig
+let appConfigPath = app.getPath('userData')
 
 if (process.env.NODE_ENV === 'development') {
   config = require('../config')
@@ -74,6 +75,7 @@ function showWindow() {
 }
 
 function quitHandler() {
+  console.log('quit')
   client.kill()
   mainWindow.destroy()
   tray.destroy()
@@ -92,9 +94,8 @@ app.on('ready', () => {
     submitURL: 'https://ssr-crash-server.herokuapp.com/',
     autoSubmit: true
   })
-
   // init storage
-  storage.setup(app.getAppPath())
+  storage.setup(appConfigPath)
   // get configs
   storedConfig = storage.getConfigs()
   // create main window
@@ -124,12 +125,16 @@ app.on('ready', () => {
     if (index > -1) {
       client.run(storedConfig.enable, storedConfig.configs[index])
     }
-}).on('exit', quitHandler).on('click', showWindow)
+  }).on('exit', quitHandler).on('click', showWindow)
+
   // when loaded, init configs
   mainWindow.webContents.once('did-finish-load', () => {
-    mainWindow.hide()
+    // has stored configs, then hide
+    if (storedConfig.configs.length > 0) {
+      mainWindow.hide()
+    }
     // download ShadowsocksR python sources
-    client.setup(app.getAppPath(), storedConfig, execHandler)
+    client.setup(appConfigPath, storedConfig, execHandler)
     // init gui configs
     mainWindow.webContents.send('init-configs', storedConfig.configs)
     // version check
