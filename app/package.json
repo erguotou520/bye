@@ -8,6 +8,7 @@
     "fs-extra": "^1.0.0",
     "github-download": "^0.5.0",
     "qr-image": "^3.1.0",
+    "tree-kill": "^1.1.0",
     "urlsafe-base64": "^1.0.0",
     "vue": "^2.0.1",
     "vue-electron": "^1.0.0"

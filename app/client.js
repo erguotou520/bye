@@ -2,7 +2,7 @@ const downloader = require('github-download')
 const path = require('path')
 const fs = require('fs')
 const exec = require('child_process').exec
-const kill = require('tree-kill')
+const treeKill = require('tree-kill')
 
 let sourcePath
 let localPyPath
@@ -25,11 +25,16 @@ module.exports.setup = function (appPath, config, execHandler) {
   }
 }
 
+module.exports.kill = function () {
+  if (child && child.pid) {
+    treeKill(child.pid)
+    child = null
+  }
+}
+
 module.exports.run = function (enable, config) {
   // kill preview
-  if (child && child.pid) {
-    kill(child.pid)
-  }
+  module.exports.kill()
   if (enable) {
     const params = []
     params.push(`-s ${config.host}`)
@@ -39,12 +44,15 @@ module.exports.run = function (enable, config) {
     config.obfs && params.push(`-o ${config.obfs}`)
     const command = `python ${localPyPath} ${params.join(' ')}`
     console.log(command)
-    child = exec(command, (error, stdout, stderr) => {
-      if (error) {
-        handler({ error })
-      } else if (stderr) {
-        handler({ stderr })
-      }
+    child = exec(command)
+    child.stdout.on('data', data => {
+      console.log(`stdout: ${data}`)
+    })
+    child.stderr.on('data', data => {
+      console.log(`stderror: ${data}`)
+    })
+    child.on('close', code => {
+      console.log(`child process exist with code ${code}`)
     })
   }
 }

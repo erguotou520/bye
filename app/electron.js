@@ -67,6 +67,7 @@ function showWindow() {
 }
 
 function quitHandler() {
+  client.kill()
   mainWindow.destroy()
   tray.destroy()
   app.quit()
@@ -125,6 +126,7 @@ app.on('ready', () => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    client.kill()
     app.quit()
   }
 })

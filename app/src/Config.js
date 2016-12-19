@@ -37,7 +37,6 @@ module.exports = class Config {
     this.remark && others.push(`remarks=${encode(this.remark)}`)
     this.udpport && others.push(`udpport=${this.udpport}`)
     this.uot && others.push(`uot=${this.uot}`)
-    console.log(required, others)
     const link = 'ssr://' + encode(required.join(':') + '/?' + others.join('&'))
     return link
   }
