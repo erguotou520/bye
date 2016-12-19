@@ -10,6 +10,9 @@ Shadowsocksr client that coding with electron and vue
 ## Prerequirement
 - [python](https://www.python.org/downloads/) to be installed
 
+## Screenshot
+![](./doc/images/ssr-client.jpg)
+
 ## Build Setup
 
 ``` bash
