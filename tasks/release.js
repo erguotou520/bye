@@ -3,7 +3,6 @@
 const exec = require('child_process').exec
 const packager = require('electron-packager')
 const path = require('path')
-const fs = require('fs')
 
 if (process.env.PLATFORM_TARGET === 'clean') {
   require('del').sync(['builds/*', '!.gitkeep'])
@@ -19,21 +18,7 @@ function pack () {
 
   pack.stdout.on('data', data => console.log(data))
   pack.stderr.on('data', data => console.error(data))
-  pack.on('exit', code => mainDeps())
-}
-
-/**
- * copy all node_modules expect .bin vue*
- */
-function mainDeps () {
-  console.log('\x1b[33mDetermining main process modules...\n\x1b[0m')
-  const deps = []
-  fs.readdirSync(path.join(__dirname, '../app/node_modules')).forEach(path => {
-    if (!/^\.bin$|^vue/.test(path)) {
-      deps.push(path)
-    }
-  })
-  build(deps.join('|'))
+  pack.on('exit', code => build())
 }
 
 /**
@@ -49,12 +34,6 @@ function removeEmptyDirectories (buildPath, e, p, a, cb) {
  */
 function build (mainModules) {
   let options = require('../config').building
-
-  for (let i = 0; i < options.ignore.length; i++) {
-    if (options.ignore[i].toString() === '/\\bnode_modules\\b/') {
-      options.ignore[i] = new RegExp(`\\bnode_modules\\/(?!${mainModules}).*\\b`)
-    }
-  }
 
   options.afterCopy = [ removeEmptyDirectories ]
 

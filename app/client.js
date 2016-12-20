@@ -1,25 +1,27 @@
 const downloader = require('github-download')
 const path = require('path')
 const fs = require('fs')
+const fsExtra = require('fs-extra')
 const exec = require('child_process').exec
 const treeKill = require('tree-kill')
 
 let sourcePath
 let localPyPath
 let child
-let handler
+// let handler
 
 module.exports.setup = function (storePath, config, execHandler) {
   sourcePath = path.join(storePath, 'shadowsocksr_python')
   localPyPath = path.join(sourcePath, 'shadowsocks/local.py')
-  if (fs.existsSync(sourcePath)) {
+  if (fs.existsSync(sourcePath) && fs.existsSync(localPyPath)) {
     console.log('exist, not need to download')
   } else {
+    fsExtra.ensureDirSync(sourcePath)
     downloader({ user: 'breakwa11', repo: 'shadowsocks' }, sourcePath).on('end', () => {
       console.log('download complete')
     })
   }
-  handler = execHandler
+  // handler = execHandler
   if (config && config.enable && config.selected > -1 && config.configs.length && config.configs[config.selected]) {
     module.exports.run(config.enable, config.configs[config.selected])
   }

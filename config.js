@@ -22,10 +22,10 @@ let config = {
     dir: path.join(__dirname, 'app'),
     icon: path.join(__dirname, 'app/icons/icon'),
     ignore: [
-      /\bnode_modules\b/,
+      /\bnode_modules[\\\/]*\.bin\b/,
+      /\bnode_modules[\\\/]*vue/,
       /\bsrc\b/,
-      /\bindex\.ejs\b/,
-      /\bicons\/icon\.(icns|ico)\b/
+      /\bindex\.ejs\b/
     ],
     out: path.join(__dirname, 'builds'),
     overwrite: true,

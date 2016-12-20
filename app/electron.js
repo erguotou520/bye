@@ -4,16 +4,17 @@ const { app, BrowserWindow, ipcMain, net } = require('electron')
 const AutoLaunch = require('auto-launch')
 const { crashReporter } = require('electron')
 const path = require('path')
+const fsExtra = require('fs-extra')
 const tray = require('./tray.js')
 const client = require('./client.js')
 const storage = require('./storage.js')
 
 const AutoLauncher = new AutoLaunch({
-    name: 'ShadowsocksR Client',
-    isHidden: true,
-    mac: {
-      useLaunchAgent: true
-    }
+  name: 'ShadowsocksR Client',
+  isHidden: true,
+  mac: {
+    useLaunchAgent: true
+  }
 })
 
 let mainWindow
@@ -22,6 +23,8 @@ let trayEvent
 let appIcon = null
 let storedConfig
 let appConfigPath = app.getPath('userData')
+
+fsExtra.ensureDirSync(appConfigPath)
 
 if (process.env.NODE_ENV === 'development') {
   config = require('../config')
