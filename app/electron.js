@@ -4,9 +4,9 @@ const { app, BrowserWindow, ipcMain, net } = require('electron')
 const AutoLaunch = require('auto-launch')
 const { crashReporter } = require('electron')
 const path = require('path')
-const tray = require('./tray')
-const client = require('./client')
-const storage = require('./storage')
+const tray = require('./tray.js')
+const client = require('./client.js')
+const storage = require('./storage.js')
 
 const AutoLauncher = new AutoLaunch({
     name: 'ShadowsocksR Client',
