@@ -76,6 +76,13 @@ export default {
     }).on('exec-error', (e, arg) => {
       global.alert(JSON.stringify(arg, null, 2), 'exec error')
     })
+  },
+  mounted () {
+    this.$nextTick(() => {
+      if (this.configs && this.configs.length > 0) {
+        this.$ref.list.selectDefault()
+      }
+    })
   }
 }
 </script>

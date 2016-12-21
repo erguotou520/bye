@@ -1,22 +1,31 @@
 {
   "name": "electron-ssr",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Shadowsocksr client using electron",
+  "build": {
+    "appId": "me.erguotou",
+    "files": [
+      "**/*",
+      "!src/**/*",
+      "!index.ejs",
+      "!node_modules/.bin/**/*",
+      "!node_modules/vue*/**/*"
+    ],
+    "directories": {
+      "app": "app",
+      "output": "builds"
+    }
+  },
   "scripts": {
-    "build": "node tasks/release.js",
-    "build:clean": "cross-env PLATFORM_TARGET=clean node tasks/release.js",
-    "build:darwin": "cross-env PLATFORM_TARGET=darwin node tasks/release.js",
-    "build:linux": "cross-env PLATFORM_TARGET=linux node tasks/release.js",
-    "build:mas": "cross-env PLATFORM_TARGET=mas node tasks/release.js",
-    "build:win32": "cross-env PLATFORM_TARGET=win32 node tasks/release.js",
     "dev": "node tasks/runner.js",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter app",
     "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix app",
     "pack": "cross-env NODE_ENV=production webpack -p --progress --colors",
     "postinstall": "npm run lint:fix && cd app && npm install",
-    "test:unit": "./node_modules/.bin/mocha tests/unit/qrcode.spec.js"
+    "test:unit": "./node_modules/.bin/mocha tests/unit/qrcode.spec.js",
+    "release": "npm run pack && ./node_modules/.bin/build"
   },
-  "author": "Greg Holguin <simulatedgreg@gmail.com>",
+  "author": "erguotou525@gmail.com",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.8.0",
@@ -33,8 +42,8 @@
     "delete-empty": "^0.1.3",
     "devtron": "^1.1.0",
     "electron": "^1.3.1",
+    "electron-builder": "^10.9.2",
     "electron-devtools-installer": "^1.1.4",
-    "electron-packager": "^8.0.0",
     "electron-prebuilt": "^1.4.10",
     "electron-rebuild": "^1.1.3",
     "eslint": "^2.10.2",
@@ -52,6 +61,7 @@
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.4.0",
+    "tree-kill": "^1.1.0",
     "url-loader": "^0.5.7",
     "vue-hot-reload-api": "^1.3.2",
     "vue-html-loader": "^1.2.2",

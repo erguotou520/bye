@@ -78,7 +78,6 @@ function showWindow() {
 }
 
 function quitHandler() {
-  console.log('quit')
   client.kill()
   mainWindow.destroy()
   tray.destroy()
@@ -136,7 +135,7 @@ app.on('ready', () => {
     if (storedConfig.configs.length > 0) {
       mainWindow.hide()
     }
-    // download ShadowsocksR python sources
+    // copy ShadowsocksR python sources
     client.setup(appConfigPath, storedConfig, execHandler)
     // init gui configs
     mainWindow.webContents.send('init-configs', storedConfig.configs)

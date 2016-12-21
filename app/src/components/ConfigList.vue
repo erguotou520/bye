@@ -38,6 +38,9 @@ export default {
     select (config) {
       this.selected = config
     },
+    selectDefault () {
+      this.selected = this.configs[0]
+    },
     add () {
       this.$emit('add')
       this.selectLast()

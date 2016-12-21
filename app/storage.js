@@ -4,13 +4,18 @@ const fsExtra = require('fs-extra')
 
 const defaultConfig = { configs: [], selected: -1, autoLaunch: false, enable: false }
 let currentConfig
+let dataPath
 let configPath = ''
 
-module.exports.setup = function (storePath) {
+module.exports.setup = function (appConfigPath) {
   try {
-    configPath = path.join(storePath, 'shadowsocksr.json')
+    dataPath = appConfigPath
+    configPath = path.join(appConfigPath, 'shadowsocksr.json')
     console.log('Config file\'s path: ' + configPath)
+    // configs
     fsExtra.ensureFileSync(configPath)
+    // logs
+    fsExtra.ensureDirSync(path.join(dataPath, 'logs'))
   } catch (e) {
     console.error('Error occured:\n' + JSON.stringify(e, null, 2))
   }
@@ -28,4 +33,8 @@ module.exports.getConfigs = function () {
 
 module.exports.saveConfig = function () {
   fsExtra.writeJSONSync(configPath, currentConfig)
+}
+
+module.exports.saveLogs = function (data) {
+  fs.appendFileSync(path.join(dataPath, 'logs/shadowsocksr-client.log'), data, { flag: 'a+' })
 }

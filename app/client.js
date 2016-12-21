@@ -1,27 +1,30 @@
-const downloader = require('github-download')
 const path = require('path')
 const fs = require('fs')
 const fsExtra = require('fs-extra')
 const exec = require('child_process').exec
 const treeKill = require('tree-kill')
+const storage = require('./storage')
+const EOL = require('os').EOL
 
 let sourcePath
 let localPyPath
 let child
-// let handler
 
-module.exports.setup = function (storePath, config, execHandler) {
+function now () {
+  const now = new Date()
+  return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+}
+
+module.exports.setup = function (storePath, config) {
   sourcePath = path.join(storePath, 'shadowsocksr_python')
   localPyPath = path.join(sourcePath, 'shadowsocks/local.py')
+  console.log(localPyPath)
   if (fs.existsSync(sourcePath) && fs.existsSync(localPyPath)) {
-    console.log('exist, not need to download')
+    console.log('exist, not need to copy')
   } else {
     fsExtra.ensureDirSync(sourcePath)
-    downloader({ user: 'breakwa11', repo: 'shadowsocks' }, sourcePath).on('end', () => {
-      console.log('download complete')
-    })
+    fsExtra.copySync(path.join(__dirname, 'shadowsocks'), sourcePath + '/shadowsocks')
   }
-  // handler = execHandler
   if (config && config.enable && config.selected > -1 && config.configs.length && config.configs[config.selected]) {
     module.exports.run(config.enable, config.configs[config.selected])
   }
@@ -50,11 +53,10 @@ module.exports.run = function (enable, config) {
     console.log(command)
     child = exec(command)
     child.stdout.on('data', data => {
-      console.log(`stdout: ${data}`)
+      storage.saveLogs(`${now()} stdout:${EOL}${data}`)
     })
     child.stderr.on('data', data => {
-      console.log(`stderror: ${data}`)
-      // handler(data)
+      storage.saveLogs(`${now()} stdout:${EOL}${data}`)
     })
     child.on('close', code => {
       console.log(`child process exist with code ${code}`)

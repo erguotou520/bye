@@ -7,7 +7,7 @@ let tray = null
 let menus = null
 const event = new EventEmitter()
 const osTrayIcon = os.platform() === 'darwin' ? 'tray_mac.png' : 'tray_win.png'
-let image = nativeImage.createFromPath(path.join(__dirname, './src/assets/images/' + osTrayIcon))
+let image = nativeImage.createFromPath(path.join(__dirname, './trayicons/' + osTrayIcon))
 
 function toggleEnable (e) {
   event.emit('change-enable', e.checked)
