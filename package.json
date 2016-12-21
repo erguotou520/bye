@@ -6,15 +6,18 @@
     "appId": "me.erguotou",
     "files": [
       "**/*",
-      "!src/**/*",
-      "!index.ejs",
-      "!node_modules/.bin/**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts}",
+      "!**/node_modules/.bin",
+      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
+      "**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}",
       "!node_modules/vue*/**/*"
     ],
     "directories": {
       "app": "app",
       "output": "builds"
-    }
+    },
+    "compression": "maximum"
   },
   "scripts": {
     "dev": "node tasks/runner.js",
@@ -45,7 +48,6 @@
     "electron-builder": "^10.9.2",
     "electron-devtools-installer": "^1.1.4",
     "electron-prebuilt": "^1.4.10",
-    "electron-rebuild": "^1.1.3",
     "eslint": "^2.10.2",
     "eslint-config-standard": "^5.1.0",
     "eslint-friendly-formatter": "^2.0.5",
