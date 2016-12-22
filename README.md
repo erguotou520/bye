@@ -11,7 +11,7 @@ Shadowsocksr client that coding with electron and vue
 - [python](https://www.python.org/downloads/) to be installed
 
 ## Screenshot
-![](./doc/images/ssr-client.jpg)
+![](./assets/images/ssr-client.jpg)
 
 ## Download
 Go to [release](https://github.com/erguotou520/electron-ssr/releases)
