@@ -13,6 +13,12 @@ Shadowsocksr client that coding with electron and vue
 ## Screenshot
 ![](./doc/images/ssr-client.jpg)
 
+## Download
+Go to [release](https://github.com/erguotou520/electron-ssr/releases)
+
+## Some tips
+* windows setup exe file will install this project to `C:\Users\{your username}\AppData\Local\Programs\electron-ssr`
+
 ## Build Setup
 
 ``` bash
@@ -22,21 +28,18 @@ npm install
 # serve with hot reload at localhost:9080
 npm run dev
 
-# build electron app for production
-npm run build
-
 # lint all JS/Vue component files in `app/src`
 npm run lint
 
 # run webpack in production
 npm run pack
+
+# build electron app for production
+npm run build:win32
+npm run build:darwin
+npm run build:linux
 ```
-More information can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/docs/npm_scripts.html).
 
----
-
-This project was generated from [electron-vue](https://github.com/SimulatedGREG/electron-vue) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about this project can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).
-
-## Shadowsocksr Doc Reference
+## ShadowsocksR Doc Reference
 - [Python client setup (Mult language)](https://github.com/breakwa11/shadowsocks-rss/wiki/Python-client-setup-(Mult-language))
 - [SSR QRcode scheme](https://github.com/breakwa11/shadowsocks-rss/wiki/SSR-QRcode-scheme)

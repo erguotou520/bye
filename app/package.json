@@ -1,6 +1,6 @@
 {
   "name": "electron-ssr",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Shadowsocksr client using electron",
   "main": "electron.js",
   "dependencies": {
