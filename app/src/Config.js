@@ -63,8 +63,12 @@ module.exports = class Config {
         this.method = requiredSplit[3]
         this.obfs = requiredSplit[4]
         this.password = decode(requiredSplit[5])
-        this.obfsparam = decode(otherSplit.obfsparam)
-        this.remark = decode(otherSplit.remarks)
+        if (otherSplit.obfsparam) {
+          this.obfsparam = decode(otherSplit.obfsparam)
+        }
+        if (otherSplit.remarks) {
+          this.remark = decode(otherSplit.remarks)
+        }
         // this.udpport = otherSplit.udpport
         // this.uot = otherSplit.uot
       } catch (e) {

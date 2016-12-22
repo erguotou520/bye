@@ -38,6 +38,9 @@ npm run pack
 npm run build:win32
 npm run build:darwin
 npm run build:linux
+
+# qrcode scheme unit test
+npm run test:unit
 ```
 
 ## ShadowsocksR Doc Reference
