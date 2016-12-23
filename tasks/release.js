@@ -48,7 +48,6 @@ function build () {
     devMetadata: {
       build: {
         appId: 'me.erguotou',
-        arch: 'all',
         files: [
           '**/*',
           '!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts}',
