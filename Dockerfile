@@ -9,7 +9,7 @@ COPY .babelrc /home/electron-ssr/.babelrc
 RUN \
   sed -i 's/archive.ubuntu.com/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
   && apt-get update -y \
-  && apt-get install curl -y \
+  && apt-get install curl icnsutils imagemagick -y \
   && curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash 、
   && export NVM_DIR="$HOME/.nvm" \
   && [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" \
