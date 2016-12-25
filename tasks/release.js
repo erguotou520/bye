@@ -72,6 +72,10 @@ function build () {
         mac: {
           category: 'public.app-category.developer-tools',
           target: ['dmg', 'zip']
+        },
+        linux: {
+          category: 'Development',
+          target: ['deb', 'rpm', 'tar.gz']
         }
       }
     }

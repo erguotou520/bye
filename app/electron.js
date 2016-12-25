@@ -62,7 +62,7 @@ function createWindow (configsLength) {
 
   // hide to tray when window closed
   mainWindow.on('close', (e) => {
-    e.preventDefault()
+    // e.preventDefault()
     mainWindow.hide()
   })
 
