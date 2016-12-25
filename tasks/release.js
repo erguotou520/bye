@@ -75,7 +75,7 @@ function build () {
         },
         linux: {
           category: 'Development',
-          target: ['deb', 'rpm', 'tar.gz']
+          target: ['rpm', 'tar.gz']
         }
       }
     }
