@@ -45,6 +45,9 @@ function build () {
   console.log('\x1b[34mBuilding electron app(s)...\n\x1b[0m')
   builder.build({
     targets: targets,
+    appMetadata: {
+      homepage: 'https://github.com/erguotou520/electron-ssr'
+    },
     devMetadata: {
       build: {
         appId: 'me.erguotou',
