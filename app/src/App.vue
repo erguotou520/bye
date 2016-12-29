@@ -51,6 +51,7 @@ export default {
     onCancel () {
       this.$refs.option.reset()
       this.$refs.option.setConfig(this.$refs.list.getSelected())
+      ipcRenderer.send('hide')
     },
     save (config) {
       const selected = this.$refs.list.getSelected()

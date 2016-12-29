@@ -35,6 +35,12 @@ function generateConfigSubmenus (configs, selectedIndex) {
       }
     }
   })
+  submenus.push({
+    label: '编辑服务器',
+    click () {
+      event.emit('open')
+    }
+  })
   return submenus
 }
 
@@ -47,11 +53,12 @@ module.exports = {
       { label: '启用系统代理', type: 'checkbox', checked: config.enable, click: toggleEnable },
       { label: '服务器', submenu: generateConfigSubmenus(config.configs, config.selected) },
       { label: '开机自启', type: 'checkbox', checked: config.autoLaunch, click: toggleAutoLaunch },
+      { label: '打开控制台', click: () => { event.emit('open-devtool') } },
       { label: '退出', click: () => { event.emit('exit') } }
     ]
     tray.setContextMenu(Menu.buildFromTemplate(menus))
-    tray.on('click', () => {
-      event.emit('click')
+    tray.on('open', () => {
+      event.emit('open')
     })
     return event
   },

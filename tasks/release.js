@@ -4,6 +4,7 @@ const exec = require('child_process').exec
 const builder = require('electron-builder')
 const path = require('path')
 const Platform = builder.Platform
+const platform = require('os').platform()
 const config = require('../config')
 
 const YELLOW = '\x1b[33m'
@@ -19,6 +20,9 @@ if (process.env.PLATFORM_TARGET === 'clean') {
  * Build webpack in production
  */
 function pack () {
+  if (!/darwin|win32|linux/.test(platform)) {
+    return console.error('Not support current platform:' + platform)
+  }
   console.log(`${YELLOW}Building webpack in production mode...\n${END}`)
   let pack = exec('npm run pack')
 
@@ -32,7 +36,7 @@ function pack () {
  */
 function build () {
   let targets
-  switch (process.env.PLATFORM_TARGET) {
+  switch (platform) {
     case 'darwin':
       targets = Platform.MAC.createTarget()
       break
@@ -55,7 +59,8 @@ function build () {
           '!**/*.{o,hprof,orig,pyc,pyo,rbc}',
           '**/._*',
           '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}',
-          '!node_modules/vue*/**/*'
+          '!node_modules/vue*/**/*',
+          '!src/**/*'
         ],
         directories: {
           app: 'app',
@@ -76,7 +81,13 @@ function build () {
         linux: {
           category: 'Development',
           target: ['rpm', 'tar.gz']
-        }
+        },
+        publish: [{
+          provider: 'bintray',
+          user: 'erguotou520',
+          repo: 'electron-ssr',
+          package: 'ssr'
+        }]
       }
     }
   })

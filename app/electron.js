@@ -127,7 +127,9 @@ app.on('ready', () => {
     if (index > -1) {
       client.run(storedConfig.enable, storedConfig.configs[index])
     }
-  }).on('exit', quitHandler).on('click', showWindow)
+  }).on('exit', quitHandler).on('open', showWindow).on('open-devtool', () => {
+    mainWindow.webContents.openDevTools()
+  })
 
   // when loaded, init configs
   mainWindow.webContents.once('did-finish-load', () => {
@@ -175,4 +177,6 @@ ipcMain.on('update-configs', (e, configs) => {
   storedConfig.configs = configs
   storage.saveConfig()
   tray.refreshConfigs(configs, storedConfig.selected)
+}).on('hide', () => {
+  mainWindow.hide()
 })

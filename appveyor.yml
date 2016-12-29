@@ -1,0 +1,28 @@
+version: 0.4.{build}
+
+platform:
+  - x64
+
+cache:
+  - node_modules
+  - app\node_modules
+  - '%APPDATA%\npm-cache'
+  - '%USERPROFILE%\.electron'
+
+init:
+  - git config --global core.autocrlf input
+
+install:
+  - ps: Install-Product node 6 x64
+  - git reset --hard HEAD
+  - npm install npm -g
+  - npm install electron-builder
+  - npm install
+  - npm prune
+
+build_script:
+  - node --version
+  - npm --version
+  - npm run build
+
+test: off
