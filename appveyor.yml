@@ -1,4 +1,4 @@
-version: 0.4.{build}
+version: 1.0.{build}
 
 platform:
   - x64
@@ -8,6 +8,10 @@ cache:
   - app\node_modules
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
+
+branches:
+  only:
+  - master
 
 init:
   - git config --global core.autocrlf input
@@ -24,5 +28,3 @@ build_script:
   - node --version
   - npm --version
   - npm run build
-
-test: off

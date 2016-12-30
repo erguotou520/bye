@@ -12,6 +12,16 @@ matrix:
       env: CC=clang CXX=clang++ npm_config_clang=1
       compiler: clang
 
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - icnsutils
+      - graphicsmagick
+      - xz-utils
+      - rpm
+
 cache:
   directories:
   - node_modules
