@@ -1,4 +1,4 @@
-version: 0.4.{build}
+version: 1.0.{build}
 
 platform:
   - x64
@@ -26,3 +26,4 @@ build_script:
   - npm run build
 
 test: off
+build: off
