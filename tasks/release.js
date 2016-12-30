@@ -83,10 +83,7 @@ function build () {
           target: ['rpm', 'tar.gz']
         },
         publish: [{
-          provider: 'bintray',
-          user: 'erguotou520',
-          repo: 'electron-ssr',
-          package: 'ssr'
+          provider: 'github'
         }]
       }
     }
