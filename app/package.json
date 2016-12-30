@@ -1,7 +1,7 @@
 {
   "name": "electron-ssr",
   "version": "0.0.2",
-  "description": "Shadowsocksr client using electron",
+  "description": "ShadowsocksR client using electron",
   "main": "electron.js",
   "dependencies": {
     "auto-launch": "^5.0.1",
