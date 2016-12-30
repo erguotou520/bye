@@ -12,6 +12,14 @@ matrix:
       env: CC=clang CXX=clang++ npm_config_clang=1
       compiler: clang
 
+addons:
+  apt:
+    packages:
+      - icnsutils
+      - graphicsmagick
+      - xz-utils
+      - rpm
+
 cache:
   directories:
   - node_modules
