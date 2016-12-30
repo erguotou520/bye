@@ -9,6 +9,10 @@ cache:
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
 
+branches:
+  only:
+  - master
+
 init:
   - git config --global core.autocrlf input
 
@@ -25,5 +29,4 @@ build_script:
   - npm --version
   - npm run build
 
-test: off
 build: off
