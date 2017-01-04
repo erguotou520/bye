@@ -42,5 +42,5 @@ script:
 - npm run build
 
 branches:
-  except:
-    - "/^v\\d+\\.\\d+\\.\\d+$/"
+  only:
+    - master

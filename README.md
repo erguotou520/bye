@@ -7,7 +7,7 @@ Shadowsocksr client that coding with electron and vue
 - Update and launched notification
 - Support all of the shadowsocksr python version's function
 
-## Prerequirement
+## Pre-requirement
 - [python](https://www.python.org/downloads/) to be installed
 
 ## Screenshot
