@@ -37,8 +37,8 @@ module.exports = class Config {
     const others = []
     this.obfsparam && others.push(`obfsparam=${encode(this.obfsparam)}`)
     this.remark && others.push(`remarks=${encode(this.remark)}`)
-    this.udpport && others.push(`udpport=${this.udpport}`)
-    this.uot && others.push(`uot=${this.uot}`)
+    // this.udpport && others.push(`udpport=${this.udpport}`)
+    // this.uot && others.push(`uot=${this.uot}`)
     const link = 'ssr://' + encode(required.join(':') + '/?' + others.join('&'))
     return link
   }
@@ -71,6 +71,41 @@ module.exports = class Config {
         }
         // this.udpport = otherSplit.udpport
         // this.uot = otherSplit.uot
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
+  getSSLink () {
+    const link = `${this.method}:${this.password}@${this.host}:${this.port}`
+    const encoded = encode(link)
+    if (this.remark) {
+      return 'ss://' + encoded + '#' + this.remark
+    }
+    return 'ss://' + encoded
+  }
+
+  setSSLink (link) {
+    if (link) {
+      try {
+        let body = link.substring(5)
+        const remark = body.split('#')
+        if (remark[1]) {
+          this.remark = remark[1]
+        }
+        body = remark[0]
+        const decoded = decode(body)
+        const split1 = decoded.split('@')
+        const split2 = split1[0].split(':')
+        const split3 = split1[1].split(':')
+        this.method = split2[0]
+        this.password = split2[1]
+        this.host = split3[0]
+        this.port = split3[1]
+        this.protocol = 'origin'
+        this.obfs = 'plain'
+        this.obfsparam = ''
       } catch (e) {
         console.error(e)
       }

@@ -64,7 +64,7 @@ export default {
   },
   created () {
     ipcRenderer.on('init-configs', (e, configs) => {
-      this.configs = configs
+      this.configs = configs || []
       if (configs && configs.length > 0) {
         new Notification('ShadowsocksR client has been launched.')
       }
@@ -80,8 +80,10 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      if (this.configs && this.configs.length > 0) {
-        this.$ref.list.selectDefault()
+      if (this.configs.length > 0) {
+        this.$refs.list.selectDefault()
+      } else {
+        this.$refs.list.add()
       }
     })
   }

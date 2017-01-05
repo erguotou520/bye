@@ -16,5 +16,5 @@
 # under the License.
 
 def version():
-    return '2.9.7 2016-11-22'
+    return '3.0.1 2017-01-03'
 

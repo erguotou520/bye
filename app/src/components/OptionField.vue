@@ -2,10 +2,10 @@
   <div class="app-option-field">
     <fieldset>
       <legend>服务器(截图注意打码)</legend>
-      <form-item label="服务器 IP">
+      <form-item label="* 服务器 IP">
         <input type="text" v-model="form.host">
       </form-item>
-      <form-item label="服务器端口">
+      <form-item label="* 服务器端口">
         <input type="number" v-model="form.port">
       </form-item>
       <form-item label="本机代理IP">
@@ -16,49 +16,38 @@
       </form-item>
       <form-item>
         <span slot="label">
-          <input type="checkbox" v-model="showPassword">密码
+          <input type="checkbox" v-model="showPassword">* 密码
         </span>
         <input v-if="showPassword" type="text" v-model="form.password">
         <input v-else type="password" v-model="form.password">
       </form-item>
-      <form-item label="加密">
+      <form-item label="* 加密">
         <select v-model="form.method">
-          <option value="rc4-md5">rc4-md5</option>
-          <option value="aes-128-cfb">aes-128-cfb</option>
-          <option value="aes-192-cfb">aes-192-cfb</option>
-          <option value="aes-256-cfb">aes-256-cfb</option>
-          <option value="salsa20">salsa20</option>
-          <option value="chacha20">chacha20</option>
-          <option value="chacha20-ietf">chacha20-ietf</option>
+          <option v-for="method in methods" :value="method">{{method}}</option>
         </select>
       </form-item>
-      <form-item label="协议">
+      <form-item label="* 协议">
         <select v-model="form.protocol">
-          <option value="origin">origin</option>
-          <option value="verify_simple">verify_simple</option>
-          <option value="verify_deflate">verify_deflate</option>
-          <option value="auth_simple">auth_simple</option>
-          <option value="auth_sha1">auth_sha1</option>
-          <option value="auth_sha1_v2">auth_sha1_v2</option>
+          <option v-for="protocol in protocols" :value="protocol">{{protocol}}</option>
         </select>
       </form-item>
-      <form-item label="混淆协议">
+      <form-item label="* 混淆">
         <select v-model="form.obfs" @change="form.obfsparam=''">
-          <option value="plain">plain</option>
-          <option value="http_simple">http_simple</option>
-          <option value="tls_simple">tls_simple</option>
-          <option value="random_head">random_head</option>
-          <option value="tls1.0_session_auth">tls1.0_session_auth</option>
+          <option v-for="obfs in obfses" :value="obfs">{{obfs}}</option>
         </select>
       </form-item>
-      <form-item label="混淆插件参数">
+      <form-item label="混淆参数">
         <input type="text" v-model="form.obfsparam" :disabled="form.obfs!=='http_simple'">
       </form-item>
       <form-item label="备注">
         <input type="text" v-model="form.remark">
       </form-item>
-      <form-item label="链接">
-        <input type="text" v-model="ssrLink">
+      <form-item>
+        <span slot="label">
+          <input type="checkbox" v-model="isSSRLink">SSR链接
+        </span>
+        <input v-show="isSSRLink" type="text" v-model="ssrLink">
+        <input v-show="!isSSRLink" type="text" v-model="ssLink">
       </form-item>
       <!-- <form-item label="高级选项">
         <span>以下选项不是所有服务端都支持</span>
@@ -81,7 +70,16 @@ export default {
     return {
       form: new Config(),
       bak: undefined,
-      showPassword: false
+      showPassword: false,
+      isSSRLink: true,
+      methods: ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
+        'aes-128-ctr', 'aes-192-ctr', 'aes-256-ctr', 'camellia-128-cfb', 'camellia-192-cfb', 'camellia-256-cfb',
+         'bf-cfb', 'rc4', 'rc4-md5', 'rc4-md5-6', 'salsa20', 'chacha20', 'chacha20-ietf'
+      ],
+      protocols: ['origin', 'verify_deflate', 'verify_sha1', 'auth_sha1_v2',
+        'auth_sha1_v4', 'auth_aes128_md5', 'auth_aes128_sha1'
+      ],
+      obfses: ['plain', 'http_simple', 'http_post', 'ramdom_head', 'tls1.2_ticket_auth']
     }
   },
   computed: {
@@ -93,6 +91,16 @@ export default {
       },
       set (val) {
         this.form.setSSRLink(val)
+      }
+    },
+    ssLink: {
+      get () {
+        const link = this.form.getSSLink()
+        this.$emit('config-change', this.form, link)
+        return link
+      },
+      set (val) {
+        this.form.setSSLink(val)
       }
     }
   },

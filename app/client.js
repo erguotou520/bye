@@ -4,7 +4,9 @@ const fsExtra = require('fs-extra')
 const exec = require('child_process').exec
 const treeKill = require('tree-kill')
 const storage = require('./storage')
-const EOL = require('os').EOL
+const os = require('os')
+const EOL = os.EOL
+const isWindows = /win32/.test(os.platform())
 
 let sourcePath
 let localPyPath
@@ -13,6 +15,20 @@ let child
 function now () {
   const now = new Date()
   return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+}
+
+function execCmd (command) {
+  exec(command)
+  child.stdout.on('data', data => {
+    storage.saveLogs(`${now()} stdout:${EOL}${data}`)
+  })
+  child.stderr.on('data', data => {
+    storage.saveLogs(`${now()} stdout:${EOL}${data}`)
+  })
+  child.on('close', code => {
+    console.log(`child process exist with code ${code}`)
+  })
+  return child
 }
 
 module.exports.setup = function (storePath, config) {
@@ -30,16 +46,20 @@ module.exports.setup = function (storePath, config) {
   }
 }
 
-module.exports.kill = function () {
-  if (child && child.pid) {
+module.exports.stop = function () {
+  // 非windows系统采用-d start方式启动
+  if (!isWindows) {
+    const command = `python '${localPyPath}' -d stop`
+    execCmd(command)
+  } else if (child && child.pid) {
     treeKill(child.pid)
     child = null
   }
 }
 
 module.exports.run = function (enable, config) {
-  // kill preview
-  module.exports.kill()
+  // stop preview
+  module.exports.stop()
   if (enable) {
     const params = []
     params.push(`-s ${config.host}`)
@@ -49,17 +69,15 @@ module.exports.run = function (enable, config) {
     params.push(`-k ${config.password}`)
     params.push(`-m ${config.method}`)
     config.obfs && params.push(`-o ${config.obfs}`)
+    // 非windows系统采用-d start方式启动
+    if (!isWindows) {
+      params.push('-d start')
+    }
     const command = `python '${localPyPath}' ${params.join(' ')}`
     console.log(command)
-    child = exec(command)
-    child.stdout.on('data', data => {
-      storage.saveLogs(`${now()} stdout:${EOL}${data}`)
-    })
-    child.stderr.on('data', data => {
-      storage.saveLogs(`${now()} stdout:${EOL}${data}`)
-    })
-    child.on('close', code => {
-      console.log(`child process exist with code ${code}`)
-    })
+    child = execCmd(command)
+    if (isWindows) {
+      child = null
+    }
   }
 }

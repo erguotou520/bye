@@ -1,6 +1,6 @@
 'use strict'
 
-const { app, BrowserWindow, ipcMain, net } = require('electron')
+const { app, BrowserWindow, ipcMain, net, shell } = require('electron')
 const AutoLaunch = require('auto-launch')
 const { crashReporter } = require('electron')
 const path = require('path')
@@ -78,7 +78,7 @@ function showWindow() {
 }
 
 function quitHandler() {
-  client.kill()
+  client.stop()
   mainWindow.destroy()
   tray.destroy()
   app.quit()
@@ -129,6 +129,10 @@ app.on('ready', () => {
     }
   }).on('exit', quitHandler).on('open', showWindow).on('open-devtool', () => {
     mainWindow.webContents.openDevTools()
+  }).on('open-log', () => {
+    if (!shell.openItem(storage.getLogPath())) {
+      console.error('Error to open log file.')
+    }
   })
 
   // when loaded, init configs
@@ -156,7 +160,7 @@ app.on('ready', () => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    client.kill()
+    client.stop()
     app.quit()
   }
 })

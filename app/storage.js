@@ -5,12 +5,14 @@ const fsExtra = require('fs-extra')
 const defaultConfig = { configs: [], selected: -1, autoLaunch: false, enable: false }
 let currentConfig
 let dataPath
+let logPath
 let configPath = ''
 
 module.exports.setup = function (appConfigPath) {
   try {
     dataPath = appConfigPath
     configPath = path.join(appConfigPath, 'shadowsocksr.json')
+    logPath = path.join(dataPath, 'logs/shadowsocksr-client.log')
     console.log('Config file\'s path: ' + configPath)
     // configs
     fsExtra.ensureFileSync(configPath)
@@ -36,5 +38,9 @@ module.exports.saveConfig = function () {
 }
 
 module.exports.saveLogs = function (data) {
-  fs.appendFileSync(path.join(dataPath, 'logs/shadowsocksr-client.log'), data, { flag: 'a+' })
+  fs.appendFileSync(logPath, data, { flag: 'a+' })
+}
+
+module.exports.getLogPath = function () {
+  return logPath
 }
