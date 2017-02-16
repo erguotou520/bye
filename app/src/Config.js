@@ -52,7 +52,7 @@ module.exports = class Config {
         const required = _split[0]
         const others = _split[1]
         const requiredSplit = required.split(':')
-        let otherSplit = {}
+        const otherSplit = {}
         others.split('&').forEach(item => {
           const _params = item.split('=')
           otherSplit[_params[0]] = _params[1]
