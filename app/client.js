@@ -18,7 +18,7 @@ function now () {
 }
 
 function execCmd (command) {
-  exec(command)
+  child = exec(command)
   child.stdout.on('data', data => {
     storage.saveLogs(`${now()} stdout:${EOL}${data}`)
   })
@@ -47,7 +47,7 @@ module.exports.setup = function (storePath, config) {
 }
 
 module.exports.stop = function () {
-  // 非windows系统采用-d start方式启动
+  // 非windows系统采用-d start方式终结
   if (!isWindows) {
     const command = `python '${localPyPath}' -d stop`
     execCmd(command)
@@ -76,8 +76,8 @@ module.exports.run = function (enable, config) {
     const command = `python '${localPyPath}' ${params.join(' ')}`
     console.log(command)
     child = execCmd(command)
-    if (isWindows) {
-      child = null
-    }
+    // if (isWindows) {
+    //   child = null
+    // }
   }
 }
