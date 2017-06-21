@@ -2,7 +2,7 @@
 
 const path = require('path')
 
-let config = {
+const config = {
   // Name of electron app
   // Will be used in production builds
   name: 'ShadowsocksR客户端',

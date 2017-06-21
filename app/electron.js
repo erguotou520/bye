@@ -34,16 +34,17 @@ if (process.env.NODE_ENV === 'development') {
   config.url = `file://${__dirname}/dist/index.html`
 }
 
-function createWindow (configsLength) {
+function createWindow () {
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
     height: 420,
-    width: 800,
+    width: 880,
     resizable: false,
     minimizable: false,
-    maximizable: false
+    maximizable: false,
+    show: false
   })
 
   mainWindow.setMenu(null)
@@ -99,9 +100,17 @@ app.on('ready', () => {
   // init storage
   storage.setup(appConfigPath)
   // get configs
-  storedConfig = storage.getConfigs()
+  storedConfig = storage.getConfig()
+  // setup client if inited
+  if (storedConfig.pyPath) {
+    client.setup(storedConfig.pyPath)
+    // if enable then start
+    if (storedConfig.enable) {
+      client.run(storedConfig.enable, storedConfig.configs[storedConfig.selected])
+    }
+  }
   // create main window
-  createWindow(storedConfig.configs.length)
+  createWindow()
   // init tray
   trayEvent = tray.setup(storedConfig)
   // tray event
@@ -121,6 +130,8 @@ app.on('ready', () => {
     } else {
       AutoLauncher.disable()
     }
+  }).on('qr-scan', () => {
+    mainWindow.webContents.send('take-screencapture')
   }).on('change-selected', (index) => {
     storedConfig.selected = index
     storage.saveConfig()
@@ -140,11 +151,11 @@ app.on('ready', () => {
     // has stored configs, then hide
     if (storedConfig.configs.length > 0) {
       mainWindow.hide()
+    } else {
+      mainWindow.show()
     }
-    // copy ShadowsocksR python sources
-    client.setup(appConfigPath, storedConfig, execHandler)
     // init gui configs
-    mainWindow.webContents.send('init-configs', storedConfig.configs)
+    mainWindow.webContents.send('init-config', storedConfig)
     // version check
     net.request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/app/package.json').on('response', (response) => {
       response.on('data', (chunk) => {
@@ -172,15 +183,31 @@ app.on('activate', () => {
 })
 
 // ipc channels
-ipcMain.on('update-configs', (e, configs) => {
-  if (configs.length && storedConfig.selected < 0) {
-    storedConfig.selected = configs.length - 1
-    client.run(storedConfig.enable, configs[configs.length - 1])
-  }
-  // save configs
-  storedConfig.configs = configs
+ipcMain.on('resize', (e, width, height) => {
+  mainWindow.setSize(width, height)
+  mainWindow.center()
+}).on('set-py-path', (e, path) => {
+  e.returnValue = client.setup(path)
+}).on('update-config', (e, field, value) => {
+  // save config
+  storedConfig[field] = value
   storage.saveConfig()
-  tray.refreshConfigs(configs, storedConfig.selected)
-}).on('hide', () => {
+  if (field === 'configs') {
+    // refresh tray menu list
+    tray.refreshConfigs(value, storedConfig.selected)
+    if (value.length && storedConfig.selected < 0) {
+      storedConfig.selected = value.length - 1
+      client.run(storedConfig.enable, value[value.length - 1])
+    }
+  }
+}).on('re-init', e => {
+  e.sender.send('init-config', storedConfig)
+}).on('scaned-config', (e, newConfig) => {
+  storedConfig.configs.push(newConfig)
+  storage.saveConfig()
+  tray.refreshConfigs(storedConfig.configs, storedConfig.selected)
+}).on('open-window', () => {
+  mainWindow.show()
+}).on('hide-window', () => {
   mainWindow.hide()
 })

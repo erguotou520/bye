@@ -24,10 +24,10 @@ function repeat (str, times) {
   return (new Array(times + 1)).join(str)
 }
 
-let children = []
+const children = []
 
 function run (command, color, name) {
-  let child = exec(command)
+  const child = exec(command)
 
   child.stdout.on('data', data => {
     console.log(format(name, data, color))
@@ -38,7 +38,7 @@ function run (command, color, name) {
      *
      * NOTE: needs more testing for stability
      */
-    if (/VALID/g.test(data.toString().trim().replace(/\n/g, '\n' + repeat(' ', command.length + 2))) && !isElectronOpen) {
+    if (/Compiled successfully/g.test(data.toString().trim().replace(/\n/g, '\n' + repeat(' ', command.length + 2))) && !isElectronOpen) {
       console.log(`${BLUE}Starting electron...\n${END}`)
       run('cross-env NODE_ENV=development electron app/electron.js', BLUE, 'electron')
       isElectronOpen = true

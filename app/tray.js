@@ -5,6 +5,7 @@ const os = require('os')
 
 let tray = null
 let menus = null
+let contextMenu = null
 const event = new EventEmitter()
 const osTrayIcon = os.platform() === 'darwin' ? 'tray_mac.png' : 'tray_win.png'
 const image = nativeImage.createFromPath(path.join(__dirname, './trayicons/' + osTrayIcon))
@@ -25,8 +26,7 @@ function generateConfigSubmenus (configs, selectedIndex) {
       type: 'checkbox',
       checked: index === selectedIndex,
       click (e) {
-        // if checked, return, do nothing
-        if (e.checked) return
+        // set others to false
         e.menu.items.forEach(submenu => {
           submenu.checked = false
         })
@@ -53,12 +53,17 @@ module.exports = {
       { label: '启用系统代理', type: 'checkbox', checked: config.enable, click: toggleEnable },
       { label: '服务器', submenu: generateConfigSubmenus(config.configs, config.selected) },
       { label: '开机自启', type: 'checkbox', checked: config.autoLaunch, click: toggleAutoLaunch },
+      { label: '二维码扫描', click: () => { event.emit('qr-scan') } },
       { label: '查看日志', click: () => { event.emit('open-log') } },
       { label: '打开控制台', click: () => { event.emit('open-devtool') } },
       { label: '退出', click: () => { event.emit('exit') } }
     ]
-    tray.setContextMenu(Menu.buildFromTemplate(menus))
+    contextMenu = Menu.buildFromTemplate(menus)
+    tray.setContextMenu(contextMenu)
     tray.on('open', () => {
+      event.emit('open')
+    })
+    tray.on('click', () => {
       event.emit('open')
     })
     return event
@@ -66,7 +71,8 @@ module.exports = {
   // refresh the configs submenu
   refreshConfigs (configs, selectedIndex) {
     menus[1].submenu = generateConfigSubmenus(configs, selectedIndex)
-    tray.setContextMenu(Menu.buildFromTemplate(menus))
+    contextMenu = Menu.buildFromTemplate(menus)
+    tray.setContextMenu(contextMenu)
   },
   // get menu config
   getMenuConfig () {

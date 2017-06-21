@@ -1,6 +1,6 @@
 {
   "name": "electron-ssr",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Shadowsocksr client using electron",
   "scripts": {
     "dev": "node tasks/runner.js",
@@ -29,7 +29,7 @@
     "delete-empty": "^0.1.3",
     "devtron": "^1.1.0",
     "electron": "^1.6.0",
-    "electron-builder": "^10.9.2",
+    "electron-builder": "^10.17.3",
     "electron-devtools-installer": "^1.1.4",
     "eslint": "^2.10.2",
     "eslint-config-vue": "^1.1.0",

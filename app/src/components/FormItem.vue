@@ -1,6 +1,6 @@
 <template>
   <div class="form-item">
-    <label>
+    <label :class="{warning}">
       <slot v-if="$slots.label" name="label"></slot>
       <span v-else>{{label}}</span>
     </label>
@@ -10,7 +10,8 @@
 <script>
 export default {
   props: {
-    label: String
+    label: String,
+    warning: Boolean
   }
 }
 </script>
@@ -23,6 +24,8 @@ export default {
     width 5rem
     margin-right .75rem
     text-align right
+    &.warning
+      color #ef3abe
   input
   select
     flex 1

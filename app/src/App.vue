@@ -1,73 +1,82 @@
 <template>
-  <div class="flex" style="width:100%">
-    <config-list ref="list" :configs="configs" @add="onAdd" @remove="onRemove" @select="onSelect"></config-list>
-    <option-field class="flex-1" ref="option" @config-change="onConfigChange"></option-field>
-    <qr-code :link="currentLink" ref="qrcode" @cancel="onCancel" @ok="save"></qr-code>
-  </div>
+  <component :is="currentView" :config="config"
+    @update-config="updateConfig"
+    @complete-init="onCompleteInit"
+    @hide-window="onHideWindow"></component>
 </template>
 <script>
 import { shell, ipcRenderer } from 'electron'
+import Homepage from './Homepage.vue'
+import Initialzation from './Initialzation.vue'
+import fullscreenScreenshot from './scan-qrcode'
 import Config from './Config'
-import ConfigList from './components/ConfigList'
-import OptionField from './components/OptionField'
-import QrCode from './components/QRCode'
 export default {
   data () {
     return {
-      configs: [],
-      currentConfig: undefined,
-      currentLink: ''
+      currentView: '',
+      config: null,
+      inited: false
     }
   },
   components: {
-    ConfigList,
-    OptionField,
-    QrCode
-  },
-  watch: {
-    configs: {
-      deep: true,
-      handler (val) {
-        ipcRenderer.send('update-configs', val)
-      }
-    }
+    Homepage, Initialzation
   },
   methods: {
-    onConfigChange (...args) {
-      this.currentConfig = args[0]
-      this.currentLink = args[1]
+    onCompleteInit () {
+      this.currentView = 'homepage'
+      ipcRenderer.send('resize', 880, 420)
     },
-    onAdd () {
-      const newConfig = new Config()
-      this.onSelect(newConfig)
-      this.configs.push(newConfig)
-    },
-    onSelect (config) {
-      this.$refs.option.setConfig(config)
-    },
-    onRemove (...args) {
-      this.configs.splice(this.configs.indexOf(args[0]), 1)
-    },
-    onCancel () {
-      this.$refs.option.reset()
-      this.$refs.option.setConfig(this.$refs.list.getSelected())
-      ipcRenderer.send('hide')
-    },
-    save (config) {
-      const selected = this.$refs.list.getSelected()
-      if (this.currentConfig && this.currentConfig.isValid()) {
-        Object.assign(selected, this.currentConfig)
-      } else {
-        global.alert('服务器配置信息不完整')
+    updateConfig ({ field, value }) {
+      ipcRenderer.send('update-config', field, value)
+      if (this.config) {
+        this.config[field] = value
       }
+    },
+    onHideWindow () {
+      ipcRenderer.send('hide-window')
     }
   },
   created () {
-    ipcRenderer.on('init-configs', (e, configs) => {
-      this.configs = configs || []
-      if (configs && configs.length > 0) {
-        new Notification('ShadowsocksR client has been launched.')
+    ipcRenderer.on('init-config', (e, config) => {
+      this.inited = true
+      this.config = config
+      if (!config.pyPath) {
+        // not initialized
+        this.currentView = 'initialzation'
+        ipcRenderer.send('resize', 640, 480)
+      } else {
+        this.currentView = 'homepage'
       }
+    }).on('take-screencapture', (e) => {
+      fullscreenScreenshot((err, data) => {
+        if (!err) {
+          if (/^ssr?:\/\//.test(data)) {
+            const newConfig = new Config()
+            if (/^ss:\/\//.test(data)) {
+              newConfig.setSSLink(data)
+            } else {
+              newConfig.setSSRLink(data)
+            }
+            ipcRenderer.send('scaned-config', newConfig)
+            if (this.config && this.config.configs) {
+              this.config.configs.push(newConfig)
+              new Notification('扫码成功', {
+                body: `已成功添加新配置`
+              }).onclick = () => {
+                ipcRenderer.send('open-window')
+              }
+            }
+          } else {
+            new Notification('扫码失败', {
+              body: `不能识别的二维码`
+            })
+          }
+        } else {
+          new Notification('扫码失败', {
+            body: `未找到相关二维码`
+          })
+        }
+      })
     }).on('new-version', (e, oldVersion, newVersion) => {
       new Notification('New version avaliable.', {
         body: `New version v${newVersion}, click to download`
@@ -77,15 +86,11 @@ export default {
     }).on('exec-error', (e, arg) => {
       global.alert(JSON.stringify(arg, null, 2), 'exec error')
     })
-  },
-  mounted () {
-    this.$nextTick(() => {
-      if (this.configs.length > 0) {
-        this.$refs.list.selectDefault()
-      } else {
-        this.$refs.list.add()
+    setTimeout(() => {
+      if (!this.inited) {
+        ipcRenderer.send('re-init')
       }
-    })
+    }, 2000)
   }
 }
 </script>
@@ -117,6 +122,7 @@ button
   line-height @height
   background #e1e1e1
   border 1px solid #aaa
+  font-family "Helvetica Neue", Helvetica, Tahoma, "PingFang SC", "Hiragino Sans GB", "Heiti SC", "Microsoft YaHei", "微软雅黑", "WenQuanYi Micro Hei", Arial, sans-serif
   outline none
   &:active
     background #ccc

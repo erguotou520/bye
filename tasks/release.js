@@ -24,7 +24,7 @@ function pack () {
     return console.error('Not support current platform:' + platform)
   }
   console.log(`${YELLOW}Building webpack in production mode...\n${END}`)
-  let pack = exec('npm run pack')
+  const pack = exec('npm run pack')
 
   pack.stdout.on('data', data => console.log(data))
   pack.stderr.on('data', data => console.error(data))

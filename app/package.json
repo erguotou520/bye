@@ -1,12 +1,11 @@
 {
   "name": "electron-ssr",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "ShadowsocksR client using electron",
   "main": "electron.js",
   "dependencies": {
     "auto-launch": "^5.0.1",
     "fs-extra": "^1.0.0",
-    "qr-image": "^3.1.0",
     "tree-kill": "^1.1.0",
     "urlsafe-base64": "^1.0.0",
     "vue": "^2.0.1",

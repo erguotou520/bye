@@ -16,8 +16,19 @@ Shadowsocksr client that coding with electron and vue
 ## Download
 Go to [release](https://github.com/erguotou520/electron-ssr/releases)
 
-## Some tips
-* windows setup exe file will install this project to `C:\Users\{your username}\AppData\Local\Programs\electron-ssr`
+## Update history
+- 0.1.0
+  * Support to open log file
+  * Deamon mode for unix system using `-d` while child process for windows
+  * Support `ssr://` and `ss://` conversion to each other
+  * Support scan screen qrcode
+  * Support to add ssr methods and protocols and obfses
+  * Now need to set `shadowsocksr` python path
+
+## Config and log file path
+* windows: `C:\Users\{your username}\AppData\Local\Programs\electron-ssr`
+* linux: `~/.config/electron-ssr`
+* mac: `~/Library/Application Support/electron-ssr`
 
 ## Build Setup
 
@@ -35,9 +46,10 @@ npm run lint
 npm run pack
 
 # build electron app for production
-npm run build:win32
-npm run build:darwin
-npm run build:linux
+npm run build
+
+# remove all files under builds
+npm run build:clean
 
 # qrcode scheme unit test
 npm run test:unit
