@@ -57,6 +57,7 @@ module.exports.run = function (enable, config) {
     params.push(`-l ${config.localPort}`)
     params.push(`-k ${config.password}`)
     params.push(`-m ${config.method}`)
+    params.push(`-O ${config.protocol}`)
     config.obfs && params.push(`-o ${config.obfs}`)
     // 非windows系统采用-d start方式启动
     if (!isWindows) {
