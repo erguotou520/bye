@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Electron from 'vue-electron'
-import Raven from 'raven-js';
+import Raven from 'raven-js'
 import RavenVue from 'raven-js/plugins/vue'
 
 Vue.use(Electron)

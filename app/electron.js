@@ -35,6 +35,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 function createWindow () {
+  if (process.platform === 'darwin') {
+    app.dock.hide()
+  }
   /**
    * Initial window options
    */
@@ -105,7 +108,7 @@ app.on('ready', () => {
   if (storedConfig.pyPath) {
     client.setup(storedConfig.pyPath)
     // if enable then start
-    if (storedConfig.enable) {
+    if (storedConfig.enable && storedConfig.configs[storedConfig.selected]) {
       client.run(storedConfig.enable, storedConfig.configs[storedConfig.selected])
     }
   }
@@ -121,6 +124,9 @@ app.on('ready', () => {
     if (selectedConfigIndex > -1) {
       // exec python command
       client.run(enable, storedConfig.configs[selectedConfigIndex])
+    }
+    if (!enable) {
+      client.stop()
     }
   }).on('change-auto-launch', (isAutoLaunch) => {
     storedConfig.autoLaunch = isAutoLaunch
@@ -191,15 +197,21 @@ ipcMain.on('resize', (e, width, height) => {
 }).on('update-config', (e, field, value) => {
   // save config
   storedConfig[field] = value
-  storage.saveConfig()
   if (field === 'configs') {
-    // refresh tray menu list
-    tray.refreshConfigs(value, storedConfig.selected)
-    if (value.length && storedConfig.selected < 0) {
-      storedConfig.selected = value.length - 1
-      client.run(storedConfig.enable, value[value.length - 1])
+    if (value.length) {
+      if (storedConfig.selected < 0) {
+        storedConfig.selected = value.length - 1
+      }
+      client.run(storedConfig.enable, value[storedConfig.selected])
+    } else {
+      storedConfig.selected = -1
+      storedConfig.enable = false
+      client.stop()
     }
   }
+  // refresh tray menu list
+  tray.refreshConfigs(value, storedConfig.selected)
+  storage.saveConfig()
 }).on('re-init', e => {
   e.sender.send('init-config', storedConfig)
 }).on('scaned-config', (e, newConfig) => {
