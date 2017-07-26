@@ -94,6 +94,7 @@ export default {
       selectedIndex: -1,
       isSSR: true,
       tempConfig: new Config(),
+      showPassword: false,
       svg: {
         size: 0,
         path: ''

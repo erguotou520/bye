@@ -36,6 +36,7 @@ module.exports.setup = function (storePath, config) {
 }
 
 module.exports.stop = function () {
+  console.log('python -d stop')
   // 非windows系统采用-d start方式终结
   if (!isWindows) {
     const command = `python '${localPyPath}' -d stop`
