@@ -21,7 +21,7 @@ function execCmd (command) {
     storage.saveLogs(`${now()} stdout:${EOL}${data}`)
   })
   child.stderr.on('data', data => {
-    storage.saveLogs(`${now()} stdout:${EOL}${data}`)
+    storage.saveLogs(`${now()} stderr:${EOL}${data}`)
   })
   child.on('close', code => {
     console.log(`child process exist with code ${code}`)
@@ -36,12 +36,13 @@ module.exports.setup = function (storePath, config) {
 }
 
 module.exports.stop = function () {
-  console.log('python -d stop')
   // 非windows系统采用-d start方式终结
   if (!isWindows) {
     const command = `python '${localPyPath}' -d stop`
     execCmd(command)
+    console.log('python -d stop')
   } else if (child && child.pid) {
+    console.log('windows kill python client')
     treeKill(child.pid)
     child = null
   }
