@@ -72,7 +72,6 @@ function createWindow () {
 
   mainWindow.on('closed', () => {
     mainWindow = null
-    console.log('mainWindow closed')
   })
 
   console.log('mainWindow opened')
@@ -83,7 +82,6 @@ function showWindow() {
 }
 
 function quitHandler() {
-  console.log('quitHandler')
   client.stop()
   mainWindow.destroy()
   tray.destroy()

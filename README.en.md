@@ -1,5 +1,6 @@
 # electron-ssr
 Shadowsocksr client that coding with electron and vue
+[中文版说明](./README.md)
 
 ## Feature
 - Close to tray
@@ -11,12 +12,18 @@ Shadowsocksr client that coding with electron and vue
 - [python](https://www.python.org/downloads/) to be installed
 
 ## Screenshot
+![](./assets/images/ssr-initialization.jpg)
 ![](./assets/images/ssr-client.jpg)
+![](./assets/images/ssr-client-tray.jpg)
 
 ## Download
 Go to [release](https://github.com/erguotou520/electron-ssr/releases)
 
 ## Update history
+- 0.1.1
+  * use `child_process` to run `python` command for all platform as `root` permission is required by `-d` mode in linux
+  * fix some config bug and logical issue
+  * hide icon in dock for mac
 - 0.1.0
   * Support to open log file
   * Deamon mode for unix system using `-d` while child process for windows

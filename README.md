@@ -1,5 +1,6 @@
 # electron-ss
 使用`electron`和`vue`开发的跨平台`shadowsocksr`客户端
+English document [here](./README.en.md)
 
 ## 功能
 - 跨平台功能支持
@@ -10,12 +11,18 @@
 - 只需要系统已安装 [python](https://www.python.org/downloads/) 可正常执行`shadowsocksr`的python版即可
 
 ## 页面截图
+![](./assets/images/ssr-initialization.jpg)
 ![](./assets/images/ssr-client.jpg)
+![](./assets/images/ssr-client-tray.jpg)
 
 ## 下载
 请前往 [release](https://github.com/erguotou520/electron-ssr/releases) 下载
 
 ## 更新历史
+- 0.1.1
+  * 统一使用`child_process`运行`python`命令，linux系统下`-d`模式需要`root`权限
+  * 修改一些配置文件代码的逻辑问题
+  * mac版在dock上不显示图标
 - 0.1.0
   * 支持从托盘中打开日志文件
   * unix系统使用`-d`模式运行，windows系统使用非`-d`模式运行

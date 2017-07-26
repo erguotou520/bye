@@ -5,7 +5,6 @@ const treeKill = require('tree-kill')
 const storage = require('./storage')
 const os = require('os')
 const EOL = os.EOL
-const isWindows = /win32/.test(os.platform())
 
 let localPyPath
 let child
@@ -36,13 +35,8 @@ module.exports.setup = function (storePath, config) {
 }
 
 module.exports.stop = function () {
-  // 非windows系统采用-d start方式终结
-  if (!isWindows) {
-    const command = `python '${localPyPath}' -d stop`
-    execCmd(command)
-    console.log('python -d stop')
-  } else if (child && child.pid) {
-    console.log('windows kill python client')
+  if (child && child.pid) {
+    console.log('kill python client')
     treeKill(child.pid)
     child = null
   }
@@ -61,15 +55,8 @@ module.exports.run = function (enable, config) {
     params.push(`-m ${config.method}`)
     params.push(`-O ${config.protocol}`)
     config.obfs && params.push(`-o ${config.obfs}`)
-    // 非windows系统采用-d start方式启动
-    if (!isWindows) {
-      params.push('-d start')
-    }
     const command = `python ${localPyPath} ${params.join(' ')}`
     console.log(command)
     child = execCmd(command)
-    // if (isWindows) {
-    //   child = null
-    // }
   }
 }
