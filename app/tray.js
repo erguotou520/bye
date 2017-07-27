@@ -55,7 +55,7 @@ module.exports = {
       { label: '开机自启', type: 'checkbox', checked: config.autoLaunch, click: toggleAutoLaunch },
       { label: '二维码扫描', click: () => { event.emit('qr-scan') } },
       { label: '查看日志', click: () => { event.emit('open-log') } },
-      { label: '打开控制台', click: () => { event.emit('open-devtool') } },
+      { label: '打开配置文件', click: () => { event.emit('open-config') } },
       { label: '退出', click: () => { event.emit('exit') } }
     ]
     contextMenu = Menu.buildFromTemplate(menus)

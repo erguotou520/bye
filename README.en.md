@@ -24,6 +24,7 @@ Go to [release](https://github.com/erguotou520/electron-ssr/releases)
   * use `child_process` to run `python` command for all platform as `root` permission is required by `-d` mode in linux
   * fix some config bug and logical issue
   * hide icon in dock for mac
+  * open config file from tray
 - 0.1.0
   * Support to open log file
   * Deamon mode for unix system using `-d` while child process for windows

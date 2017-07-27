@@ -54,3 +54,7 @@ module.exports.saveLogs = function (data) {
 module.exports.getLogPath = function () {
   return logPath
 }
+
+module.exports.getConfigPath = function () {
+  return configPath
+}

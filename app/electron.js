@@ -146,8 +146,10 @@ app.on('ready', () => {
     if (index > -1) {
       client.run(storedConfig.enable, storedConfig.configs[index])
     }
-  }).on('exit', quitHandler).on('open', showWindow).on('open-devtool', () => {
-    mainWindow.webContents.openDevTools()
+  }).on('exit', quitHandler).on('open', showWindow).on('open-config', () => {
+    if (!shell.openItem(storage.getConfigPath())) {
+      console.error('Error to open config file.')
+    }
   }).on('open-log', () => {
     if (!shell.openItem(storage.getLogPath())) {
       console.error('Error to open log file.')
@@ -200,6 +202,8 @@ ipcMain.on('resize', (e, width, height) => {
   // save config
   storedConfig[field] = value
   if (field === 'configs') {
+    // refresh tray menu list
+    tray.refreshConfigs(storedConfig.configs, storedConfig.selected)
     if (value.length) {
       if (storedConfig.selected < 0) {
         storedConfig.selected = value.length - 1
@@ -211,8 +215,6 @@ ipcMain.on('resize', (e, width, height) => {
       client.stop()
     }
   }
-  // refresh tray menu list
-  tray.refreshConfigs(value, storedConfig.selected)
   storage.saveConfig()
 }).on('re-init', e => {
   e.sender.send('init-config', storedConfig)
