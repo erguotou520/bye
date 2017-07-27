@@ -23,6 +23,7 @@ English document [here](./README.en.md)
   * 统一使用`child_process`运行`python`命令，linux系统下`-d`模式需要`root`权限
   * 修改一些配置文件代码的逻辑问题
   * mac版在dock上不显示图标
+  * 支持从菜单中打开配置文件
 - 0.1.0
   * 支持从托盘中打开日志文件
   * unix系统使用`-d`模式运行，windows系统使用非`-d`模式运行
