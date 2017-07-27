@@ -83,7 +83,9 @@ function showWindow() {
 
 function quitHandler() {
   client.stop()
-  mainWindow.destroy()
+  if (mainWindow) {
+    mainWindow.destroy()
+  }
   tray.destroy()
   app.quit()
 }
