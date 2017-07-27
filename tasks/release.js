@@ -79,7 +79,10 @@ function build () {
         },
         mac: {
           category: 'public.app-category.developer-tools',
-          target: ['dmg', 'zip']
+          target: ['dmg', 'zip'],
+          extendInfo: {
+            LSUIElement: 'YES'
+          }
         },
         linux: {
           category: 'Development',
