@@ -799,7 +799,7 @@ Version.decodeVersionInformation = function(versionBits) {
     }
     // Otherwise see if this is the closest to a real version info bit string
     // we have seen so far
-    var bitsDifference = FormatInformation.numBitsDiffering(versionBits, targetVersion);
+    var bitsDifference = FormatInformation$1.numBitsDiffering(versionBits, targetVersion);
     if (bitsDifference < bestDifference) {
       bestVersion = i + 7;
       bestDifference = bitsDifference;
