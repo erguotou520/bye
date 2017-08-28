@@ -1,4 +1,4 @@
-# electron-ss
+# electron-ss（因上游项目已删除，所以暂停维护）
 使用`electron`和`vue`开发的跨平台`shadowsocksr`客户端
 English document [here](./README.en.md)
 
