@@ -1,27 +1,33 @@
-version: 1.0.{build}
+# Commented sections below can be used to run tests on the CI server
+# https://simulatedgreg.gitbooks.io/electron-vue/content/en/testing.html#on-the-subject-of-ci-testing
+version: 0.1.{build}
 
+branches:
+  only:
+    - master
+
+image: Visual Studio 2017
 platform:
   - x64
 
 cache:
   - node_modules
-  - app\node_modules
   - '%APPDATA%\npm-cache'
   - '%USERPROFILE%\.electron'
-
-branches:
-  only:
-  - master
+  - '%USERPROFILE%\AppData\Local\Yarn\cache'
 
 init:
   - git config --global core.autocrlf input
 
 install:
-  - ps: Install-Product node 6 x64
+  - ps: Install-Product node 8 x64
+  - choco install yarn --ignore-dependencies
   - git reset --hard HEAD
-  - npm install
+  - yarn
+  - node --version
 
 build_script:
-  - node --version
-  - npm --version
-  - npm run build
+  #- yarn test
+  - yarn build
+
+test: off

@@ -1,58 +1,135 @@
 {
   "name": "electron-ssr",
-  "version": "0.1.2",
+  "version": "0.0.0",
+  "author": "erguotou <erguotou525@gmail.com>",
   "description": "Shadowsocksr client using electron",
-  "scripts": {
-    "dev": "node tasks/runner.js",
-    "build:clean": "cross-env PLATFORM_TARGET=clean node tasks/release.js",
-    "build": "node tasks/release.js",
-    "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter app",
-    "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix app",
-    "pack": "cross-env NODE_ENV=production webpack -p --progress --colors",
-    "postinstall": "npm run lint:fix && cd app && npm install",
-    "test:unit": "./node_modules/.bin/mocha tests/unit/qrcode.spec.js"
-  },
-  "author": "erguotou525@gmail.com",
   "license": "MIT",
-  "devDependencies": {
-    "babel-core": "^6.8.0",
-    "babel-eslint": "^7.0.0",
-    "babel-loader": "^6.2.4",
-    "babel-plugin-transform-runtime": "^6.8.0",
-    "babel-preset-es2015": "^6.6.0",
-    "babel-preset-stage-0": "^6.5.0",
-    "babel-runtime": "^6.6.1",
-    "chai": "^3.5.0",
-    "cross-env": "^1.0.7",
-    "css-loader": "^0.23.1",
-    "del": "^2.2.1",
-    "delete-empty": "^0.1.3",
-    "devtron": "^1.1.0",
-    "electron": "^1.6.0",
-    "electron-builder": "^10.17.3",
-    "electron-devtools-installer": "^1.1.4",
-    "eslint": "^2.10.2",
-    "eslint-config-vue": "^1.1.0",
-    "eslint-friendly-formatter": "^2.0.5",
-    "eslint-loader": "^1.3.0",
-    "eslint-plugin-html": "^1.3.0",
-    "eslint-plugin-promise": "^1.0.8",
-    "extract-text-webpack-plugin": "^1.0.1",
-    "file-loader": "^0.8.5",
-    "html-webpack-plugin": "^2.16.1",
-    "json-loader": "^0.5.4",
-    "mocha": "^3.2.0",
-    "style-loader": "^0.13.1",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^2.4.0",
-    "tree-kill": "^1.1.0",
-    "url-loader": "^0.5.7",
-    "vue-hot-reload-api": "^1.3.2",
-    "vue-html-loader": "^1.2.2",
-    "vue-loader": "^9.5.1",
-    "vue-style-loader": "^1.0.0",
-    "webpack": "^1.13.0",
-    "webpack-dev-server": "^1.14.1"
+  "main": "./dist/electron/main.js",
+  "scripts": {
+    "build": "node .electron-vue/build.js && electron-builder",
+    "build:dir": "node .electron-vue/build.js && electron-builder --dir",
+    "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
+    "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
+    "dev": "node .electron-vue/dev-runner.js",
+    "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src test",
+    "lint:fix": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter --fix src test",
+    "pack": "npm run pack:main && npm run pack:renderer",
+    "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
+    "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
+    "test": "npm run unit",
+    "unit": "karma start test/unit/karma.conf.js",
+    "postinstall": "npm run lint:fix"
   },
-  "dependencies": {}
+  "build": {
+    "productName": "electron-ssr",
+    "appId": "me.erguotou.ssr",
+    "compression": "maximum",
+    "directories": {
+      "output": "build"
+    },
+    "files": [
+      "dist/electron/**/*"
+    ],
+    "dmg": {
+      "contents": [
+        {
+          "x": 410,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "icon": "build/icons/icon.icns",
+      "category": "public.app-category.developer-tools",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "extendInfo": {
+        "LSUIElement": "YES"
+      }
+    },
+    "win": {
+      "icon": "build/icons/icon.ico",
+      "target": [
+        "nsis",
+        "zip"
+      ]
+    },
+    "linux": {
+      "icon": "build/icons",
+      "category": "Development",
+      "target": [
+        "deb",
+        "rpm",
+        "tar.gz"
+      ]
+    },
+    "publish": [
+      {
+        "provider": "github"
+      }
+    ]
+  },
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "iview": "^2.7.4",
+    "rxdb": "^7.2.0",
+    "rxjs": "^5.5.5",
+    "tree-kill": "^1.2.0",
+    "vue": "^2.3.3",
+    "vue-electron": "^1.0.6",
+    "vue-rx": "^5.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "babili-webpack-plugin": "^0.1.2",
+    "cfonts": "^1.1.3",
+    "chai": "^4.0.0",
+    "chalk": "^2.1.0",
+    "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^5.0.5",
+    "css-loader": "^0.28.4",
+    "del": "^3.0.0",
+    "devtron": "^1.4.0",
+    "electron": "^1.7.5",
+    "electron-builder": "^19.19.1",
+    "electron-debug": "^1.4.0",
+    "electron-devtools-installer": "^2.2.0",
+    "eslint": "^4.4.1",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-html": "^3.1.1",
+    "eslint-plugin-vue-libs": "^2.0.1",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.30.1",
+    "mocha": "^3.0.2",
+    "multispinner": "^0.2.1",
+    "node-loader": "^0.6.0",
+    "style-loader": "^0.18.2",
+    "tracer": "^0.8.11",
+    "url-loader": "^0.5.9",
+    "vue-html-loader": "^1.2.4",
+    "vue-loader": "^13.0.5",
+    "vue-style-loader": "^3.0.1",
+    "vue-template-compiler": "^2.4.2",
+    "webpack": "^3.5.2",
+    "webpack-dev-server": "^2.7.1",
+    "webpack-hot-middleware": "^2.18.2",
+    "webpack-merge": "^4.1.0"
+  }
 }

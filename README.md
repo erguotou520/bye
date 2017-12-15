@@ -1,67 +1,28 @@
-# electron-ss
-使用`electron`和`vue`开发的跨平台`shadowsocksr`客户端
-English document [here](./README.en.md)
+# electron-ssr
 
-## 功能
-- 跨平台功能支持
-- 支持python版`shadowsocksr`的所有功能
-- 当有可更新版本时给出通知
+> An electron-vue project
 
-## 环境要求
-- 只需要系统已安装 [python](https://www.python.org/downloads/) 可正常执行`shadowsocksr`的python版即可
-
-## 页面截图
-![](./assets/images/ssr-initialization.jpg)
-![](./assets/images/ssr-client.jpg)
-![](./assets/images/ssr-client-tray.jpg)
-
-## 下载
-请前往 [release](https://github.com/erguotou520/electron-ssr/releases) 下载
-
-## 更新历史
-- 0.1.1
-  * 统一使用`child_process`运行`python`命令，linux系统下`-d`模式需要`root`权限
-  * 修改一些配置文件代码的逻辑问题
-  * mac版在dock上不显示图标
-  * 支持从菜单中打开配置文件
-- 0.1.0
-  * 支持从托盘中打开日志文件
-  * unix系统使用`-d`模式运行，windows系统使用非`-d`模式运行
-  * 支持 `ssr://` 和 `ss://` 链接直接的互换
-  * 支持扫描屏幕二维码（但需要确保屏幕上只能有一个二维码，即使是本软件的默认二维码也不能出现在屏幕中）
-  * 支持在工具初始化时新增和删除加密方法、协议以及混淆协议，初始化完成后请直接修改配置文件（修改后需重启生效）
-  * 初始化时要求选择python版 `shadowsocksr` 的目录地址
-
-## 配置文件和日志的目录
-* windows: `C:\Users\{your username}\AppData\Local\Programs\electron-ssr`
-* linux: `~/.config/electron-ssr`
-* mac: `~/Library/Application Support/electron-ssr`
-
-## 开发和构建命令
+#### Build Setup
 
 ``` bash
-# 安装依赖
+# install dependencies
 npm install
 
-# 启动一个支持热重载的服务 localhost:9080
+# serve with hot reload at localhost:9080
 npm run dev
 
-# 检查 `app/src` 目录下所有 JS/Vue 代码
-npm run lint
-
-# 应用打包
-npm run pack
-
-# 应用构建
+# build electron application for production
 npm run build
 
-# 删除构建的目录
-npm run build:clean
+# run unit tests
+npm test
 
-# 单元测试
-npm run test:unit
+
+# lint all JS/Vue component files in `src/`
+npm run lint
+
 ```
 
-## ShadowsocksR 参考文档
-- [Python client setup (Mult language)](https://github.com/breakwa11/shadowsocks-rss/wiki/Python-client-setup-(Mult-language))
-- [SSR QRcode scheme](https://github.com/breakwa11/shadowsocks-rss/wiki/SSR-QRcode-scheme)
+---
+
+This project was generated with [electron-vue](https://github.com/SimulatedGREG/electron-vue)@[1c165f7](https://github.com/SimulatedGREG/electron-vue/tree/1c165f7c5e56edaf48be0fbb70838a1af26bb015) using [vue-cli](https://github.com/vuejs/vue-cli). Documentation about the original structure can be found [here](https://simulatedgreg.gitbooks.io/electron-vue/content/index.html).

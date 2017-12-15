@@ -1,8 +1,10 @@
 .DS_Store
-app/dist/index.html
-app/dist/build.js
-builds/*
-node_modules
+dist/electron/*
+dist/web/*
+build/*
+!build/icons
+coverage
+node_modules/
 npm-debug.log
 npm-debug.log.*
 thumbs.db

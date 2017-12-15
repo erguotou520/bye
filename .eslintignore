@@ -1,4 +1,3 @@
-app/node_modules/**
-app/dist/**
-app/electron.js
-app/src/qrcode/**
+test/unit/coverage/**
+test/unit/*.js
+test/e2e/*.js

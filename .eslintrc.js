@@ -1,19 +1,23 @@
 module.exports = {
   root: true,
-  // https://github.com/vuejs/eslint-config-vue
-  extends: 'vue',
-  // required to lint *.vue files
+  parser: 'babel-eslint',
+  parserOptions: {
+    sourceType: 'module',
+    allowImportExportEverywhere: false
+  },
+  env: {
+    browser: true,
+    node: true
+  },
+  extends: ["plugin:vue-libs/recommended"],
+  globals: {
+    __static: true
+  },
   plugins: [
     'html'
   ],
-  // add your custom rules here
   'rules': {
-    "no-sequences": [0],
-    "no-debugger": process.env.NODE_ENV === 'production' ? 2 : 0
-  },
-  globals: {
-    "Notification": true,
-    "it": true,
-    "describe": true
+    // allow debugger during development
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0
   }
 }
