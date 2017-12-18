@@ -1,4 +1,7 @@
-import { shell } from 'electron'
+import { app, shell } from 'electron'
+import { showWindow, destroyWindow } from './window'
+import { stop as stopCommand } from './ssr'
+import { destroyTray } from './tray'
 
 // 切换启用状态
 export function toggleEnable () {
@@ -52,7 +55,7 @@ export function openLog () {
 
 // 打开窗口
 export function showMainWindow () {
-  //
+  showWindow()
 }
 
 // 打开指定的url
@@ -62,5 +65,8 @@ export function openURL (url) {
 
 // 退出
 export function exitApp () {
-  //
+  stopCommand()
+  destroyWindow()
+  destroyTray()
+  app.quit()
 }

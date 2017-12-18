@@ -1,12 +1,14 @@
 import fs from 'fs'
 import tracer from 'tracer'
+import bootstrapPromise, { logPath } from './bootstrap'
 
 const logger = tracer.console({
   transport (data) {
-    fs.createWriteStream('./stream.log', {
-      flags: 'a+'
-    }).write(data.output + '\n')
+    bootstrapPromise.then(() => {
+      fs.createWriteStream(logPath, {
+        flags: 'a+'
+      }).write(data.output + '\n')
+    })
   }
 })
-
 export default logger

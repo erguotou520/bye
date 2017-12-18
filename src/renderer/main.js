@@ -3,6 +3,7 @@ import VueRx from 'vue-rx'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription' // Disposable if using RxJS4
 import { Subject } from 'rxjs/Subject' // required for domStreams option
+import './ipc'
 
 import App from './App'
 
@@ -17,6 +18,5 @@ Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
-  components: { App },
-  template: '<App/>'
+  render: h => h(App)
 }).$mount('#app')
