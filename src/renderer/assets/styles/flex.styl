@@ -1,0 +1,41 @@
+/**
+ * FLex display helper
+ */
+.flex
+  display flex
+.flex-inline
+  display inline-flex
+.flex-auto
+  flex 0 0 auto
+for i in 0..3
+  .flex-{i}
+    flex i
+.flex-row
+  flex-direction row
+.flex-column
+  flex-direction column
+
+.flex-jc-start
+  justify-content flex-start
+.flex-jc-center
+  justify-content center
+.flex-jc-end
+  justify-content flex-end
+.flex-jc-between
+  justify-content space-between
+.flex-jc-around
+  justify-content space-around
+
+.flex-ai-start
+  align-items flex-start
+.flex-ai-center
+  align-items center
+.flex-ai-end
+  align-items flex-end
+
+.flex-as-start
+  align-self flex-start
+.flex-as-center
+  align-self center
+.flex-as-end
+  align-self flex-end

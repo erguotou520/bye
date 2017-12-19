@@ -1,0 +1,31 @@
+/**
+ * 文字
+ */
+@import './variable.styl'
+.text-left
+  text-align left
+.text-center
+  text-align center
+.text-right
+  text-align right
+
+.text-primary
+  color $color-primary
+.text-title
+  color $color-title
+.text-content
+  color $color-content
+.text-sub-title
+  color $color-sub-title
+.text-disabled
+  color $color-disabled
+.text-white
+  color #fff
+
+for weight in 400 700
+  .weight-{weight}
+    font-weight weight
+
+for size in 10 12 14 16 18 20 24 28 30
+  .font-{size}
+    font-size: size px

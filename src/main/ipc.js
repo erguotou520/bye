@@ -1,25 +1,23 @@
 import { ipcMain } from 'electron'
 import { Observable } from 'rxjs/Observable'
-import {
-  EVENT_APP_ERROR_RENDER,
-  EVENT_APP_HIDE_WINDOW,
-  EVENT_APP_SHOW_WINDOW,
-  EVENT_RX_SYNC_RENDER
-} from '../shared/events'
+import * as events from '../shared/events'
 
 /**
  * ipc-main事件
  */
-ipcMain.on(EVENT_APP_ERROR_RENDER, () => {
+ipcMain.on(events.EVENT_APP_ERROR_RENDER, () => {
   //
-}).on(EVENT_APP_HIDE_WINDOW, () => {
+}).on(events.EVENT_APP_HIDE_WINDOW, () => {
 
-}).on(EVENT_APP_SHOW_WINDOW, () => {
+}).on(events.EVENT_APP_SHOW_WINDOW, () => {
 
+}).on(events.EVENT_APP_WEB_INIT, e => {
+  e.sender.returnValue = {}
 })
 
 export const ipc$ = Observable.create(observe => {
-  ipcMain.on(EVENT_RX_SYNC_RENDER, data => {
+  ipcMain.on(events.EVENT_RX_SYNC_RENDERER, (e, data) => {
+    console.log('received sync data: ', data)
     observe.next(data)
   })
 })

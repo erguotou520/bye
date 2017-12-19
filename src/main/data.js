@@ -4,6 +4,8 @@ import 'rxjs/add/operator/multicast'
 import { readJson, writeJson } from 'fs-extra'
 import bootstrap, { appConfigPath } from './bootstrap'
 import { ipc$ } from './ipc'
+import { sendData } from './window'
+import { EVENT_RX_SYNC_MAIN } from '../shared/events'
 import { getUpdatedKeys, configMerge } from '../shared/utils'
 
 let promise
@@ -48,6 +50,7 @@ appConfig$.subscribe(data => {
   if (changed.length) {
     // 如果更新则写入配置文件
     writeJson(appConfigPath, appConfig)
+    sendData(EVENT_RX_SYNC_MAIN, appConfig)
   }
 })
 

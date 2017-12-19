@@ -1,3 +1,6 @@
+import fs from 'fs'
+import path from 'path'
+
 const STRING_PROTOTYPE = '[object String]'
 const NUMBER_PROTOTYPE = '[object Number]'
 const REGEXP_PROTOTYPE = '[object RegExp]'
@@ -155,4 +158,14 @@ export function clone (obj, deep = false) {
     default:
       return obj
   }
+}
+
+/**
+ * 判断选择的local.py的路径是否正确
+ * @param {*String} path local.py所在的目录
+ */
+export function isSSRPathAvaliable (folderPath) {
+  const localPyPath = path.join(folderPath, 'local.py')
+  console.log(localPyPath)
+  return fs.existsSync(localPyPath)
 }

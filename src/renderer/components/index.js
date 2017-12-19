@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import { Row, Col } from 'iview/src/components/grid'
 import { Select, Option, OptionGroup } from 'iview/src/components/select'
-import './style.less'
+import ExternalLink from './ExternalLink'
 
 import {
+  Alert,
   Button,
   Checkbox,
   Form,
@@ -18,6 +19,7 @@ import {
 } from 'iview'
 
 const components = {
+  Alert,
   Button,
   Checkbox,
   Col,
@@ -44,3 +46,5 @@ Object.keys(components).forEach(key => {
   }
   Vue.component('i' + key, components[key])
 })
+
+Vue.component('ExternalLink', ExternalLink)

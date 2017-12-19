@@ -1,0 +1,47 @@
+/**
+ * margin和padding
+ */
+@import "./variable"
+size = 8px 16px 24px 32px
+map = {
+  t: top,
+  r: right,
+  b: bottom,
+  l: left
+}
+
+for j in 0..3
+  .mx-{j+1}
+    margin-left: size[j]
+    margin-right: size[j]
+  .my-{j+1}
+    margin-top: size[j]
+    margin-bottom: size[j]
+  .px-{j+1}
+    padding-left: size[j]
+    padding-right: size[j]
+  .py-{j+1}
+    padding-top: size[j]
+    padding-bottom: size[j]
+  for key, value in map
+    .m{key}-{j+1}
+      margin-{value} size[j]
+    .p{key}-{j+1}
+      padding-{value} size[j]
+
+.mx-auto
+  margin-left auto
+  margin-right auto
+.ml-auto
+  margin-left auto
+.mr-auto
+  margin-right auto
+
+/* media query */
+@media (max-width: $media-md)
+  .md-mt-0
+    margin-top 0
+  .md-mt-3
+    margin-top size[2]
+  .sm-mt-3
+    margin-top size[2]

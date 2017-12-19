@@ -2,7 +2,7 @@ import path from 'path'
 import { app } from 'electron'
 import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
 import logger from './logger'
-import defaultConfig from './config'
+import defaultConfig from '../shared/config'
 
 // 应用配置存储目录
 export const appConfigDir = app.getPath('userData')

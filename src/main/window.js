@@ -60,3 +60,17 @@ export function destroyWindow () {
     mainWindow.destroy()
   }
 }
+
+/**
+ * 想主窗口发送消息
+ */
+export function sendData (channel, args) {
+  if (mainWindow) {
+    mainWindow.webContents.once('did-finish-load', () => {
+      console.log('send data to renderer', args)
+      mainWindow.webContents.send(channel, args)
+    })
+  } else {
+    console.log('not ready')
+  }
+}

@@ -1,0 +1,10 @@
+@import './variable.styl'
+map = {
+  t: top,
+  r: right,
+  b: bottom,
+  l: left
+}
+for key, pos in map
+  .border-1px-{key}
+    border-{pos} 1px solid $color-border

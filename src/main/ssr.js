@@ -1,5 +1,3 @@
-import path from 'path'
-import fs from 'fs'
 import { exec } from 'child_process'
 import treeKill from 'tree-kill'
 import { appConfig$ } from './data'
@@ -56,16 +54,6 @@ export function stop () {
     treeKill(child.pid)
     child = null
   }
-}
-
-/**
- * 判断选择的local.py的路径是否正确
- * @param {*String} path local.py所在的目录
- */
-export function isSSRPathAvaliable (folderPath) {
-  const localPyPath = path.join(folderPath, 'local.py')
-  console.log(localPyPath)
-  return fs.existsSync(localPyPath)
 }
 
 /**
