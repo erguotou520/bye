@@ -49,7 +49,7 @@ appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   if (changed.length) {
     // 如果更新则写入配置文件
-    writeJson(appConfigPath, appConfig)
+    writeJson(appConfigPath, appConfig, { spaces: '\t' })
     sendData(EVENT_RX_SYNC_MAIN, appConfig)
   }
 })

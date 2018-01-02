@@ -11,7 +11,7 @@ export default new Vue({
   methods: {
     updateConfig (targetConfig) {
       merge(this.appConfig, targetConfig)
-      console.log('1', this.appConfig)
+      console.log('config updated: ', targetConfig)
     }
   }
 })

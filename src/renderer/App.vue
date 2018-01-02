@@ -1,31 +1,45 @@
 <template>
-  <div id="app" class="flex flex-column flex-jc-center flex-ai-center">
-    <transition name="slide-left">
+  <div id="app">
+    <transition name="page-view">
       <component :is="activeView" @finished="onStepFinished"></component>
     </transition>
   </div>
 </template>
 <script>
+import Feature from './views/Feature'
 import Setup from './views/Setup'
 import Options from './views/Options'
 import ManagePanel from './views/ManagePanel'
 import { syncConfig } from './ipc'
+import { STORE_KEY_FEATURE } from './constants'
+
+const views = ['Feature', 'Setup', 'ManagePanel']
+const ls = window.localStorage
 export default {
   data () {
-    console.log('2', this.$store.appConfig)
+    // 功能页面是否已展示过
+    const featureReaded = !!ls.getItem(STORE_KEY_FEATURE)
     return {
-      activeView: this.$store.appConfig.ssrPath ? 'ManagePanel' : 'Setup'
+      activeIndex: this.$store.appConfig.ssrPath ? 2 : (featureReaded ? 1 : 0)
+    }
+  },
+  computed: {
+    activeView () {
+      return views[this.activeIndex]
     }
   },
   methods: {
     onStepFinished (data) {
-      if (this.activeView === 'Setup') {
+      if (this.activeIndex === 0) {
+        ls.setItem(STORE_KEY_FEATURE, 'read')
+      } else if (this.activeIndex === 1) {
         syncConfig(data)
-        this.activeView = 'ManagePanel'
       }
+      this.activeIndex++
     }
   },
   components: {
+    Feature,
     Setup,
     Options,
     ManagePanel

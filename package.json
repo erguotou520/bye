@@ -81,11 +81,9 @@
   "dependencies": {
     "fs-extra": "^5.0.0",
     "iview": "^2.7.4",
-    "rxdb": "^7.2.0",
     "rxjs": "^5.5.5",
     "tree-kill": "^1.2.0",
-    "vue": "^2.3.3",
-    "vue-rx": "^5.0.0"
+    "vue": "^2.3.3"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

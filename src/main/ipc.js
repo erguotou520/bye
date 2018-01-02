@@ -1,6 +1,8 @@
 import { ipcMain } from 'electron'
 import { Observable } from 'rxjs/Observable'
 import * as events from '../shared/events'
+import { readJsonSync } from 'fs-extra'
+import { appConfigPath } from './bootstrap'
 
 /**
  * ipc-main事件
@@ -12,7 +14,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, () => {
 }).on(events.EVENT_APP_SHOW_WINDOW, () => {
 
 }).on(events.EVENT_APP_WEB_INIT, e => {
-  e.sender.returnValue = {}
+  e.returnValue = readJsonSync(appConfigPath)
 })
 
 export const ipc$ = Observable.create(observe => {

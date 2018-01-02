@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import { Row, Col } from 'iview/src/components/grid'
 import { Select, Option, OptionGroup } from 'iview/src/components/select'
+import AppView from './AppView'
 import ExternalLink from './ExternalLink'
 
 import {
@@ -47,4 +48,5 @@ Object.keys(components).forEach(key => {
   Vue.component('i' + key, components[key])
 })
 
+Vue.component('AppView', AppView)
 Vue.component('ExternalLink', ExternalLink)

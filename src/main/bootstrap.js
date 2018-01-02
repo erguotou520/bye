@@ -19,7 +19,7 @@ async function init () {
   // 判断配置文件是否存在，不存在用默认数据写入
   const configFileExists = await pathExists(appConfigPath)
   if (!configFileExists) {
-    await outputJson(appConfigPath, defaultConfig)
+    await outputJson(appConfigPath, defaultConfig, { spaces: '\t' })
   }
   await ensureDir(path.join(appConfigDir, 'logs'))
   await ensureFile(logPath)
