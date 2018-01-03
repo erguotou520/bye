@@ -10,6 +10,8 @@ export const appConfigDir = app.getPath('userData')
 export const appConfigPath = path.join(appConfigDir, 'shadowsocksr.json')
 // 日志路径
 export const logPath = path.join(appConfigDir, 'logs/shadowsocksr-client.log')
+// 默认的ssr下载目录
+export const defaultSSRDownloadDir = path.join(appConfigDir, 'shadowsocksr')
 
 /**
  * 确保文件存在，目录正常

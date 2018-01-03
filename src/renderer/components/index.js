@@ -16,7 +16,8 @@ import {
   Tabs,
   Tag,
   Tooltip,
-  Upload
+  Upload,
+  Progress
 } from 'iview'
 
 const components = {
@@ -38,7 +39,8 @@ const components = {
   TabPane: Tabs.Pane,
   Tag,
   Tooltip,
-  Upload
+  Upload,
+  Progress
 }
 
 Object.keys(components).forEach(key => {

@@ -17,8 +17,7 @@
     "pack:main": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.main.config.js",
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "test": "npm run unit",
-    "unit": "karma start test/unit/karma.conf.js",
-    "postinstall": "npm run lint:fix"
+    "unit": "karma start test/unit/karma.conf.js"
   },
   "build": {
     "productName": "electron-ssr",
@@ -79,10 +78,12 @@
     ]
   },
   "dependencies": {
+    "download-git-repo": "^1.0.1",
     "fs-extra": "^5.0.0",
     "iview": "^2.7.4",
     "rxjs": "^5.5.5",
     "tree-kill": "^1.2.0",
+    "urlsafe-base64": "^1.0.0",
     "vue": "^2.3.3"
   },
   "devDependencies": {

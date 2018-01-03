@@ -16,6 +16,12 @@ export const EVENT_APP_SHOW_WINDOW = 'app.show.window'
 // 由`ipc-renderer`发出 用于获取系统初始化数据
 export const EVENT_APP_WEB_INIT = 'app.init.web'
 
+// 由`ipc-renderer`发出 自动下载ssr项目并设置目录
+export const EVENT_SSR_DOWNLOAD_RENDERER = 'ssr.download.render'
+
+// 由`ipc-main`发出 自动下载ssr的进度
+export const EVENT_SSR_DOWNLOAD_MAIN = 'ssr.download.main'
+
 // 由`ipc-main`发出 同步`rx`数据
 export const EVENT_RX_SYNC_MAIN = 'rx.sync.main'
 

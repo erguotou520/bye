@@ -21,7 +21,7 @@ export default {
 .page-view-enter-active
 .page-view-leave-active
   position absolute
-  transition all 1s
+  transition all .3s
 .page-view-leave
   transform translate3d(0, 0, 0)
 .page-view-leave-to
