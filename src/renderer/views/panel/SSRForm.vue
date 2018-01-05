@@ -1,13 +1,13 @@
 <template>
   <i-form :model="form" :label-width="120">
     <i-form-item label="服务器地址">
-      <i-input type="text" v-model="form.host"/>
+      <i-input type="text" v-model="form.server"/>
     </i-form-item>
     <i-form-item label="服务器端口">
-      <i-input-number v-model="form.port" :min="1024" :max="65535"/>
+      <i-input-number v-model="form.server_port" :min="1024" :max="65535"/>
     </i-form-item>
     <i-form-item label="密码">
-      <i-input-number v-model="form.password"/>
+      <i-input type="password" v-model="form.password"/>
     </i-form-item>
     <i-form-item label="加密方式">
       <i-select v-model="form.method">
@@ -28,14 +28,25 @@
       <i-input v-model="form.obfsparam"/>
     </i-form-item>
     <i-form-item label="备注">
-      <i-input v-model="form.remark"/>
+      <i-input v-model="form.remarks"/>
     </i-form-item>
   </i-form>
 </template>
 <script>
+import Config from '../../../shared/ssr'
 export default {
   data () {
-
+    return {
+      form: new Config(),
+      rules: {
+        server: { required: true, message: '请输入服务器地址' },
+        server_port: { required: true, message: '请输入服务器端口' },
+        password: { required: true, message: '请输入密码' },
+        method: { required: true, message: '请选择一种加密方式' },
+        protocol: { required: true, message: '请选择一种协议' },
+        obfs: { required: true, message: '请选择一种混淆' }
+      }
+    }
   }
 }
 </script>

@@ -35,6 +35,9 @@ export default class Config {
     this.group = ''
     this.enable = true
     Object.assign(this, config)
+    if (this.remarks) {
+      this.remarks_base64 = encode(this.remarks)
+    }
   }
 
   isValid () {
@@ -45,7 +48,7 @@ export default class Config {
     const required = [this.server, this.server_port, this.protocol, this.method, this.obfs, encode(this.password)]
     const others = []
     this.obfsparam && others.push(`obfsparam=${encode(this.obfsparam)}`)
-    this.remarks && others.push(`remarkss=${encode(this.remarks)}`)
+    this.remarks && others.push(`remarks=${encode(this.remarks)}`)
     this.group && others.push(`group=${encode(this.group)}`)
     const link = `ssr://${encode(required.join(':') + '/?' + others.join('&'))}`
     return link
@@ -74,8 +77,8 @@ export default class Config {
         if (otherSplit.obfsparam) {
           this.obfsparam = decode(otherSplit.obfsparam)
         }
-        if (otherSplit.remarkss) {
-          this.remarks = decode(otherSplit.remarkss)
+        if (otherSplit.remarks) {
+          this.remarks = decode(otherSplit.remarks)
         }
         if (otherSplit.group) {
           this.group = decode(otherSplit.group)
