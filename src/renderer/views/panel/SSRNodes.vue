@@ -4,7 +4,9 @@
 <script>
 export default {
   data () {
-    nodes: this.$store.groupedNodes
+    return {
+      nodes: this.$store.groupedNodes
+    }
   }
 }
 </script>
