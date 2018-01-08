@@ -43,12 +43,14 @@
       </setup-card>
     </div>
   </app-view> -->
-  <app-view name="setup">
+  <app-view name="setup" class="px-2">
     <i-alert class="my-2" type="info" show-icon>
       <i-icon slot="icon" type="ios-lightbulb-outline" size="32"></i-icon>
       <div slot="desc">
-        <p class="mb-1"><b>自动模式</b>下系统将会自动下载ShadowsocksR项目至<span class="text-primary px-2px selectable">{{$store.meta.defaultSSRDownloadDir}}</span>并完成初始化</p>
-        <p><b>本地模式</b>下请选择本地ShadowsocksR项目下的shadowsocks目录。</p>
+        <p class="mb-1" style="word-break: break-all;"><b>自动模式</b>&nbsp;该模式下系统将自动下载ShadowsocksR项目至
+          <span class="text-primary px-2px selectable">{{$store.getters.appMetaConfig.defaultSSRDownloadDir}}</span>
+          并完成初始化</p>
+        <p><b>本地模式</b>&nbsp;该模式下请选择本地ShadowsocksR项目下的shadowsocks目录。</p>
         <p>如果本地没有该项目可前往<external-link href="https://github.com/shadowsocksr-backup/shadowsocksr/tree/dev"></external-link>下载。</p>
         <b>请确保所选的目录下有<span class="text-primary px-2px selectable">local.py</span>文件</b>
       </div>
@@ -69,11 +71,11 @@
           </i-form-item>
         </i-form>
       </div>
-      <div class="pos-r flex-1 h-100 flex flex-column flex-ai-center flex-jc-center border-1px-l">
+      <div class="pos-r flex-1 h-100 flex flex-column flex-ai-center flex-jc-center border-1px-l pl-2">
         <h1>本地模式</h1>
         <i-form ref="form" class="mt-2" :model="form" :rules="rules" inline>
           <i-form-item prop="ssrPath">
-            <i-input v-model="form.ssrPath" readonly placeholder="请选择shadowsocks目录" style="width:240px"/>
+            <i-input v-model="form.ssrPath" readonly placeholder="请选择shadowsocks目录" style="width:200px"/>
           </i-form-item>
           <i-form-item>
             <i-button type="primary" @click="selectPath">选择ssr目录</i-button>

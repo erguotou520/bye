@@ -6,6 +6,7 @@
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 import Feature from './views/Feature'
 import Setup from './views/Setup'
 import Options from './views/Options'
@@ -20,10 +21,11 @@ export default {
     // 功能页面是否已展示过
     const featureReaded = !!ls.getItem(STORE_KEY_FEATURE)
     return {
-      activeIndex: this.$store.appConfig.ssrPath ? 2 : (featureReaded ? 1 : 0)
+      activeIndex: this.$store.getters.appConfig.ssrPath ? 2 : (featureReaded ? 1 : 0)
     }
   },
   computed: {
+    ...mapState(['appConfig', 'appMetaConfig']),
     activeView () {
       return views[this.activeIndex]
     }
@@ -47,7 +49,7 @@ export default {
 }
 </script>
 <style lang="stylus">
-@import '~iview/dist/styles/iview.css'
+@import '~erguotou-iview/dist/styles/iview.css'
 @import './assets/styles'
 @import './assets/base.styl'
 </style>

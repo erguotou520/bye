@@ -1,7 +1,7 @@
 <template>
-  <app-view name="panel" row>
+  <app-view name="panel" class="px-1 py-1" row>
     <ssr-nodes></ssr-nodes>
-    <ssr-form></ssr-form>
+    <ssr-form class="flex-1 mx-1"></ssr-form>
     <ssr-qrcode></ssr-qrcode>
   </app-view>
 </template>

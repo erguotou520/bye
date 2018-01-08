@@ -15,14 +15,14 @@ function generateID () {
   for (let i = 0; i < 32; i++) {
     arr.push(seed[Math.floor(Math.random() * seed.length)])
   }
-  return arr.join()
+  return arr.join('')
 }
 
 export default class Config {
   constructor (config) {
     this.id = generateID()
     this.server = '127.0.0.1'
-    this.server_port = '8388'
+    this.server_port = 8388
     this.password = '0'
     this.method = 'aes-256-cfb'
     this.protocol = 'origin'
@@ -30,8 +30,6 @@ export default class Config {
     this.obfsparam = ''
     this.remarks = ''
     this.remarks_base64 = ''
-    this.localAddr = '127.0.0.1'
-    this.localserver_port = '1080'
     this.group = ''
     this.enable = true
     Object.assign(this, config)

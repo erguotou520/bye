@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import './components'
 import './ipc'
-import data from './data'
+import store from './store'
 
 import App from './App'
 
-Vue.prototype.$store = data
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
+  store,
   render: h => h(App)
 }).$mount('#app')

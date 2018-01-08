@@ -1,11 +1,12 @@
 import Vue from 'vue'
-import { Row, Col } from 'iview/src/components/grid'
-import { Select, Option, OptionGroup } from 'iview/src/components/select'
+import { Row, Col } from 'erguotou-iview/src/components/grid'
+import { Select, Option, OptionGroup } from 'erguotou-iview/src/components/select'
 import AppView from './AppView'
 import ExternalLink from './ExternalLink'
 
 import {
   Alert,
+  AutoComplete,
   Button,
   Checkbox,
   Form,
@@ -15,13 +16,15 @@ import {
   Radio,
   Tabs,
   Tag,
+  Tree,
   Tooltip,
   Upload,
   Progress
-} from 'iview'
+} from 'erguotou-iview'
 
 const components = {
   Alert,
+  AutoComplete,
   Button,
   Checkbox,
   Col,
@@ -38,6 +41,7 @@ const components = {
   Tabs,
   TabPane: Tabs.Pane,
   Tag,
+  Tree,
   Tooltip,
   Upload,
   Progress

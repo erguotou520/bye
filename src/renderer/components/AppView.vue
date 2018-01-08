@@ -18,6 +18,7 @@ export default {
 .app-view
   width 100vw
   height 100vh
+  overflow hidden
 .page-view-enter-active
 .page-view-leave-active
   position absolute

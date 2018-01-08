@@ -1,5 +1,5 @@
 import { ipcRenderer } from 'electron'
-import data from './data'
+import store from './store'
 import * as events from '../shared/events'
 
 /**
@@ -11,7 +11,7 @@ ipcRenderer.on(events.EVENT_APP_UPDATE_VERSION, () => {
 
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
   console.log('received sync data: %o', appConfig)
-  data.updateConfig(appConfig)
+  store.updateConfig(appConfig)
 })
 
 /**
@@ -29,8 +29,8 @@ export function syncConfig (appConfig) {
 function getInitConfig () {
   console.log('get init config data')
   const res = ipcRenderer.sendSync(events.EVENT_APP_WEB_INIT)
-  data.updateConfig(res.config)
-  data.updateMeta(res.meta)
+  store.commit('updateConfig', res.config)
+  store.commit('updateMeta', res.meta)
 }
 
 // 启动应用时获取初始化数据

@@ -78,13 +78,16 @@
     ]
   },
   "dependencies": {
+    "auto-launch": "^5.0.5",
     "download-git-repo": "^1.0.1",
+    "erguotou-iview": "^2.8.0",
     "fs-extra": "^5.0.0",
-    "iview": "^2.7.4",
+    "qr-image": "^3.2.0",
     "rxjs": "^5.5.5",
     "tree-kill": "^1.2.0",
     "urlsafe-base64": "^1.0.0",
-    "vue": "^2.3.3"
+    "vue": "^2.3.3",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
@@ -115,6 +118,7 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.30.1",
+    "less-loader": "^4.0.5",
     "mocha": "^3.0.2",
     "multispinner": "^0.2.1",
     "node-loader": "^0.6.0",
