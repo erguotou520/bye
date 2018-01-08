@@ -24,7 +24,7 @@
 </template>
 <script>
 import qr from 'qr-image'
-import { mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 import { clipboard } from 'electron'
 
 const COPY_TOOLTIP = '点击复制链接'
@@ -39,7 +39,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['editingConfig']),
+    ...mapState(['editingConfig']),
     editingConfigLink () {
       return this.isSSR ? this.editingConfig.getSSRLink() : this.editingConfig.getSSLink()
     },
