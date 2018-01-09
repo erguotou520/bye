@@ -18,6 +18,7 @@ import {
   Tag,
   Tree,
   Tooltip,
+  Poptip,
   Upload,
   Progress
 } from 'erguotou-iview'
@@ -43,6 +44,7 @@ const components = {
   Tag,
   Tree,
   Tooltip,
+  Poptip,
   Upload,
   Progress
 }

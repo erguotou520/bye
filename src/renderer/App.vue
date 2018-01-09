@@ -21,7 +21,7 @@ export default {
     // 功能页面是否已展示过
     const featureReaded = !!ls.getItem(STORE_KEY_FEATURE)
     return {
-      activeIndex: this.$store.getters.appConfig.ssrPath ? 2 : (featureReaded ? 1 : 0)
+      activeIndex: this.$store.state.appConfig.ssrPath ? 2 : (featureReaded ? 1 : 0)
     }
   },
   computed: {

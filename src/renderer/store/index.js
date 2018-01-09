@@ -5,14 +5,17 @@ import { merge } from '../../shared/utils'
 import Config from '../../shared/ssr'
 Vue.use(Vuex)
 
+const currentConfig = new Config()
+const editingConfig = new Config()
 export default new Vuex.Store({
   state: {
     appConfig: defaultConfig,
     meta: {
       defaultSSRDownloadDir: ''
     },
-    currentConfig: new Config(),
-    editingConfig: new Config(),
+    currentConfig,
+    editingConfig,
+    editingGroup: '',
     methods: ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
       'aes-128-ctr', 'aes-192-ctr', 'aes-256-ctr', 'camellia-128-cfb', 'camellia-192-cfb', 'camellia-256-cfb',
       'bf-cfb', 'rc4', 'rc4-md5', 'rc4-md5-6', 'salsa20', 'chacha20', 'chacha20-ietf'
@@ -38,14 +41,13 @@ export default new Vuex.Store({
       merge(state.currentConfig, ssrConfig)
       merge(state.editingConfig, ssrConfig)
     },
+    // 更新当前编辑的组
+    updateEditingGroup (state, newGroupName) {
+      state.editingGroup = newGroupName
+    },
     // 更新编辑项
     updateEditing (state, config) {
       merge(state.editingConfig, config)
     }
-  },
-  getters: {
-    appConfig: state => state.appConfig,
-    appMetaConfig: state => state.meta,
-    editingConfig: state => state.editingConfig
   }
 })

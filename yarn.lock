@@ -2742,9 +2742,9 @@ env-paths@^1.0.0:
   version "1.0.0"
   resolved "http://r.cnpmjs.org/env-paths/download/env-paths-1.0.0.tgz#4168133b42bb05c38a35b1ae4397c8298ab369e0"
 
-erguotou-iview@^2.8.0:
-  version "2.8.1"
-  resolved "https://registry.npmjs.org/erguotou-iview/-/erguotou-iview-2.8.1.tgz#9dc1b78da59f6f320d24c6c7ad9ba354bd21806f"
+erguotou-iview@2.8.1-alpha-2:
+  version "2.8.1-alpha-2"
+  resolved "https://registry.npmjs.org/erguotou-iview/-/erguotou-iview-2.8.1-alpha-2.tgz#a4a58ed62c82e982f694d571803abad5857c28b6"
   dependencies:
     async-validator "^1.8.2"
     core-js "^2.5.3"

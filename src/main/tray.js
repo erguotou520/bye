@@ -57,6 +57,7 @@ export default function renderTray (appConfig) {
       { label: '打开配置文件', click: handler.openConfigFile }
     ] },
     { label: '帮助', submenu: [
+      { label: '检查更新', click: handler.checkUpdate },
       { label: '查看日志', click: handler.openLog },
       { label: '项目主页', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr') } },
       { label: 'Bug反馈', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr/issues') } },

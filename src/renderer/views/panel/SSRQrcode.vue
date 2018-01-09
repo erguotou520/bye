@@ -17,8 +17,8 @@
       </i-input>
     </div>
     <div class="flex mt-2 flex-jc-center">
-      <i-button type="default" @click="cancel">取消</i-button>
-      <i-button type="primary" class="ml-3" @click="save">确定</i-button>
+      <i-button class="config-btn" type="default" @click="cancel">取消</i-button>
+      <i-button class="config-btn ml-3" type="primary" @click="save">确定</i-button>
     </div>
   </div>
 </template>

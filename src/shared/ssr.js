@@ -20,7 +20,6 @@ function generateID () {
 
 export default class Config {
   constructor (config) {
-    this.id = generateID()
     this.server = '127.0.0.1'
     this.server_port = 8388
     this.password = '0'
@@ -29,13 +28,11 @@ export default class Config {
     this.obfs = 'plain'
     this.obfsparam = ''
     this.remarks = ''
-    this.remarks_base64 = ''
     this.group = ''
-    this.enable = true
     Object.assign(this, config)
-    if (this.remarks) {
-      this.remarks_base64 = encode(this.remarks)
-    }
+    this.id = generateID()
+    this.remarks_base64 = this.remarks ? encode(this.remarks) : ''
+    this.enable = true
   }
 
   isValid () {

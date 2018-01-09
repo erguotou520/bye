@@ -80,7 +80,7 @@
   "dependencies": {
     "auto-launch": "^5.0.5",
     "download-git-repo": "^1.0.1",
-    "erguotou-iview": "^2.8.0",
+    "erguotou-iview": "2.8.1-alpha-2",
     "fs-extra": "^5.0.0",
     "qr-image": "^3.2.0",
     "rxjs": "^5.5.5",

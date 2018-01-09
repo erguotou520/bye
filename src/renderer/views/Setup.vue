@@ -48,7 +48,7 @@
       <i-icon slot="icon" type="ios-lightbulb-outline" size="32"></i-icon>
       <div slot="desc">
         <p class="mb-1" style="word-break: break-all;"><b>自动模式</b>&nbsp;该模式下系统将自动下载ShadowsocksR项目至
-          <span class="text-primary px-2px selectable">{{$store.getters.appMetaConfig.defaultSSRDownloadDir}}</span>
+          <span class="text-primary px-2px selectable">{{$store.state.appMetaConfig.defaultSSRDownloadDir}}</span>
           并完成初始化</p>
         <p><b>本地模式</b>&nbsp;该模式下请选择本地ShadowsocksR项目下的shadowsocks目录。</p>
         <p>如果本地没有该项目可前往<external-link href="https://github.com/shadowsocksr-backup/shadowsocksr/tree/dev"></external-link>下载。</p>

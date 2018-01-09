@@ -1,12 +1,16 @@
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, shell } from 'electron'
 import store from './store'
 import * as events from '../shared/events'
 
 /**
  * ipc-render事件
  */
-ipcRenderer.on(events.EVENT_APP_UPDATE_VERSION, () => {
-
+ipcRenderer.on(events.EVENT_APP_UPDATE_VERSION, (e, oldVersion, newVersion) => {
+  new Notification('New version avaliable.', {
+    body: `New version v${newVersion}, click to download`
+  }).onclick = () => {
+    shell.openExternal('https://github.com/erguotou520/electron-ssr/releases')
+  }
 }).on(events.EVENT_APP_ERROR_MAIN, () => {
 
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
