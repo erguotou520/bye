@@ -1749,10 +1749,6 @@ clone@^1.0.2:
   version "1.0.3"
   resolved "http://r.cnpmjs.org/clone/download/clone-1.0.3.tgz#298d7e2231660f40c003c2ed3140decf3f53085f"
 
-clone@^2.1.1:
-  version "2.1.1"
-  resolved "http://r.cnpmjs.org/clone/download/clone-2.1.1.tgz#d217d1e961118e3ac9a4b8bba3285553bf647cdb"
-
 co@^4.6.0:
   version "4.6.0"
   resolved "http://r.cnpmjs.org/co/download/co-4.6.0.tgz#6ea6bdf3d853ae54ccb8e47bfa0bf3f9031fb184"
@@ -4413,14 +4409,6 @@ lcid@^1.0.0:
   resolved "http://r.cnpmjs.org/lcid/download/lcid-1.0.0.tgz#308accafa0bc483a3867b4b6f2b9506251d1b835"
   dependencies:
     invert-kv "^1.0.0"
-
-less-loader@^4.0.5:
-  version "4.0.5"
-  resolved "http://r.cnpmjs.org/less-loader/download/less-loader-4.0.5.tgz#ae155a7406cac6acd293d785587fcff0f478c4dd"
-  dependencies:
-    clone "^2.1.1"
-    loader-utils "^1.1.0"
-    pify "^2.3.0"
 
 levn@^0.3.0, levn@~0.3.0:
   version "0.3.0"
