@@ -1,8 +1,10 @@
 import { app } from 'electron'
+import AutoLaunch from 'auto-launch'
 import './bootstrap'
-import './data'
+import { appConfig$ } from './data'
 import './tray'
-// import { stop as stopCommand } from './ssr'
+import './ipc'
+// import { stop as stopCommand } from './client'
 import { createWindow, getWindow } from './window'
 import logger from './logger'
 
@@ -30,3 +32,24 @@ app.on('activate', () => {
   }
 })
 
+// 开机自启动配置
+const AutoLauncher = new AutoLaunch({
+  name: 'ShadowsocksR Client',
+  isHidden: true,
+  mac: {
+    useLaunchAgent: true
+  }
+})
+
+appConfig$.subscribe(data => {
+  const [appConfig, changed] = data
+  if (!changed.length || (changed.length && changed.indexOf('autoLaunch') > -1)) {
+    // 初始化或者选项变更时
+    console.log('auto launch: ', appConfig.autoLaunch)
+    if (appConfig.autoLaunch) {
+      AutoLauncher.enable()
+    } else {
+      AutoLauncher.disable()
+    }
+  }
+})

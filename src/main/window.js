@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron'
 let mainWindow
+let readyPromise
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -25,6 +26,10 @@ export function createWindow () {
 
   mainWindow.on('closed', () => {
     mainWindow = null
+  })
+
+  readyPromise = new Promise(resolve => {
+    mainWindow.webContents.once('did-finish-load', resolve)
   })
 }
 
@@ -65,12 +70,10 @@ export function destroyWindow () {
 /**
  * 想主窗口发送消息
  */
-export function sendData (channel, ...args) {
+export async function sendData (channel, ...args) {
   if (mainWindow) {
-    // mainWindow.webContents.once('did-finish-load', () => {
-    console.log('send data to renderer', ...args)
+    await readyPromise
     mainWindow.webContents.send(channel, ...args)
-    // })
   } else {
     console.log('not ready')
   }

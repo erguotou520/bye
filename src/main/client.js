@@ -1,3 +1,4 @@
+import path from 'path'
 import { exec } from 'child_process'
 import treeKill from 'tree-kill'
 import { appConfig$ } from './data'
@@ -32,16 +33,17 @@ export function run (config, ssrPath, localPort = 1080) {
   stop()
   // 参数
   const params = []
-  params.push(`-s ${config.host}`)
-  params.push(`-p ${config.port}`)
+  params.push(`-s ${config.server}`)
+  params.push(`-p ${config.server_port}`)
   params.push(`-k ${config.password}`)
   params.push(`-m ${config.method}`)
   config.obfs && params.push(`-o ${config.obfs}`)
   params.push(`-O ${config.protocol}`)
   params.push(`-l ${localPort}`)
   // FIXME
-  const command = `python ${ssrPath} ${params.join(' ')}`
-  logger.debug('run command: %s', command)
+  const command = `python ${path.join(ssrPath, 'local.py')} ${params.join(' ')}`
+  console.log('run command: %s', command)
+  // logger.debug('run command: %s', command)
   child = runCommand(command)
 }
 
@@ -50,7 +52,8 @@ export function run (config, ssrPath, localPort = 1080) {
  */
 export function stop () {
   if (child && child.pid) {
-    logger.log('Kill python client')
+    console.log('Kill python client')
+    // logger.log('Kill python client')
     treeKill(child.pid)
     child = null
   }

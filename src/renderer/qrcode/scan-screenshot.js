@@ -1,4 +1,4 @@
-const { desktopCapturer } = require('electron')
+import { desktopCapturer } from 'electron'
 var { qrcode } = require('./qrcode')
 
 /**
@@ -7,7 +7,7 @@ var { qrcode } = require('./qrcode')
  * @param callback {Function} callback receives as first parameter the base64 string of the image
  * @param imageFormat {String} Format of the image to generate ('image/jpeg' or 'image/png')
  **/
-export default function fullscreenScreenshot (callback, imageFormat = 'image/png') {
+export default function scanQrcode (callback, imageFormat = 'image/png') {
   function handleStream (stream) {
     // Create hidden video tag
     var video = document.createElement('video')
@@ -25,7 +25,6 @@ export default function fullscreenScreenshot (callback, imageFormat = 'image/png
       var ctx = canvas.getContext('2d')
       // Draw video on canvas
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
-
       if (callback) {
         // Save screenshot to base64
         // var base64 = canvas.toDataURL(imageFormat)
@@ -34,7 +33,7 @@ export default function fullscreenScreenshot (callback, imageFormat = 'image/png
         qrcode.imagedata = ctx.getImageData(0, 0, qrcode.width, qrcode.height)
         try {
           var result = qrcode.process(ctx)
-          console.log('r:', result)
+          console.log('qrcode process result:', result)
           callback(null, result)
         } catch (e) {
           console.error(e)
@@ -43,7 +42,6 @@ export default function fullscreenScreenshot (callback, imageFormat = 'image/png
       } else {
         console.log('Need callback!')
       }
-
       // Remove hidden video tag
       video.remove()
       try {

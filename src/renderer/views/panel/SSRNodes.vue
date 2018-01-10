@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import Config from '../../../shared/ssr'
 export default {
   data () {
@@ -89,7 +89,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateConfig', 'setCurrentConfig', 'updateEditingGroup']),
+    ...mapMutations(['setCurrentConfig', 'updateEditingGroup']),
+    ...mapActions(['updateConfig']),
     // 复制节点并带上title参数
     cloneConfig (config) {
       return { title: `${config.remarks || config.server} (${config.server}:${config.server_port})`, ...config }

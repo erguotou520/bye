@@ -82,6 +82,7 @@ export default class Config {
         console.error(e)
       }
     }
+    return this
   }
 
   getSSLink () {
@@ -114,5 +115,25 @@ export default class Config {
         console.error(e)
       }
     }
+    return this
   }
+}
+
+// 根据字符串导入配置，字符串使用\n或空格间隔
+export function loadConfigsFromString (strings) {
+  if (strings) {
+    const arr = strings.split(/[\n ]/)
+    const avaliable = []
+    arr.forEach(str => {
+      if (/^ssr:\/\//.test(str)) {
+        avaliable.push(new Config().setSSRLink(str))
+      } else if (/^ss:\/\//.test(str)) {
+        avaliable.push(new Config().setSSLink(str))
+      }
+    })
+    if (avaliable.length) {
+      return [avaliable]
+    }
+  }
+  return []
 }

@@ -1,8 +1,8 @@
-import path from 'path'
+import { Menu, Tray } from 'electron'
 import os from 'os'
-import { Menu, Tray, nativeImage } from 'electron'
 import { appConfig$ } from './data'
 import * as handler from './tray-handler'
+import trayIcon from '../trayicons'
 
 let tray
 let menus
@@ -15,7 +15,7 @@ let menus
 function generateConfigSubmenus (configs, selectedIndex) {
   const submenus = configs.map((config, index) => {
     return {
-      label: `${config.remark}(${config.host}:${config.port})`,
+      label: `${config.remarks}(${config.server}:${config.server_port})`,
       type: 'checkbox',
       checked: index === selectedIndex,
       click (e) {
@@ -30,7 +30,7 @@ function generateConfigSubmenus (configs, selectedIndex) {
   })
   submenus.push({
     label: '编辑服务器',
-    click: handler.showMainWindow()
+    click: handler.showMainWindow
   })
   return submenus
 }
@@ -39,11 +39,8 @@ function generateConfigSubmenus (configs, selectedIndex) {
  * 渲染托盘图标和托盘菜单
  */
 export default function renderTray (appConfig) {
-  // 选择任务栏图标
-  const osTrayIcon = os.platform() === 'darwin' ? 'tray_mac.png' : 'tray_win.png'
-  const image = nativeImage.createFromPath(path.join(__dirname, './trayicons/' + osTrayIcon))
   // 生成tray
-  tray = new Tray(image)
+  tray = new Tray(trayIcon)
   tray.setToolTip('ShadowsocksR客户端')
   menus = [
     { label: '启用系统代理', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
@@ -67,6 +64,7 @@ export default function renderTray (appConfig) {
   ]
   const contextMenu = Menu.buildFromTemplate(menus)
   tray.setContextMenu(contextMenu)
+  tray.on(['darwin', 'win32'].indexOf(os.platform()) > -1 ? 'double-click' : 'click', handler.showMainWindow)
 }
 
 /**

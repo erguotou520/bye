@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import defaultConfig from '../../shared/config'
 import { merge } from '../../shared/utils'
 import Config from '../../shared/ssr'
+import { syncConfig } from '../ipc'
 Vue.use(Vuex)
 
 const currentConfig = new Config()
@@ -48,6 +49,17 @@ export default new Vuex.Store({
     // 更新编辑项
     updateEditing (state, config) {
       merge(state.editingConfig, config)
+    }
+  },
+  actions: {
+    updateConfig ({ commit }, targetConfig) {
+      commit('updateConfig', targetConfig)
+      syncConfig(targetConfig)
+    },
+    addConfigs ({ state, dispatch }, configs) {
+      if (configs.length) {
+        dispatch('updateConfig', { configs: [...state.appConfig.configs, ...configs] })
+      }
     }
   }
 })

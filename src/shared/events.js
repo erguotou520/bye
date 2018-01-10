@@ -4,6 +4,9 @@ export const EVENT_APP_UPDATE_VERSION = 'app.update.version'
 // 由`ipc-main`发出 `main`进程报错
 export const EVENT_APP_ERROR_MAIN = 'app.error.main'
 
+// 由`ipc-main`发出 扫描屏幕二维码
+export const EVENT_APP_SCAN_DESKTOP = 'app.scan.desktop'
+
 // 由`ipc-renderer`发出 `renderer`进程报错
 export const EVENT_APP_ERROR_RENDER = 'app.error.renderer'
 

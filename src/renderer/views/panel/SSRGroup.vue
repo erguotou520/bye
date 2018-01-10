@@ -11,7 +11,7 @@
   </i-form>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 export default {
   data () {
     return {
@@ -32,7 +32,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['updateConfig']),
+    ...mapActions(['updateConfig']),
     rename () {
       if (this.form.group !== this.editingGroup) {
         const clone = this.appConfig.configs.slice()

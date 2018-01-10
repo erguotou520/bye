@@ -3,13 +3,12 @@ import { Subject } from 'rxjs/Subject'
 import 'rxjs/add/operator/multicast'
 import { readJson, writeJson } from 'fs-extra'
 import bootstrap, { appConfigPath } from './bootstrap'
-import { ipc$ } from './ipc'
 import { sendData } from './window'
 import { EVENT_RX_SYNC_MAIN } from '../shared/events'
 import { getUpdatedKeys, configMerge } from '../shared/utils'
 
 let promise
-let currentConfig
+export let currentConfig
 
 // 读取配置
 async function read () {
@@ -24,23 +23,29 @@ async function init () {
 
 // 支持多播
 const subject = new Subject()
+let _observe
 const source = Observable.create(observe => {
+  _observe = observe
   // 初始化数据
   promise = init().then(data => {
     currentConfig = data
     // 第一个参数为当前配置对象，第二个参数为变更的字段数组
     observe.next([data, []])
-    // ipc接收到数据更新后
-    ipc$.subscribe(v => {
-      const changedKeys = getUpdatedKeys(currentConfig, v)
-      // 只有有数据变更才更新配置
-      if (changedKeys.length) {
-        configMerge(currentConfig, v)
-        observe.next([currentConfig, changedKeys])
-      }
-    })
   })
 })
+
+/**
+ * 统一使用该接口从外部更新应用配置
+ * @param {Object} targetConfig 要更新的配置
+ */
+export function updateAppConfig (targetConfig) {
+  const changedKeys = getUpdatedKeys(currentConfig, targetConfig)
+  // 只有有数据变更才更新配置
+  if (changedKeys.length) {
+    configMerge(currentConfig, targetConfig)
+    _observe.next([currentConfig, changedKeys])
+  }
+}
 
 export const appConfig$ = source.multicast(subject).refCount()
 

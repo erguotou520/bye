@@ -82,9 +82,9 @@ export function configMerge (to, from) {
       case OBJECT_PROTOTYPE:
         merge(to[key], value)
         break
-      // 配置数组采用追加的形式
+      // 配置数组采用直接覆盖的形式
       case ARRAY_PROTOTYPE:
-        Array.prototype.push.apply(to[key], from[key])
+        to[key] = from[key]
         break
       default:
         to[key] = value
@@ -104,9 +104,9 @@ export function getUpdatedKeys (appConfig, targetConfig) {
     switch (protoString(value)) {
       case OBJECT_PROTOTYPE:
         return getUpdatedKeys(appConfig[key], value).length
-      // 配置数组对象，判断每个对象是否相同
+      // 配置数组对象，直接使用新的
       case ARRAY_PROTOTYPE:
-        return value.some((v, index) => getUpdatedKeys(appConfig[key][index], v).length)
+        return true
       default:
         return appConfig[key] !== value
     }
@@ -169,3 +169,4 @@ export function isSSRPathAvaliable (folderPath) {
   console.log(localPyPath)
   return fs.existsSync(localPyPath)
 }
+
