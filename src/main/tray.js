@@ -3,7 +3,7 @@ import { appConfig$ } from './data'
 import * as handler from './tray-handler'
 import { startProxy } from './proxy'
 import trayIcon from '../trayicons'
-import { isMac, isWin } from '../shared/utils'
+import { isMac, isWin, isLinux } from '../shared/utils'
 
 let tray
 let menus
@@ -80,6 +80,10 @@ export default function renderTray (appConfig) {
   const contextMenu = Menu.buildFromTemplate(menus)
   tray.setContextMenu(contextMenu)
   tray.on((isMac || isWin) ? 'double-click' : 'click', handler.showMainWindow)
+  // try fix linux dismiss bug
+  if (isLinux) {
+    process.env.XDG_CURRENT_DESKTOP = 'Unity'
+  }
 }
 
 /**
@@ -99,7 +103,7 @@ appConfig$.subscribe(data => {
     renderTray(appConfig)
   } else if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
     // configs或index字段修改时刷新服务器列表
-    menus[1].submenu = generateConfigSubmenus(appConfig.configs, appConfig.index)
+    menus[3].submenu = generateConfigSubmenus(appConfig.configs, appConfig.index)
     tray.setContextMenu(Menu.buildFromTemplate(menus))
   }
 })

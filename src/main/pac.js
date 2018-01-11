@@ -9,6 +9,7 @@ import bootstrapPromise, { pacPath } from './bootstrap'
 import dataPromise, { currentConfig } from './data'
 
 let pacContent
+let pacServer
 
 /**
  * 下载pac文件
@@ -38,7 +39,7 @@ function readPac () {
  */
 export async function serverPac () {
   await dataPromise
-  http.createServer((req, res) => {
+  pacServer = http.createServer((req, res) => {
     if (parse(req.url).pathname === '/pac') {
       downloadPac().then(() => {
         res.writeHead(200, { 'Content-Type': 'application/x-ns-proxy-autoconfig', 'Server': 'SSR client' })
@@ -53,4 +54,15 @@ export async function serverPac () {
     }
   }).listen(currentConfig.pacPort || 1240, currentConfig.shareOverLan ? '0.0.0.0' : 'localhost')
   console.log('pac server listen at: %s:%s', currentConfig.shareOverLan ? '0.0.0.0' : 'localhost', currentConfig.pacPort || 1240)
+}
+
+/**
+ * 关闭pac服务
+ */
+export function stopPacServer () {
+  if (pacServer) {
+    pacServer.close(() => {
+      console.log('pac server closed.')
+    })
+  }
 }

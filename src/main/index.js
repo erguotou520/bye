@@ -1,13 +1,12 @@
-import process from 'process'
 import { app } from 'electron'
 import AutoLaunch from 'auto-launch'
 import './bootstrap'
 import { appConfig$ } from './data'
-import './tray'
-import './ipc'
+import { destroyTray } from './tray'
+import { stopPacServer } from './ipc'
 import { serverPac } from './pac'
 import { stop as stopCommand } from './client'
-import { createWindow, getWindow } from './window'
+import { createWindow, getWindow, destroyWindow } from './window'
 import logger from './logger'
 
 /**
@@ -23,9 +22,16 @@ app.on('ready', createWindow)
 app.on('window-all-closed', () => {
   logger.debug('Event:window-all-closed')
   if (process.platform !== 'darwin') {
-    stopCommand()
     app.quit()
   }
+})
+
+app.on('will-quit', () => {
+  console.log('will-quit')
+  stopCommand()
+  destroyWindow()
+  destroyTray()
+  stopPacServer()
 })
 
 app.on('activate', () => {

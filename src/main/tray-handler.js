@@ -1,9 +1,7 @@
 import { app, shell, clipboard, dialog } from 'electron'
 import { readJson, writeJSON } from 'fs-extra'
 import bootstrapPromise, { logPath, appConfigPath } from './bootstrap'
-import { showWindow, destroyWindow, sendData } from './window'
-import { stop as stopCommand } from './client'
-import { destroyTray } from './tray'
+import { showWindow, sendData } from './window'
 import { updateAppConfig, currentConfig } from './data'
 import { downloadPac } from './pac'
 import * as events from '../shared/events'
@@ -118,8 +116,5 @@ export function openURL (url) {
 
 // 退出
 export function exitApp () {
-  stopCommand()
-  destroyWindow()
-  destroyTray()
   app.quit()
 }

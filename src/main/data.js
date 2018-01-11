@@ -6,6 +6,7 @@ import bootstrap, { appConfigPath } from './bootstrap'
 import { sendData } from './window'
 import { EVENT_RX_SYNC_MAIN } from '../shared/events'
 import { getUpdatedKeys, configMerge } from '../shared/utils'
+import { mergeConfig } from '../shared/config'
 
 let promise
 export let currentConfig
@@ -18,7 +19,9 @@ async function read () {
 // 应用起步后初始化
 async function init () {
   await bootstrap
-  return read()
+  const stored = await read()
+  mergeConfig(stored)
+  return stored
 }
 
 // 支持多播

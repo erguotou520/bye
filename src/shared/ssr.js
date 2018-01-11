@@ -132,7 +132,7 @@ export function loadConfigsFromString (strings) {
       }
     })
     if (avaliable.length) {
-      return [avaliable]
+      return avaliable
     }
   }
   return []

@@ -3,10 +3,10 @@
  * linux目前仅支持gnome桌面的系统
  */
 import path from 'path'
-import { exec, execSync } from 'child_process'
+import { execSync } from 'child_process'
 import { currentConfig } from './data'
-import logger from './logger'
-import { isWin, isMac, isLinux } from '../shared/utils'
+// import logger from './logger'
+import { isWin, isMac, isLinux, isArray } from '../shared/utils'
 
 // windows sysproxy.exe文件的路径
 const winToolPath = path.resolve(__dirname, '../lib/sysproxy.exe')
@@ -15,81 +15,88 @@ const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
 
 /**
  * 运行命令
- * @param {String} command 待运行的命令
+ * @param {String} commands 待运行的命令
  */
-function runCommand (command) {
-  return new Promise((resolve, reject) => {
-    if (command) {
-      // logger.info(command)
-      console.log(command)
-      const child = exec(command)
-      child.stderr.on('data', logger.error)
-      child.on('close', resolve)
-    } else {
-      resolve()
+function runCommand (commands) {
+  if (commands) {
+    if (!isArray(commands)) {
+      commands = [commands]
     }
-  })
+    // logger.info(commands)
+    commands.forEach(command => {
+      execSync(command)
+    })
+  }
 }
 
 /**
  * 获取mac当前的network_service
  */
 function getNetworkService () {
-  return execSync(`sh ${macServiceShellPath}`)
+  const service = execSync(`sh ${macServiceShellPath}`)
+  if (service) {
+    return service.toString().replace(/\n/, '')
+  }
 }
 
 /**
  * 设置代理为空
  */
 export function setProxyToNone () {
-  let command
+  let commands
   if (isWin) {
-    command = `${winToolPath} pac ""`
+    commands = `${winToolPath} pac ""`
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      command = `networksetup -setautoproxystate ${service} off && networksetup -setsocksfirewallproxystate ${service} off`
+      commands = [`sudo networksetup -setautoproxystate ${service} off`,
+        `sudo networksetup -setsocksfirewallproxystate ${service} off`]
     }
   } else if (isLinux) {
-    command = `gsettings set org.gnome.system.proxy mode 'none'`
+    commands = `gsettings set org.gnome.system.proxy mode 'none'`
   }
-  runCommand(command)
+  runCommand(commands)
 }
 
 /**
  * 设置代理为全局
  */
 export function setProxyToGlobal (host, port) {
-  let command
+  let commands
   if (isWin) {
-    command = `${winToolPath} global ${host}:${port}`
+    commands = `${winToolPath} global ${host}:${port}`
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      command = `networksetup -setautoproxystate ${service} off && networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`
+      commands = [`sudo networksetup -setautoproxystate ${service} off`,
+        `sudo networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`]
     }
   } else if (isLinux) {
-    command = `gsettings set org.gnome.system.proxy mode 'none' && gsettings set org.gnome.system.proxy mode 'manual' && gsettings set org.gnome.system.proxy.socks host '${host}' && gsettings set org.gnome.system.proxy.socks port ${port}`
+    commands = [`gsettings set org.gnome.system.proxy mode 'manual'`,
+      `gsettings set org.gnome.system.proxy.socks host '${host}'`,
+      `gsettings set org.gnome.system.proxy.socks port ${port}`]
   }
-  runCommand(command)
+  runCommand(commands)
 }
 
 /**
  * 设置代理为全局
  */
 export function setProxyToPac (pacUrl) {
-  let command
+  let commands
   if (isWin) {
-    command = `${winToolPath} pac ${pacUrl}`
+    commands = `${winToolPath} pac ${pacUrl}`
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      command = `networksetup -setautoproxyurl ${service} ${pacUrl} && networksetup -setsocksfirewallproxystate ${service} off`
+      commands = [`sudo networksetup -setautoproxyurl ${service} ${pacUrl}`,
+        `sudo networksetup -setsocksfirewallproxystate ${service} off`]
     }
   } else if (isLinux) {
-    command = `gsettings set org.gnome.system.proxy mode 'none' && gsettings set org.gnome.system.proxy mode 'auto' && gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`
+    commands = [`gsettings set org.gnome.system.proxy mode 'auto'`,
+      `gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`]
   }
-  runCommand(command)
+  runCommand(commands)
 }
 
 // 启用代理
