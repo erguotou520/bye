@@ -4,7 +4,8 @@ import './bootstrap'
 import { appConfig$ } from './data'
 import './tray'
 import './ipc'
-// import { stop as stopCommand } from './client'
+import { serverPac } from './pac'
+import { stop as stopCommand } from './client'
 import { createWindow, getWindow } from './window'
 import logger from './logger'
 
@@ -21,7 +22,7 @@ app.on('ready', createWindow)
 app.on('window-all-closed', () => {
   logger.debug('Event:window-all-closed')
   if (process.platform !== 'darwin') {
-    // stopCommand()
+    stopCommand()
     app.quit()
   }
 })
@@ -45,7 +46,6 @@ appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   if (!changed.length || (changed.length && changed.indexOf('autoLaunch') > -1)) {
     // 初始化或者选项变更时
-    console.log('auto launch: ', appConfig.autoLaunch)
     if (appConfig.autoLaunch) {
       AutoLauncher.enable()
     } else {
@@ -53,3 +53,6 @@ appConfig$.subscribe(data => {
     }
   }
 })
+
+// 下载pac文件
+serverPac()

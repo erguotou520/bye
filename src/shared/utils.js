@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 
 const STRING_PROTOTYPE = '[object String]'
 const NUMBER_PROTOTYPE = '[object Number]'
@@ -170,3 +171,7 @@ export function isSSRPathAvaliable (folderPath) {
   return fs.existsSync(localPyPath)
 }
 
+export const platform = os.platform()
+export const isWin = platform === 'win32'
+export const isMac = platform === 'darwin'
+export const isLinux = platform === 'linux'

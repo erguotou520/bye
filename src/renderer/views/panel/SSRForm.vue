@@ -4,7 +4,7 @@
       <i-input type="text" :value="editingConfig.server" @input="v=>onInput('server', v)"/>
     </i-form-item>
     <i-form-item label="服务器端口" prop="server_port">
-      <i-input-number :value="editingConfig.server_port" @input="v=>onInput('server_port', v)" :min="1024" :max="65535"/>
+      <i-input-number :value="editingConfig.server_port" @input="v=>onInput('server_port', v)" :min="0" :max="65535"/>
     </i-form-item>
     <i-form-item prop="password">
       <span slot="label">

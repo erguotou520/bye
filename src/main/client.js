@@ -1,6 +1,7 @@
 import path from 'path'
 import { exec } from 'child_process'
 import treeKill from 'tree-kill'
+import { ssrLogPath } from './bootstrap'
 import { appConfig$ } from './data'
 import logger from './logger'
 
@@ -27,7 +28,7 @@ export function runCommand (command) {
  * @param {*String} ssrPath local.py的路径
  * @param {*[Number|String]} localPort 本地共享端口
  */
-export function run (config, ssrPath, localPort = 1080) {
+export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
   // currentConfig = config
   // 先结束之前的
   stop()
@@ -37,9 +38,14 @@ export function run (config, ssrPath, localPort = 1080) {
   params.push(`-p ${config.server_port}`)
   params.push(`-k ${config.password}`)
   params.push(`-m ${config.method}`)
-  config.obfs && params.push(`-o ${config.obfs}`)
   params.push(`-O ${config.protocol}`)
+  config.protocol_param && params.push(`-G ${config.protocol_param}`)
+  config.obfs && params.push(`-o ${config.obfs}`)
+  config.obfs_param && params.push(`-g ${config.obfs_param}`)
+  params.push(`-b ${shareOverLan ? '0.0.0.0' : '127.0.0.1'}`)
   params.push(`-l ${localPort}`)
+  config.timeout && params.push(`-t ${config.timeout}`)
+  params.push(`--log-file ${ssrLogPath}`)
   // FIXME
   const command = `python ${path.join(ssrPath, 'local.py')} ${params.join(' ')}`
   console.log('run command: %s', command)
@@ -65,7 +71,7 @@ export function stop () {
  */
 function runWithConfig (appConfig) {
   if (appConfig.ssrPath && appConfig.enable && appConfig.configs && appConfig.configs[appConfig.index]) {
-    run(appConfig.configs[appConfig.index], appConfig.ssrPath, appConfig.localPort)
+    run(appConfig.configs[appConfig.index], appConfig.ssrPath, appConfig.shareOverLan, appConfig.localPort)
   }
 }
 
