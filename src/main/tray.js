@@ -50,11 +50,14 @@ export default function renderTray (appConfig) {
   tray = new Tray(trayIcon)
   tray.setToolTip('ShadowsocksR客户端')
   menus = [
-    { label: '启用系统代理', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
+    { label: '启用系统代理        ', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
     { label: '系统代理模式', submenu: [
       { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => toggleProxy(e, 0) },
       { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => toggleProxy(e, 1) },
       { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => toggleProxy(e, 2) }
+    ] },
+    { label: 'PAC', submenu: [
+      { label: '更新PAC', click: handler.updatePac }
     ] },
     { label: '服务器', submenu: generateConfigSubmenus(appConfig.configs, appConfig.index) },
     { label: '开机自启', type: 'checkbox', checked: appConfig.autoLaunch, click: handler.toggleAutoLaunch },

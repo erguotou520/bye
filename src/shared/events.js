@@ -1,5 +1,5 @@
 // 由`ipc-main`发出 版本升级
-export const EVENT_APP_UPDATE_VERSION = 'app.update.version'
+export const EVENT_APP_NOTIFY_NOTIFICATION = 'app.notify.notification'
 
 // 由`ipc-main`发出 `main`进程报错
 export const EVENT_APP_ERROR_MAIN = 'app.error.main'

@@ -35,7 +35,7 @@ function runCommand (command) {
  * 获取mac当前的network_service
  */
 function getNetworkService () {
-  return execSync(macServiceShellPath)
+  return execSync(`sh ${macServiceShellPath}`)
 }
 
 /**
@@ -47,7 +47,9 @@ export function setProxyToNone () {
     command = `${winToolPath} pac ""`
   } else if (isMac) {
     const service = getNetworkService()
-    command = `networksetup -setautoproxystate ${service} off && networksetup -setwebproxystate ${service} off && networksetup -setsocksfirewallproxystate ${service} off`
+    if (service) {
+      command = `networksetup -setautoproxystate ${service} off && networksetup -setsocksfirewallproxystate ${service} off`
+    }
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'none'`
   }
@@ -63,7 +65,9 @@ export function setProxyToGlobal (host, port) {
     command = `${winToolPath} global ${host}:${port}`
   } else if (isMac) {
     const service = getNetworkService()
-    command = `networksetup -setautoproxystate ${service} off && networksetup -setwebproxystate ${service} off && networksetup networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`
+    if (service) {
+      command = `networksetup -setautoproxystate ${service} off && networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`
+    }
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'none' && gsettings set org.gnome.system.proxy mode 'manual' && gsettings set org.gnome.system.proxy.socks host '${host}' && gsettings set org.gnome.system.proxy.socks port ${port}`
   }
@@ -79,7 +83,9 @@ export function setProxyToPac (pacUrl) {
     command = `${winToolPath} pac ${pacUrl}`
   } else if (isMac) {
     const service = getNetworkService()
-    command = `networksetup -setautoproxyurl ${service} ${pacUrl} && networksetup -setwebproxystate ${service} off && networksetup -setsocksfirewallproxystate ${service} off`
+    if (service) {
+      command = `networksetup -setautoproxyurl ${service} ${pacUrl} && networksetup -setsocksfirewallproxystate ${service} off`
+    }
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'none' && gsettings set org.gnome.system.proxy mode 'auto' && gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`
   }

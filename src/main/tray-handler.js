@@ -1,12 +1,14 @@
-import { app, shell, net, clipboard, dialog } from 'electron'
+import { app, shell, clipboard, dialog } from 'electron'
 import { readJson, writeJSON } from 'fs-extra'
+import bootstrapPromise, { logPath, appConfigPath } from './bootstrap'
 import { showWindow, destroyWindow, sendData } from './window'
 import { stop as stopCommand } from './client'
 import { destroyTray } from './tray'
 import { updateAppConfig, currentConfig } from './data'
-import bootstrapPromise, { logPath, appConfigPath } from './bootstrap'
+import { downloadPac } from './pac'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
+import { request } from './tools'
 import pkg from '../../package.json'
 
 // 切换启用状态
@@ -22,6 +24,15 @@ export function toggleAutoLaunch () {
 // 更改选中的ssr配置
 export function switchConfig (index) {
   updateAppConfig({ index })
+}
+
+// 更新pac
+export function updatePac () {
+  downloadPac(true).then(() => {
+    sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, { title: 'PAC更新', body: 'PAC文件更新成功' })
+  }).catch(() => {
+    sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, { title: 'PAC更新', body: 'PAC文件更新失败' })
+  })
 }
 
 // 二维码扫描
@@ -77,15 +88,16 @@ export async function openConfigFile () {
 
 // 检查更新
 export function checkUpdate () {
-  net.request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/app/package.json').on('response', (response) => {
-    response.on('data', (chunk) => {
-      const remotePkg = JSON.parse(chunk.toString())
-      const currentVersion = pkg.version
-      if (remotePkg.version > currentVersion) {
-        sendData(events.EVENT_APP_UPDATE_VERSION, currentVersion, remotePkg.version)
-      }
+  request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/app/package.json').then(data => {
+    const remotePkg = JSON.parse(data)
+    const currentVersion = pkg.version
+    const isOutdated = remotePkg.version > currentVersion
+    sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, {
+      title: '更新通知',
+      body: isOutdated ? `最新版本为 v${remotePkg.version}，点击前往下载。` : '当前已是最新版',
+      url: isOutdated ? 'https://github.com/erguotou520/electron-ssr/releases' : ''
     })
-  }).end()
+  })
 }
 
 // 打开日志文件

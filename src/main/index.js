@@ -1,3 +1,4 @@
+import process from 'process'
 import { app } from 'electron'
 import AutoLaunch from 'auto-launch'
 import './bootstrap'
@@ -46,13 +47,23 @@ appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   if (!changed.length || (changed.length && changed.indexOf('autoLaunch') > -1)) {
     // 初始化或者选项变更时
-    if (appConfig.autoLaunch) {
-      AutoLauncher.enable()
-    } else {
-      AutoLauncher.disable()
-    }
+    AutoLauncher.isEnabled().then(enabled => {
+      // 状态不相同时
+      if (appConfig.autoLaunch !== enabled) {
+        return AutoLauncher[appConfig.autoLaunch ? 'enable' : 'disable']().catch(() => {
+          logger.error(`${appConfig.autoLaunch ? '执行' : '取消'}开机自启动失败`)
+        })
+      }
+    }).catch(() => {
+      logger.error('获取开机自启状态失败')
+    })
   }
 })
 
 // 下载pac文件
 serverPac()
+
+// 未捕获的rejections
+process.on('unhandledRejection', (reason, p) => {
+  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+})

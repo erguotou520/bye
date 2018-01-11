@@ -1,13 +1,13 @@
+import path from 'path'
 import { ipcRenderer, shell } from 'electron'
 import store from './store'
 import scanQrcode from './qrcode/scan-screenshot'
 import * as events from '../shared/events'
-import trayIcon from '../trayicons'
 import { loadConfigsFromString } from '../shared/ssr'
 
 function showNotification (title, body) {
   new Notification(title, {
-    icon: trayIcon,
+    icon: path.join(__dirname, '../trayicons/tray_win@3x.png'),
     body: body
   })
 }
@@ -15,9 +15,12 @@ function showNotification (title, body) {
 /**
  * ipc-render事件
  */
-ipcRenderer.on(events.EVENT_APP_UPDATE_VERSION, (e, oldVersion, newVersion) => {
-  showNotification('更新通知', `最新版本为 v${newVersion}，点击前往下载。`).onclick = () => {
-    shell.openExternal('https://github.com/erguotou520/electron-ssr/releases')
+ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) => {
+  const notify = showNotification(title, body)
+  if (url) {
+    notify.onclick = () => {
+      shell.openExternal(url)
+    }
   }
 }).on(events.EVENT_APP_SCAN_DESKTOP, () => {
   scanQrcode((e, result) => {
