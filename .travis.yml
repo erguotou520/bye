@@ -17,9 +17,14 @@ cache:
   - "$HOME/.cache"
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
+    - graphicsmagick
     - libgnome-keyring-dev
     - icnsutils
+    - xz-utils
+    - rpm
     #- xvfb
 before_install:
 - mkdir -p /tmp/git-lfs && curl -L https://github.com/github/git-lfs/releases/download/v1.2.1/git-lfs-$([
@@ -32,7 +37,7 @@ install:
 - nvm install 7
 - curl -o- -L https://yarnpkg.com/install.sh | bash
 - source ~/.bashrc
-- npm install -g xvfb-maybe
+# - npm install -g xvfb-maybe
 - yarn
 script:
 #- xvfb-maybe node_modules/.bin/karma start test/unit/karma.conf.js
