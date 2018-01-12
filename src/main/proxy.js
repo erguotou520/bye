@@ -64,8 +64,8 @@ export function setProxyToNone () {
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      runMacCommand([`sudo networksetup -setautoproxystate ${service} off`,
-        `sudo networksetup -setsocksfirewallproxystate ${service} off`])
+      runMacCommand([`networksetup -setautoproxystate ${service} off`,
+        `networksetup -setsocksfirewallproxystate ${service} off`])
     }
   } else if (isLinux) {
     commands = `gsettings set org.gnome.system.proxy mode 'none'`
@@ -83,8 +83,8 @@ export function setProxyToGlobal (host, port) {
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      runMacCommand([`sudo networksetup -setautoproxystate ${service} off`,
-        `sudo networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`])
+      runMacCommand([`networksetup -setautoproxystate ${service} off`,
+        `networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`])
     }
   } else if (isLinux) {
     commands = [`gsettings set org.gnome.system.proxy mode 'manual'`,
@@ -104,8 +104,8 @@ export function setProxyToPac (pacUrl) {
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      runMacCommand([`sudo networksetup -setautoproxyurl ${service} ${pacUrl}`,
-        `sudo networksetup -setsocksfirewallproxystate ${service} off`])
+      runMacCommand([`networksetup -setautoproxyurl ${service} ${pacUrl}`,
+        `networksetup -setsocksfirewallproxystate ${service} off`])
     }
   } else if (isLinux) {
     commands = [`gsettings set org.gnome.system.proxy mode 'auto'`,
