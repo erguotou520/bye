@@ -4,8 +4,9 @@
  */
 import path from 'path'
 import { execSync } from 'child_process'
+import { exec } from 'sudo-prompt'
 import { currentConfig } from './data'
-// import logger from './logger'
+import logger from './logger'
 import { isWin, isMac, isLinux, isArray } from '../shared/utils'
 
 // windows sysproxy.exe文件的路径
@@ -25,6 +26,20 @@ function runCommand (commands) {
     // logger.info(commands)
     commands.forEach(command => {
       execSync(command)
+    })
+  }
+}
+
+function runMacCommand (commands) {
+  if (commands) {
+    commands.forEach(command => {
+      exec(command, (err, stdout, stderr) => {
+        if (err || stderr) {
+          logger.error(err || stderr)
+        } else {
+          console.log(stdout)
+        }
+      })
     })
   }
 }
@@ -49,8 +64,8 @@ export function setProxyToNone () {
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      commands = [`sudo networksetup -setautoproxystate ${service} off`,
-        `sudo networksetup -setsocksfirewallproxystate ${service} off`]
+      runMacCommand([`sudo networksetup -setautoproxystate ${service} off`,
+        `sudo networksetup -setsocksfirewallproxystate ${service} off`])
     }
   } else if (isLinux) {
     commands = `gsettings set org.gnome.system.proxy mode 'none'`
@@ -68,8 +83,8 @@ export function setProxyToGlobal (host, port) {
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      commands = [`sudo networksetup -setautoproxystate ${service} off`,
-        `sudo networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`]
+      runMacCommand([`sudo networksetup -setautoproxystate ${service} off`,
+        `sudo networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`])
     }
   } else if (isLinux) {
     commands = [`gsettings set org.gnome.system.proxy mode 'manual'`,
@@ -89,8 +104,8 @@ export function setProxyToPac (pacUrl) {
   } else if (isMac) {
     const service = getNetworkService()
     if (service) {
-      commands = [`sudo networksetup -setautoproxyurl ${service} ${pacUrl}`,
-        `sudo networksetup -setsocksfirewallproxystate ${service} off`]
+      runMacCommand([`sudo networksetup -setautoproxyurl ${service} ${pacUrl}`,
+        `sudo networksetup -setsocksfirewallproxystate ${service} off`])
     }
   } else if (isLinux) {
     commands = [`gsettings set org.gnome.system.proxy mode 'auto'`,
