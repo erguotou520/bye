@@ -4,7 +4,7 @@
       <i-input type="text" v-model="form.group"/>
     </i-form-item>
     <span>
-      <i-button :disabled="form.group === editingGroup"
+      <i-button :disabled="form.group === editingGroup.title"
         @click="form.group = editingGroup">重置</i-button>
       <i-button class="ml-1" type="primary" @click="rename">保存</i-button>
     </span>
@@ -27,21 +27,21 @@ export default {
     ...mapState(['editingGroup', 'appConfig'])
   },
   watch: {
-    'editingGroup' (v) {
+    'editingGroup.title' (v) {
       this.form.group = v
     }
   },
   methods: {
-    ...mapActions(['updateConfig']),
+    ...mapActions(['updateConfigs']),
     rename () {
-      if (this.form.group !== this.editingGroup) {
+      if (this.form.group !== this.editingGroup.title) {
         const clone = this.appConfig.configs.slice()
         clone.forEach(config => {
-          if (config.group === this.editingGroup) {
+          if (config.group === this.editingGroup.title) {
             config.group = this.form.group
           }
         })
-        this.updateConfig({ configs: clone })
+        this.updateConfigs(clone)
       }
     }
   }

@@ -13,9 +13,6 @@ export const EVENT_APP_ERROR_RENDER = 'app.error.renderer'
 // 由`ipc-renderer`发出 隐藏窗口
 export const EVENT_APP_HIDE_WINDOW = 'app.hide.window'
 
-//  由`ipc-renderer`发出 打开窗口
-export const EVENT_APP_SHOW_WINDOW = 'app.show.window'
-
 // 由`ipc-renderer`发出 用于获取系统初始化数据
 export const EVENT_APP_WEB_INIT = 'app.init.web'
 

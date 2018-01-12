@@ -27,42 +27,60 @@ export default {
         type: 'ghost',
         size: 'small'
       },
-      // selectedIndex: this.$store.state.appConfig.index,
+      selectedNodeIndex: -1,
+      selectedConfigIndex: this.$store.state.appConfig.index,
       selectedNode: null
     }
   },
   computed: {
     ...mapState(['appConfig', 'editingGroup']),
+    // 配置节点
+    configs () {
+      if (this.appConfig && this.appConfig.configs && this.appConfig.configs.length) {
+        return this.appConfig.configs.map((config, index) => {
+          return this.cloneConfig(config, index === this.selectedConfigIndex)
+        })
+      }
+      return []
+    },
+    // 选中的配置节点
+    selectedConfig () {
+      return this.configs[this.appConfig.index]
+    },
     // 分组后的ssr节点
     groupedNodes () {
-      if (this.appConfig && this.appConfig.configs && this.appConfig.configs.length) {
+      if (this.configs.length) {
         const ungrouped = []
         const groups = {}
-        this.appConfig.configs.forEach(config => {
-          if (config.group) {
-            if (groups[config.group]) {
-              groups[config.group].push(this.cloneConfig(config))
+        this.configs.forEach(node => {
+          if (node.group) {
+            if (groups[node.group]) {
+              groups[node.group].push(node)
             } else {
-              groups[config.group] = [this.cloneConfig(config)]
+              groups[node.group] = [node]
             }
           } else {
-            ungrouped.push(this.cloneConfig(config))
+            ungrouped.push(node)
           }
         })
         if (ungrouped.length) {
           groups['未分组'] = ungrouped
         }
+        let index = 0
         return Object.keys(groups).map(groupName => {
-          return {
+          const node = {
             title: groupName,
             expand: true,
+            selected: index === this.selectedNodeIndex,
             children: groups[groupName]
           }
+          index = index + groups[groupName].length + 1
+          return node
         })
-      } else {
-        return []
       }
+      return []
     },
+    // 按钮禁用状态
     disabled () {
       if (!this.selectedNode) {
         return { remove: true, up: true, down: true }
@@ -71,14 +89,14 @@ export default {
         // 选中的是分组
         const index = this.groupedNodes.indexOf(this.selectedNode)
         return {
-          remove: false,
+          remove: this.selectedNode.title === '未分组',
           up: index < 1,
           down: index > this.groupedNodes.length - 2
         }
       }
       // 选中的是配置节点
-      const prev = this.$refs.tree.flatState[this.selectedNode.nodeKey - 1]
-      const next = this.$refs.tree.flatState[this.selectedNode.nodeKey + 1]
+      const prev = this.$refs.tree.flatState[this.selectedNodeIndex - 1]
+      const next = this.$refs.tree.flatState[this.selectedNodeIndex + 1]
       return {
         remove: false,
         // 前一项不存在或前一项是分组节点
@@ -88,24 +106,35 @@ export default {
       }
     }
   },
+  watch: {
+    'appConfig.index' (v) {
+      this.selectedConfigIndex = v
+      this.setSelectedNodeIndex()
+    }
+  },
   methods: {
     ...mapMutations(['setCurrentConfig', 'updateEditingGroup']),
-    ...mapActions(['updateConfig']),
-    // 复制节点并带上title参数
-    cloneConfig (config) {
-      return { title: `${config.remarks || config.server} (${config.server}:${config.server_port})`, ...config }
+    ...mapActions(['updateConfigs']),
+    // 复制节点并带上title和选中参数
+    cloneConfig (config, selected) {
+      return { title: `${config.remarks || config.server} (${config.server}:${config.server_port})`, selected, ...config }
+    },
+    // 设置选中节点的索引
+    setSelectedNodeIndex () {
+      this.selectedNodeIndex = this.$refs.tree.getSelectedNodes()[0].nodeKey
     },
     // 点击节点时
     onSelect (selection) {
       const node = selection[0]
+      this.selectedNodeIndex = node.nodeKey
       this.selectedNode = node
       if (!node.children) {
         // 选中配置项
         this.setCurrentConfig(node)
-        this.updateEditingGroup('')
+        this.updateEditingGroup({ show: false })
       } else {
         // 选中分组
-        this.updateEditingGroup(node.title)
+        this.updateEditingGroup({ show: true, title: node.title === '未分组' ? '' : node.title })
       }
     },
     // flat分组
@@ -120,25 +149,34 @@ export default {
     // 新增
     create () {
       const newConfig = new Config(this.selectedNode)
+      newConfig.selected = false
       const clone = this.appConfig.configs.slice()
       clone.push(newConfig)
-      this.updateConfig({ configs: clone })
+      this.updateConfigs(clone)
+      this.selectedConfigIndex = this.appConfig.configs.length - 1
+      this.$nextTick(() => {
+        this.selectedNodeIndex = this.$refs.tree.flatState.findIndex(node => node.node.id === newConfig.id)
+      })
     },
     // 删除分组
     removeGroup () {
       const clone = this.appConfig.configs.slice()
-      this.updateConfig({ configs: clone.filter(config => config.group !== this.selectedNode.title) })
+      this.updateConfigs(clone.filter(config => config.group !== this.selectedNode.title))
+      this.selectedNodeIndex = 0
     },
     // 删除
     remove () {
       const clone = this.appConfig.configs.slice()
       const index = clone.findIndex(config => config.id === this.selectedNode.id)
       clone.splice(index, 1)
-      this.updateConfig({ configs: clone })
+      this.updateConfigs(clone)
+      if (clone.length === 0) {
+        this.selectedNodeIndex = -1
+      }
     },
     // 上/下移 direction = 1 上移 其它 下移
     updown (direction = 1) {
-      const node = this.$refs.tree.getSelectedNodes()[0]
+      const node = this.selectedNode
       const clone = this.groupedNodes.slice()
       if (node.children) {
         // 分组上/下移
@@ -146,7 +184,7 @@ export default {
         clone.splice(index, 1)
         clone.splice(direction === 1 ? index - 1 : index + 1, 0, node)
       } else {
-        // 节点上移
+        // 节点上/下移
         let keyCount = 0
         for (let i = 0; i < clone.length; i++) {
           // 计算分组中的nodeKey累计
@@ -161,10 +199,15 @@ export default {
             break
           }
         }
-        direction === 1 ? this.selectedNode.nodeKey-- : this.selectedNode.nodeKey++
+        direction === 1 ? this.selectedNodeIndex-- : this.selectedNode.nodeKey++
       }
-      this.updateConfig({ configs: this.flatNodeGroups(clone) })
+      this.updateConfigs(this.flatNodeGroups(clone))
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.setSelectedNodeIndex()
+    })
   }
 }
 </script>

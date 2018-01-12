@@ -1,9 +1,10 @@
 <template>
   <app-view name="panel" class="px-2 py-2" row>
     <ssr-nodes></ssr-nodes>
-    <ssr-form v-show="!editingGroup" class="flex-1 mx-1"></ssr-form>
-    <ssr-group v-show="editingGroup" class="flex-1 ml-1"></ssr-group>
-    <ssr-qrcode v-show="!editingGroup"></ssr-qrcode>
+    <ssr-form v-show="!editingGroup.show" class="flex-1 mx-1"></ssr-form>
+    <ssr-group v-show="editingGroup.show&&editingGroup.title" class="flex-1 ml-1"></ssr-group>
+    <ssr-qrcode v-show="!editingGroup.show"></ssr-qrcode>
+    <div v-show="editingGroup.show&&!editingGroup.title" class="flex-1"></div>
   </app-view>
 </template>
 <script>

@@ -18,14 +18,16 @@
     </div>
     <div class="flex mt-2 flex-jc-center">
       <i-button class="config-btn" type="default" @click="cancel">取消</i-button>
-      <i-button class="config-btn ml-3" type="primary" @click="save">确定</i-button>
+      <i-button class="config-btn ml-3" type="primary" :disabled="!appConfig.configs.length" @click="save">确定</i-button>
     </div>
   </div>
 </template>
 <script>
 import qr from 'qr-image'
-import { mapState } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import { clipboard } from 'electron'
+import { hideWindow } from '../../ipc'
+import { clone } from '../../../shared/utils'
 
 const COPY_TOOLTIP = '点击复制链接'
 const COPY_TOOLTIP_COPIED = '链接已复制'
@@ -39,7 +41,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['editingConfig']),
+    ...mapState(['appConfig', 'editingConfig']),
     editingConfigLink () {
       return this.isSSR ? this.editingConfig.getSSRLink() : this.editingConfig.getSSLink()
     },
@@ -48,6 +50,8 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['resetState']),
+    ...mapActions(['updateConfigs']),
     copy () {
       this.copied = true
       this.copyTooltip = COPY_TOOLTIP_COPIED
@@ -68,17 +72,17 @@ export default {
       }, 500)
     },
     cancel () {
-      this.$emit('hide-window')
+      this.resetState()
+      hideWindow()
     },
     save () {
-      if (!this.selectedConfig) {
-        return window.alert('请先选择或创建一个配置')
-      }
-      if (this.tempConfig.isValid()) {
-        const copy = this.configs.slice()
-        Object.assign(copy[this.selectedIndex], this.tempConfig)
+      if (this.editingConfig.isValid()) {
+        const copy = this.appConfig.configs.slice()
+        const index = copy.findIndex(config => config.id === this.editingConfig.id)
+        copy.splice(index, 1)
+        copy.splice(index, 0, clone(this.editingConfig))
         this.updateConfigs(copy)
-        this.$emit('hide-window')
+        hideWindow()
       } else {
         window.alert('服务器配置信息不完整')
       }

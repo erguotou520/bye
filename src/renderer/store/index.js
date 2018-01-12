@@ -1,22 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import defaultConfig from '../../shared/config'
-import { merge } from '../../shared/utils'
+import { merge, clone } from '../../shared/utils'
 import Config from '../../shared/ssr'
 import { syncConfig } from '../ipc'
 Vue.use(Vuex)
 
-const currentConfig = new Config()
+// 当前编辑的配置项
 const editingConfig = new Config()
+// 备份当前选中的配置项
+const editingConfigBak = new Config()
+// ssr config 有效key
+const configKeys = Object.keys(editingConfig)
+// 编辑组的名称
+let groupTitleBak = ''
 export default new Vuex.Store({
   state: {
     appConfig: defaultConfig,
     meta: {
       defaultSSRDownloadDir: ''
     },
-    currentConfig,
     editingConfig,
-    editingGroup: '',
+    editingGroup: { show: false, title: '' },
     methods: ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
       'aes-128-ctr', 'aes-192-ctr', 'aes-256-ctr', 'camellia-128-cfb', 'camellia-192-cfb', 'camellia-256-cfb',
       'bf-cfb', 'rc4', 'rc4-md5', 'rc4-md5-6', 'salsa20', 'chacha20', 'chacha20-ietf'
@@ -39,12 +44,18 @@ export default new Vuex.Store({
     },
     // 设置选中的配置
     setCurrentConfig (state, ssrConfig) {
-      merge(state.currentConfig, ssrConfig)
       merge(state.editingConfig, ssrConfig)
+      merge(editingConfigBak, ssrConfig)
+    },
+    // 重置状态
+    resetState (state) {
+      merge(state.editingConfig, editingConfigBak)
+      state.editingGroup.title = groupTitleBak
     },
     // 更新当前编辑的组
-    updateEditingGroup (state, newGroupName) {
-      state.editingGroup = newGroupName
+    updateEditingGroup (state, newGroup) {
+      merge(state.editingGroup, newGroup)
+      groupTitleBak = newGroup.title
     },
     // 更新编辑项
     updateEditing (state, config) {
@@ -52,9 +63,30 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    initConfig ({ commit }, { config, meta }) {
+      commit('updateConfig', config)
+      commit('updateMeta', meta)
+      const initialSelected = config.configs[config.index]
+      if (initialSelected) {
+        commit('setCurrentConfig', initialSelected)
+      }
+    },
     updateConfig ({ commit }, targetConfig) {
       commit('updateConfig', targetConfig)
       syncConfig(targetConfig)
+    },
+    updateConfigs ({ dispatch }, _configs) {
+      const configs = _configs.map(config => {
+        const _clone = clone(config)
+        Object.keys(_clone).forEach(key => {
+          if (configKeys.indexOf(key) < 0) {
+            // 删除无用的key
+            delete _clone[key]
+          }
+        })
+        return _clone
+      })
+      dispatch('updateConfig', { configs })
     },
     addConfigs ({ state, dispatch }, configs) {
       if (configs.length) {

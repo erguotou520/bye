@@ -4,17 +4,16 @@ import downloadGitRepo from 'download-git-repo'
 import * as events from '../shared/events'
 import { appConfigPath, defaultSSRDownloadDir } from './bootstrap'
 import { updateAppConfig } from './data'
+import { hideWindow } from './window'
 import { mergeConfig } from '../shared/config'
-// import logger from './logger'
+import logger from './logger'
 /**
  * ipc-main事件
  */
-ipcMain.on(events.EVENT_APP_ERROR_RENDER, () => {
-  //
+ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
+  logger.error(e)
 }).on(events.EVENT_APP_HIDE_WINDOW, () => {
-
-}).on(events.EVENT_APP_SHOW_WINDOW, () => {
-
+  hideWindow()
 }).on(events.EVENT_APP_WEB_INIT, e => {
   const stored = readJsonSync(appConfigPath)
   mergeConfig(stored)
