@@ -88,8 +88,9 @@ export default {
       if (this.selectedNode.children) {
         // 选中的是分组
         const index = this.groupedNodes.indexOf(this.selectedNode)
+        const isUngrouped = this.selectedNode.title === '未分组'
         return {
-          remove: this.selectedNode.title === '未分组',
+          remove: isUngrouped,
           up: index < 1,
           down: index > this.groupedNodes.length - 2
         }

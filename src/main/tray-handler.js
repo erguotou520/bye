@@ -104,6 +104,11 @@ export async function openLog () {
   shell.openItem(logPath)
 }
 
+// 打开选项设置页面
+export function showOptions () {
+  sendData(events.EVENT_APP_SHOW_PAGE, { page: 'Options' })
+}
+
 // 打开窗口
 export function showMainWindow () {
   showWindow()
