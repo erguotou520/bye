@@ -40,7 +40,7 @@ export function scanQRCode () {
 
 // 打开选项设置页面
 export function openOptionsWindow () {
-  sendData(events.EVENT_APP_SHOW_WINDOW, 'options')
+  sendData(events.EVENT_APP_SHOW_PAGE, 'Options')
 }
 
 // 导入配置文件

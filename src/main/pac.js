@@ -39,6 +39,8 @@ function readPac () {
  */
 export async function serverPac () {
   await dataPromise
+  const host = currentConfig.shareOverLan ? '0.0.0.0' : 'localhost'
+  const port = currentConfig.pacPort || 1240
   pacServer = http.createServer((req, res) => {
     if (parse(req.url).pathname === '/pac') {
       downloadPac().then(() => {
@@ -52,8 +54,18 @@ export async function serverPac () {
       res.writeHead(200)
       res.end()
     }
-  }).listen(currentConfig.pacPort || 1240, currentConfig.shareOverLan ? '0.0.0.0' : 'localhost')
-  console.log('pac server listen at: %s:%s', currentConfig.shareOverLan ? '0.0.0.0' : 'localhost', currentConfig.pacPort || 1240)
+  }).listen(port, host)
+  pacServer
+    .on('listening', () => {
+      console.log('pac server listen at: %s:%s', host, port)
+    })
+    .on('error', err => {
+      if (err.code === 'EADDRINUSE') {
+        // 端口已经被使用
+        console.log(`pac端口${port}已被占用`)
+      }
+      pacServer.close()
+    })
 }
 
 /**
