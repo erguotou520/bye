@@ -88,6 +88,7 @@
 <script>
 import { ipcRenderer } from 'electron'
 import { remote } from 'electron'
+import { mapState } from 'vuex'
 import { syncConfig } from '../ipc'
 import { isSSRPathAvaliable } from '../../shared/utils'
 import * as events from '../../shared/events'
@@ -120,6 +121,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState(['meta'])
+  },
   methods: {
     // 返回当前主页面
     back () {
@@ -132,14 +136,14 @@ export default {
       const self = this
 
       function callback (e, err) {
-        console.log('download ssr result', err)
+        console.log('download ssr result', e, err)
         ipcRenderer.removeListener(events.EVENT_SSR_DOWNLOAD_MAIN, callback)
         if (err) {
           self.autoError = err.message
         } else {
           self.autoPercent = 100
           self.$nextTick(() => {
-            self.setup()
+            self.setup(self.meta.defaultSSRDownloadDir)
           })
         }
         clearInterval(interval)
@@ -159,19 +163,17 @@ export default {
       })
       if (path.length) {
         this.form.ssrPath = path[0]
-        this.$nextTick(() => {
-          this.setup()
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            this.setup()
+          }
         })
       }
     },
     // 完成初始化
-    setup () {
-      this.$refs.form.validate(valid => {
-        if (valid) {
-          syncConfig({ ssrPath: this.form.ssrPath })
-          this.$emit('finished')
-        }
-      })
+    setup (ssrPath) {
+      syncConfig({ ssrPath: ssrPath || this.form.ssrPath })
+      this.$emit('finished')
     }
   }
 }
