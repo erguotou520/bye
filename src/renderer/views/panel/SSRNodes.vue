@@ -5,7 +5,7 @@
       :data="groupedNodes" @on-select-change="onSelect" ref="tree"></i-tree>
     <div class="flex mt-1 flex-jc-center">
       <i-button type="primary" class="w-6r mr-1" @click="create">添加</i-button>
-      <i-poptip v-if="selectedNode&&selectedNode.children" confirm title="确定删除该分组下所有节点？"
+      <i-poptip v-if="selectedGroupName" confirm title="确定删除该分组下所有节点？"
         @on-ok="removeGroup">
         <i-button class="w-6r" :disabled="disabled.remove">删除</i-button>
       </i-poptip>
@@ -18,8 +18,9 @@
   </div>
 </template>
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import Config from '../../../shared/ssr'
+import { groupConfigs } from '../../../shared/utils'
 
 export default {
   data () {
@@ -28,90 +29,85 @@ export default {
         type: 'ghost',
         size: 'small'
       },
-      selectedNodeIndex: -1,
-      selectedConfigIndex: this.$store.state.appConfig.index,
-      selectedNode: null
+      // 记录ID
+      selectedConfigId: this.$store.getters.selectedConfig ? this.$store.getters.selectedConfig.id : '',
+      // 记录分组名
+      selectedGroupName: ''
     }
   },
   computed: {
     ...mapState(['appConfig', 'editingGroup']),
+    ...mapGetters(['selectedConfig']),
     // 配置节点
     configs () {
       if (this.appConfig && this.appConfig.configs && this.appConfig.configs.length) {
-        return this.appConfig.configs.map((config, index) => {
-          return this.cloneConfig(config, index === this.selectedConfigIndex)
+        return this.appConfig.configs.map(config => {
+          return this.cloneConfig(config, this.selectedGroupName ? false : config.id === this.selectedConfigId)
         })
       }
       return []
     },
-    // 选中的配置节点
-    selectedConfig () {
-      return this.configs[this.appConfig.index]
+    // 分组后的配置节点
+    groupedConfigs () {
+      return groupConfigs(this.configs)
     },
     // 分组后的ssr节点
     groupedNodes () {
-      if (this.configs.length) {
-        const ungrouped = []
-        const groups = {}
-        this.configs.forEach(node => {
-          if (node.group) {
-            if (groups[node.group]) {
-              groups[node.group].push(node)
-            } else {
-              groups[node.group] = [node]
-            }
-          } else {
-            ungrouped.push(node)
-          }
-        })
-        if (ungrouped.length) {
-          groups['未分组'] = ungrouped
+      return Object.keys(this.groupedConfigs).map(groupName => {
+        const node = {
+          title: groupName,
+          expand: true,
+          selected: groupName === this.selectedGroupName,
+          children: this.groupedConfigs[groupName]
         }
-        let index = 0
-        return Object.keys(groups).map(groupName => {
-          const node = {
-            title: groupName,
-            expand: true,
-            selected: index === this.selectedNodeIndex,
-            children: groups[groupName]
-          }
-          index = index + groups[groupName].length + 1
-          return node
-        })
+        return node
+      })
+    },
+    // 选中的节点数据
+    selectedConfigNode () {
+      if (this.selectedConfigId) {
+        return this.configs.find(config => config.id === this.selectedConfigId)
       }
-      return []
+      return null
     },
     // 按钮禁用状态
     disabled () {
-      if (!this.selectedNode) {
+      if (!this.selectedConfigId && !this.selectedGroupName) {
         return { remove: true, up: true, down: true }
       }
-      if (this.selectedNode.children) {
+      if (this.selectedGroupName) {
         // 选中的是分组
-        const index = this.groupedNodes.indexOf(this.selectedNode)
-        const isUngrouped = this.selectedNode.title === '未分组'
+        const index = this.groupedNodes.findIndex(node => node.title === this.selectedGroupName)
+        const isUngrouped = this.selectedGroupName === '未分组'
         return {
           remove: isUngrouped,
-          up: index < 1,
-          down: index > this.groupedNodes.length - 2
+          up: isUngrouped || index < 1,
+          down: isUngrouped || index > this.groupedNodes.length - 2
         }
       }
       // 选中的是配置节点
-      const prev = this.$refs.tree.flatState[this.selectedNodeIndex - 1]
-      const next = this.$refs.tree.flatState[this.selectedNodeIndex + 1]
+      const currentGroup = this.selectedConfigNode.group || '未分组'
+      const group = this.groupedConfigs[currentGroup]
+      const inGroupIndex = group.indexOf(this.selectedConfigNode)
       return {
         remove: false,
         // 前一项不存在或前一项是分组节点
-        up: !prev || !!prev.node.children,
+        up: inGroupIndex <= 0,
         // 后一项不存在或后一项是分组节点
-        down: !next || !!next.node.children
+        down: inGroupIndex >= group.length - 1
       }
     }
   },
   watch: {
     'appConfig.index' (v) {
-      this.selectedConfigIndex = v
-      this.setSelectedNodeIndex()
+      this.selectedGroupName = ''
+      this.selectedConfigId = this.selectedConfig ? this.selectedConfig.id : ''
+    },
+    'editingGroup.updated' (v) {
+      if (v) {
+        this.updateEditingGroup({ updated: false })
+        this.selectedGroupName = this.editingGroup.title
+      }
     }
   },
   methods: {
@@ -121,23 +117,22 @@ export default {
     cloneConfig (config, selected) {
       return { title: `${config.remarks || config.server} (${config.server}:${config.server_port})`, selected, ...config }
     },
-    // 设置选中节点的索引
-    setSelectedNodeIndex () {
-      if (this.configs.length) {
-        this.selectedNodeIndex = this.$refs.tree.getSelectedNodes()[0].nodeKey
-      }
+    // 设置节点选中状态
+    setSelected (group, config) {
+      this.selectedGroupName = group
+      this.selectedConfigId = config
     },
     // 点击节点时
     onSelect (selection) {
       const node = selection[0]
-      this.selectedNodeIndex = node.nodeKey
-      this.selectedNode = node
       if (!node.children) {
         // 选中配置项
+        this.setSelected('', node.id)
         this.setCurrentConfig(node)
         this.updateEditingGroup({ show: false })
       } else {
         // 选中分组
+        this.setSelected(node.title, '')
         this.updateEditingGroup({ show: true, title: node.title === '未分组' ? '' : node.title })
       }
     },
@@ -152,31 +147,25 @@ export default {
     },
     // 新增
     create () {
-      const newConfig = new Config(this.selectedNode)
-      newConfig.selected = false
+      const newConfig = new Config(this.selectedConfigNode)
       const clone = this.appConfig.configs.slice()
       clone.push(newConfig)
       this.updateConfigs(clone)
-      this.selectedConfigIndex = this.appConfig.configs.length - 1
-      this.$nextTick(() => {
-        this.selectedNodeIndex = this.$refs.tree.flatState.findIndex(node => node.node.id === newConfig.id)
-      })
+      this.setSelected('', newConfig.id)
+      this.updateEditingGroup({ show: false })
     },
     // 删除分组
     removeGroup () {
       const clone = this.appConfig.configs.slice()
-      this.updateConfigs(clone.filter(config => config.group !== this.selectedNode.title))
-      this.selectedNodeIndex = 0
+      this.updateConfigs(clone.filter(config => config.group !== this.selectedGroup))
+      this.setSelected('', this.selectedConfig ? this.selectedConfig.id : '')
     },
     // 删除
     remove () {
       const clone = this.appConfig.configs.slice()
-      const index = clone.findIndex(config => config.id === this.selectedNode.id)
+      const index = clone.findIndex(config => config.id === this.selectedConfigId)
       clone.splice(index, 1)
       this.updateConfigs(clone)
-      if (clone.length === 0) {
-        this.selectedNodeIndex = -1
-      }
     },
     // 上/下移 direction = 1 上移 其它 下移
     updown (direction = 1) {
@@ -207,11 +196,6 @@ export default {
       }
       this.updateConfigs(this.flatNodeGroups(clone))
     }
-  },
-  mounted () {
-    this.$nextTick(() => {
-      this.setSelectedNodeIndex()
-    })
   }
 }
 </script>

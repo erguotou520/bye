@@ -3,7 +3,7 @@ import { appConfig$ } from './data'
 import * as handler from './tray-handler'
 import { startProxy } from './proxy'
 import trayIcon from '../trayicons'
-import { isMac, isWin, isLinux } from '../shared/utils'
+import { isMac, isWin, isLinux, groupConfigs } from '../shared/utils'
 
 let tray
 let menus
@@ -14,19 +14,26 @@ let menus
  * @param {*Number} selectedIndex 选中的ssr配置的索引
  */
 function generateConfigSubmenus (configs, selectedIndex) {
-  const submenus = configs.map((config, index) => {
+  const groups = groupConfigs(configs)
+  const submenus = Object.keys(groups).map(key => {
+    const configs = groups[key]
     return {
-      label: `${config.remarks}(${config.server}:${config.server_port})`,
-      type: 'checkbox',
-      checked: index === selectedIndex,
-      click (e) {
-        // set others to false
-        e.menu.items.forEach(submenu => {
-          submenu.checked = false
-        })
-        e.checked = true
-        handler.switchConfig(e.menu.items.indexOf(e))
-      }
+      label: `${configs.some(config => config.checked) ? '● ' : ''}${key}`,
+      submenu: configs.map(config => {
+        return {
+          label: `${config.remarks}(${config.server}:${config.server_port})`,
+          type: 'checkbox',
+          checked: config.checked,
+          click (e) {
+            // set others to false
+            e.menu.items.forEach(submenu => {
+              submenu.checked = false
+            })
+            e.checked = true
+            handler.switchConfig(e.menu.items.indexOf(e))
+          }
+        }
+      })
     }
   })
   submenus.push({ label: '订阅管理', click: handler.showSubscribes })

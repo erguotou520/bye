@@ -1,4 +1,5 @@
 import Base64 from 'urlsafe-base64'
+import { merge, generateID } from './utils'
 
 function encode (str) {
   return Base64.encode(Buffer.from(str, 'utf-8'))
@@ -6,16 +7,6 @@ function encode (str) {
 
 function decode (str) {
   return Base64.decode(str).toString('utf-8')
-}
-
-// 生成随机ID
-function generateID () {
-  const seed = 'ABCDEF01234567890'
-  const arr = []
-  for (let i = 0; i < 32; i++) {
-    arr.push(seed[Math.floor(Math.random() * seed.length)])
-  }
-  return arr.join('')
 }
 
 export default class Config {
@@ -29,7 +20,7 @@ export default class Config {
     this.obfsparam = ''
     this.remarks = ''
     this.group = ''
-    Object.assign(this, config)
+    merge(this, config)
     this.id = generateID()
     this.remarks_base64 = this.remarks ? encode(this.remarks) : ''
     this.enable = true

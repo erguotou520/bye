@@ -5,13 +5,13 @@
     </i-form-item>
     <span>
       <i-button :disabled="form.group === editingGroup.title"
-        @click="form.group = editingGroup">重置</i-button>
+        @click="form.group = editingGroup.title">重置</i-button>
       <i-button class="ml-1" type="primary" @click="rename">保存</i-button>
     </span>
   </i-form>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -32,6 +32,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateEditingGroup']),
     ...mapActions(['updateConfigs']),
     rename () {
       if (this.form.group !== this.editingGroup.title) {
@@ -42,6 +43,7 @@ export default {
           }
         })
         this.updateConfigs(clone)
+        this.updateEditingGroup({ updated: true, title: this.form.group })
       }
     }
   }

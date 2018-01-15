@@ -161,6 +161,37 @@ export function clone (obj, deep = false) {
   }
 }
 
+// 生成随机ID
+export function generateID () {
+  const seed = 'ABCDEF01234567890'
+  const arr = []
+  for (let i = 0; i < 32; i++) {
+    arr.push(seed[Math.floor(Math.random() * seed.length)])
+  }
+  return arr.join('')
+}
+
+// 为配置分组
+export function groupConfigs (configs) {
+  const groups = {}
+  const ungrouped = []
+  configs.forEach(node => {
+    if (node.group) {
+      if (groups[node.group]) {
+        groups[node.group].push(node)
+      } else {
+        groups[node.group] = [node]
+      }
+    } else {
+      ungrouped.push(node)
+    }
+  })
+  if (ungrouped.length) {
+    groups['未分组'] = ungrouped
+  }
+  return groups
+}
+
 /**
  * 判断选择的local.py的路径是否正确
  * @param {*String} path local.py所在的目录

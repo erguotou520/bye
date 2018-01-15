@@ -17,8 +17,8 @@
       </i-input>
     </div>
     <div class="flex mt-2 flex-jc-center">
-      <i-button class="config-btn" type="default" @click="cancel">取消</i-button>
-      <i-button class="config-btn ml-3" type="primary" :disabled="!appConfig.configs.length" @click="save">确定</i-button>
+      <i-button class="w-6r" type="default" @click="cancel">取消</i-button>
+      <i-button class="w-6r ml-3" type="primary" :disabled="!appConfig.configs.length" @click="save">确定</i-button>
     </div>
   </div>
 </template>

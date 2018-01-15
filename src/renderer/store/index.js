@@ -31,7 +31,7 @@ export default new Vuex.Store({
       tab: 'common'
     },
     editingConfig,
-    editingGroup: { show: false, title: '' },
+    editingGroup: { show: false, title: '', updated: false },
     methods: ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
       'aes-128-ctr', 'aes-192-ctr', 'aes-256-ctr', 'camellia-128-cfb', 'camellia-192-cfb', 'camellia-256-cfb',
       'bf-cfb', 'rc4', 'rc4-md5', 'rc4-md5-6', 'salsa20', 'chacha20', 'chacha20-ietf'
@@ -97,8 +97,12 @@ export default new Vuex.Store({
         commit('updateView', { page: views[2] })
       }
     },
-    updateConfig ({ commit }, targetConfig) {
-      commit('updateConfig', targetConfig)
+    updateConfig ({ getters, commit }, targetConfig) {
+      let index
+      if (targetConfig.configs && getters.selectedConfig) {
+        index = targetConfig.configs.findIndex(config => config.id === getters.selectedConfig.id)
+      }
+      commit('updateConfig', { ...targetConfig, index })
       syncConfig(targetConfig)
     },
     updateConfigs ({ dispatch }, _configs) {
@@ -119,5 +123,8 @@ export default new Vuex.Store({
         dispatch('updateConfig', { configs: [...state.appConfig.configs, ...configs] })
       }
     }
+  },
+  getters: {
+    selectedConfig: state => state.appConfig.configs[state.appConfig.index]
   }
 })
