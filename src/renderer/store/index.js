@@ -4,6 +4,7 @@ import defaultConfig from '../../shared/config'
 import { merge, clone } from '../../shared/utils'
 import Config from '../../shared/ssr'
 import { syncConfig } from '../ipc'
+import { STORE_KEY_FEATURE } from '../constants'
 Vue.use(Vuex)
 
 // 当前编辑的配置项
@@ -12,8 +13,13 @@ const editingConfig = new Config()
 const editingConfigBak = new Config()
 // ssr config 有效key
 const configKeys = Object.keys(editingConfig)
+// 页面
+const views = ['Feature', 'Setup', 'ManagePanel', 'Options']
 // 编辑组的名称
 let groupTitleBak = ''
+// 功能页面是否已展示过
+const featureReaded = !!window.localStorage.getItem(STORE_KEY_FEATURE)
+
 export default new Vuex.Store({
   state: {
     appConfig: defaultConfig,
@@ -21,9 +27,8 @@ export default new Vuex.Store({
       defaultSSRDownloadDir: ''
     },
     view: {
-      page: '',
-      tab: 'common',
-      fromMain: false
+      page: featureReaded ? views[1] : views[0],
+      tab: 'common'
     },
     editingConfig,
     editingGroup: { show: false, title: '' },
@@ -51,6 +56,14 @@ export default new Vuex.Store({
     updateView (state, targetView) {
       merge(state.view, targetView)
     },
+    // 返回上一个页面
+    prevView (state) {
+      state.view.page = views[views.indexOf(state.view.page) - 1]
+    },
+    // 下一个页面
+    nextView (state) {
+      state.view.page = views[views.indexOf(state.view.page) + 1]
+    },
     // 设置选中的配置
     setCurrentConfig (state, ssrConfig) {
       merge(state.editingConfig, ssrConfig)
@@ -59,7 +72,7 @@ export default new Vuex.Store({
     // 重置状态
     resetState (state) {
       merge(state.editingConfig, editingConfigBak)
-      merge(state.view, { fromMain: false, page: '', tab: 'common' })
+      merge(state.view, { page: views.indexOf(state.view.page) >= 2 ? views[2] : state.view.page, tab: 'common' })
       state.editingGroup.title = groupTitleBak
     },
     // 更新当前编辑的组
@@ -79,6 +92,9 @@ export default new Vuex.Store({
       const initialSelected = config.configs[config.index]
       if (initialSelected) {
         commit('setCurrentConfig', initialSelected)
+      }
+      if (config.ssrPath) {
+        commit('updateView', { page: views[2] })
       }
     },
     updateConfig ({ commit }, targetConfig) {

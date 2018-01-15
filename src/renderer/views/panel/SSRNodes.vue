@@ -4,22 +4,23 @@
       empty-text="暂无节点，点击添加添加新节点" :enable-cancel-select="false"
       :data="groupedNodes" @on-select-change="onSelect" ref="tree"></i-tree>
     <div class="flex mt-1 flex-jc-center">
-      <i-button type="primary" class="config-btn mr-1" @click="create">添加</i-button>
+      <i-button type="primary" class="w-6r mr-1" @click="create">添加</i-button>
       <i-poptip v-if="selectedNode&&selectedNode.children" confirm title="确定删除该分组下所有节点？"
         @on-ok="removeGroup">
-        <i-button class="config-btn" :disabled="disabled.remove">删除</i-button>
+        <i-button class="w-6r" :disabled="disabled.remove">删除</i-button>
       </i-poptip>
-      <i-button v-else class="config-btn" :disabled="disabled.remove" @click="remove">删除</i-button>
+      <i-button v-else class="w-6r" :disabled="disabled.remove" @click="remove">删除</i-button>
     </div>
     <div class="flex mt-1 flex-jc-center">
-      <i-button class="config-btn mr-1" :disabled="disabled.up" @click="updown(1)">上移</i-button>
-      <i-button class="config-btn" :disabled="disabled.down" @click="updown(-1)">下移</i-button>
+      <i-button class="w-6r mr-1" :disabled="disabled.up" @click="updown(1)">上移</i-button>
+      <i-button class="w-6r" :disabled="disabled.down" @click="updown(-1)">下移</i-button>
     </div>
   </div>
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
 import Config from '../../../shared/ssr'
+
 export default {
   data () {
     return {

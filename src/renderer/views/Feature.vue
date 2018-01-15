@@ -32,9 +32,21 @@
         <p>ssr和electron-ssr源代码均开放</p>
       </i-col>
     </i-row>
-    <i-button type="primary" class="text-center mt-64" @click="$emit('finished')">知道了</i-button>
+    <i-button type="primary" class="text-center mt-64" @click="done">知道了</i-button>
   </app-view>
 </template>
+<script>
+import { STORE_KEY_FEATURE } from '../constants'
+export default {
+  methods: {
+    done () {
+      localStorage.setItem(STORE_KEY_FEATURE, 'read')
+      this.$emit('finished')
+    }
+  }
+}
+</script>
+
 <style lang="stylus" module>
 @import '../assets/styles/variable'
 .svg

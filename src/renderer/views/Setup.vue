@@ -88,6 +88,7 @@
 <script>
 import { ipcRenderer } from 'electron'
 import { remote } from 'electron'
+import { syncConfig } from '../ipc'
 import { isSSRPathAvaliable } from '../../shared/utils'
 import * as events from '../../shared/events'
 
@@ -167,7 +168,8 @@ export default {
     setup () {
       this.$refs.form.validate(valid => {
         if (valid) {
-          this.$emit('finished', { ssrPath: this.form.ssrPath })
+          syncConfig({ ssrPath: this.form.ssrPath })
+          this.$emit('finished')
         }
       })
     }
