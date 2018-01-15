@@ -106,7 +106,14 @@ export async function openLog () {
 
 // 打开选项设置页面
 export function showOptions () {
+  showWindow()
   sendData(events.EVENT_APP_SHOW_PAGE, { page: 'Options' })
+}
+
+// 打开订阅管理页面
+export function showSubscribes () {
+  showWindow()
+  sendData(events.EVENT_APP_SHOW_PAGE, { page: 'Options', tab: 'subscribes' })
 }
 
 // 打开窗口

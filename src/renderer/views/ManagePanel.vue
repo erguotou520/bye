@@ -22,8 +22,3 @@ export default {
   }
 }
 </script>
-<style lang="stylus">
-.view-panel
-  .config-btn
-    width 6rem
-</style>

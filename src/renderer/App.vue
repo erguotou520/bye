@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <transition name="page-view">
-      <component :is="activeView" @finished="onStepFinished"></component>
+      <component :is="activeView" @back="onBack" @finished="onStepFinished"></component>
     </transition>
   </div>
 </template>
@@ -14,7 +14,7 @@ import ManagePanel from './views/ManagePanel'
 import { syncConfig } from './ipc'
 import { STORE_KEY_FEATURE } from './constants'
 
-const views = ['Feature', 'Setup', 'ManagePanel']
+const views = ['Feature', 'Setup', 'ManagePanel', 'Options']
 const ls = window.localStorage
 export default {
   data () {
@@ -25,12 +25,28 @@ export default {
     }
   },
   computed: {
-    ...mapState(['appConfig', 'appMetaConfig']),
+    ...mapState(['appConfig', 'appMetaConfig', 'view']),
     activeView () {
       return views[this.activeIndex]
     }
   },
+  watch: {
+    view: {
+      deep: true,
+      handler (v) {
+        if (v.fromMain) {
+          const targetIndex = views.indexOf(v.page)
+          if (targetIndex > -1) {
+            this.activeIndex = targetIndex
+          }
+        }
+      }
+    }
+  },
   methods: {
+    onBack () {
+      this.activeIndex--
+    },
     onStepFinished (data) {
       if (this.activeIndex === 0) {
         ls.setItem(STORE_KEY_FEATURE, 'read')
@@ -52,4 +68,6 @@ export default {
 @import '~erguotou-iview/dist/styles/iview.css'
 @import './assets/styles'
 @import './assets/base.styl'
+.w-6r
+  width 6rem
 </style>

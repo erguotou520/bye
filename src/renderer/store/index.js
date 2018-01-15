@@ -20,6 +20,11 @@ export default new Vuex.Store({
     meta: {
       defaultSSRDownloadDir: ''
     },
+    view: {
+      page: '',
+      tab: 'common',
+      fromMain: false
+    },
     editingConfig,
     editingGroup: { show: false, title: '' },
     methods: ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
@@ -42,6 +47,10 @@ export default new Vuex.Store({
       merge(state.meta, targetMeta)
       console.log('meta updated: ', targetMeta)
     },
+    // 更改页面视图
+    updateView (state, targetView) {
+      merge(state.view, targetView)
+    },
     // 设置选中的配置
     setCurrentConfig (state, ssrConfig) {
       merge(state.editingConfig, ssrConfig)
@@ -50,6 +59,7 @@ export default new Vuex.Store({
     // 重置状态
     resetState (state) {
       merge(state.editingConfig, editingConfigBak)
+      merge(state.view, { fromMain: false, page: '', tab: 'common' })
       state.editingGroup.title = groupTitleBak
     },
     // 更新当前编辑的组

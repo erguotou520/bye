@@ -33,6 +33,9 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
       }
     }
   })
+}).on(events.EVENT_APP_SHOW_PAGE, (e, targetView) => {
+  console.log('received view update: ', targetView.page, targetView.tab)
+  store.commit('updateView', { ...targetView, fromMain: true })
 }).on(events.EVENT_APP_ERROR_MAIN, () => {
 
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {

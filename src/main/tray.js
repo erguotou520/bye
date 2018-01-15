@@ -29,10 +29,8 @@ function generateConfigSubmenus (configs, selectedIndex) {
       }
     }
   })
-  submenus.push({
-    label: '编辑服务器',
-    click: handler.showMainWindow
-  })
+  submenus.push({ label: '订阅管理', click: handler.showSubscribes })
+  submenus.push({ label: '编辑服务器', click: handler.showMainWindow })
   return submenus
 }
 

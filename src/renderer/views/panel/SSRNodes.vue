@@ -122,7 +122,9 @@ export default {
     },
     // 设置选中节点的索引
     setSelectedNodeIndex () {
-      this.selectedNodeIndex = this.$refs.tree.getSelectedNodes()[0].nodeKey
+      if (this.configs.length) {
+        this.selectedNodeIndex = this.$refs.tree.getSelectedNodes()[0].nodeKey
+      }
     },
     // 点击节点时
     onSelect (selection) {

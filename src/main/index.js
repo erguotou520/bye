@@ -3,6 +3,7 @@ import AutoLaunch from 'auto-launch'
 import './bootstrap'
 import { appConfig$ } from './data'
 import { destroyTray } from './tray'
+import './ipc'
 import { serverPac, stopPacServer } from './pac'
 import { stop as stopCommand } from './client'
 import { createWindow, getWindow, destroyWindow } from './window'
@@ -19,7 +20,7 @@ if (process.env.NODE_ENV !== 'development') {
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
-  logger.debug('Event:window-all-closed')
+  // logger.debug('Event:window-all-closed')
   if (process.platform !== 'darwin') {
     app.quit()
   }
