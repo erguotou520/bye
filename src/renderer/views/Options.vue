@@ -1,15 +1,34 @@
 <template>
   <app-view name="options" class="bg-white">
-    <i-tabs class="flex-1" :value="view.tab" @on-click="name => updateView({ tab: name })">
+    <i-tabs class="flex-1 w-100" :value="view.tab" @on-click="name => updateView({ tab: name })">
       <i-tab-pane label="通用设置" name="common">
-        123
+        <div class="options-container px-2 pb-2 scroll-y">
+          <i-form ref="form" class="mt-2" :model="form" :rules="rules" :label-width="120">
+            <i-form-item prop="ssrPath" label="SSR python目录">
+              <i-input v-model="form.ssrPath" readonly placeholder="请选择shadowsocks目录" style="width:200px"/>
+              <i-button type="primary" @click="selectPath">选择ssr目录</i-button>
+            </i-form-item>
+            <i-form-item label="开机自启动">
+              <i-checkbox v-model="form.autoLaunch"/>
+            </i-form-item>
+            <i-form-item label="局域网共享">
+              <i-checkbox v-model="form.shareOverlan"/>
+            </i-form-item>
+            <i-form-item label="本地监听端口">
+              <i-input-number v-model="form.localPort" :min="0" :max="65535" />
+            </i-form-item>
+            <i-form-item label="pac端口">
+              <i-input-number v-model="form.pacPort" :min="0" :max="65535" />
+            </i-form-item>
+          </i-form>
+        </div>
       </i-tab-pane>
       <i-tab-pane label="SSR设置" name="ssr">
         <div class="options-container px-2 pb-2 scroll-y">
-          <i-alert type="info" closable>双击可修改，修改后回车可保存，esc可取消修改。</i-alert>
+          <i-alert v-if="showTip" type="info" closable @on-close="closeTip">双击可修改，修改后回车可保存，esc可取消修改。</i-alert>
           <fieldset class="px-1 py-1">
             <legend class="ml-1">SSR加密方法</legend>
-            <edit-tag v-for="method in methods" :key="method" :name="methods"
+            <edit-tag v-for="method in methods" :key="method" :name="method"
               @on-close="removeMethod" @on-update="v => updateMethod(method, v)"></edit-tag>
             <i-input v-model="method" class="create-input" placeholder="输入后回车可新增" size="small" @keyup.enter.native="addMethod" icon="plus"/>
           </fieldset>
@@ -38,12 +57,38 @@
   </app-view>
 </template>
 <script>
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
+import { remote } from 'electron'
 import { hideWindow } from '../ipc'
+import { STORE_KEY_SSR_TIP } from '../constants'
 import EditTag from '../components/EditTag'
+import { isSSRPathAvaliable } from '../../shared/utils'
+
+const { dialog } = remote.require('electron')
+const ls = window.localStorage
 export default {
   data () {
+    const appConfig = this.$store.state.appConfig
     return {
+      form: {
+        ssrPath: appConfig.ssrPath,
+        autoLaunch: appConfig.autoLaunch,
+        shareOverlan: appConfig.shareOverlan,
+        localPort: appConfig.localPort,
+        pacPort: appConfig.pacPort
+      },
+      rules: {
+        ssrPath: [
+          { validator: (rule, value, callback) => {
+            if (isSSRPathAvaliable(value)) {
+              callback()
+            } else {
+              callback('该目录不正确，请重新选择')
+            }
+          } }
+        ]
+      },
+      showTip: !ls.getItem(STORE_KEY_SSR_TIP),
       method: '',
       protocol: '',
       obfs: ''
@@ -53,10 +98,46 @@ export default {
     EditTag
   },
   computed: {
-    ...mapState(['view', 'methods', 'protocols', 'obfses'])
+    ...mapState(['appConfig', 'view', 'methods', 'protocols', 'obfses'])
+  },
+  watch: {
+    'appConfig.ssrPath' (v) {
+      this.ssrPath = v
+    },
+    'appConfig.autoLaunch' (v) {
+      this.autoLaunch = v
+    },
+    'appConfig.shareOverlan' (v) {
+      this.shareOverlan = v
+    },
+    'appConfig.localPort' (v) {
+      this.localPort = v
+    },
+    'appConfig.pacPort' (v) {
+      this.pacPort = v
+    }
   },
   methods: {
     ...mapMutations(['resetState', 'updateView', 'updateMethods', 'updateProtocols', 'updateObfses']),
+    ...mapActions(['updateConfig']),
+    closeTip () {
+      ls.setItem(STORE_KEY_SSR_TIP, true)
+    },
+    // 选择目录
+    selectPath () {
+      const path = dialog.showOpenDialog({
+        properties: ['openDirectory']
+      })
+      if (path && path.length) {
+        this.form.ssrPath = path[0]
+        this.$refs.form.validate(valid => {
+          if (valid) {
+            this.updateConfig({ ssrPath: this.form.ssrPath })
+          }
+        })
+      }
+    },
+
     addMethod () {
       if (this.method) {
         const clone = this.methods.slice()

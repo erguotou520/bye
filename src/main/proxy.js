@@ -8,7 +8,6 @@ import { currentConfig } from './data'
 // import logger from './logger'
 import { isArray } from '../shared/utils'
 import { isWin, isMac, isLinux } from '../shared/env'
-import { pacPath } from './bootstrap'
 
 // windows sysproxy.exe文件的路径
 const winToolPath = path.resolve(__dirname, '../lib/sysproxy.exe')

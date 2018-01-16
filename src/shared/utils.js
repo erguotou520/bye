@@ -200,7 +200,6 @@ export function groupConfigs (configs, selectedIndex) {
  */
 export function isSSRPathAvaliable (folderPath) {
   const localPyPath = path.join(folderPath, 'local.py')
-  console.log(localPyPath)
+  console.log(localPyPath, fs.existsSync(localPyPath))
   return fs.existsSync(localPyPath)
 }
-

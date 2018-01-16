@@ -122,7 +122,7 @@ export default {
       const path = dialog.showOpenDialog({
         properties: ['openDirectory']
       })
-      if (path.length) {
+      if (path && path.length) {
         this.form.ssrPath = path[0]
         this.$refs.form.validate(valid => {
           if (valid) {

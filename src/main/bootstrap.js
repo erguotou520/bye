@@ -13,7 +13,7 @@ export const logPath = path.join(appConfigDir, 'logs/shadowsocksr-client.log')
 // ssr运行日志路径
 export const ssrLogPath = path.join(appConfigDir, 'logs/shadowsocksr.log')
 // 默认的ssr下载目录
-export const defaultSSRDownloadDir = path.join(appConfigDir, 'shadowsocksr')
+export const defaultSSRDownloadDir = path.join(appConfigDir, 'shadowsocksr/shadowsocks')
 // pac文件下载目录
 export const pacPath = path.join(appConfigDir, 'pac.txt')
 

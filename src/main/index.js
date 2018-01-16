@@ -4,7 +4,7 @@ import './bootstrap'
 import { appConfig$ } from './data'
 import { destroyTray } from './tray'
 import './ipc'
-import { serverPac, stopPacServer } from './pac'
+import { stopPacServer } from './pac'
 import { stop as stopCommand } from './client'
 import { createWindow, getWindow, destroyWindow } from './window'
 import logger from './logger'
@@ -20,7 +20,7 @@ if (process.env.NODE_ENV !== 'development') {
 app.on('ready', () => {
   createWindow()
   // pac服务
-  serverPac()
+  // serverPac()
 })
 
 app.on('window-all-closed', () => {

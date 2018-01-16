@@ -6,3 +6,5 @@ export const STORE_KEY_SSR_METHODS = 'ssr.methods'
 export const STORE_KEY_SSR_PROTOCOLS = 'ssr.protocols'
 // ssr obfses
 export const STORE_KEY_SSR_OBFSES = 'ssr.obfses'
+// ssr配置页面提示标语
+export const STORE_KEY_SSR_TIP = 'ssr.tip'
