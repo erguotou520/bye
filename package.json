@@ -68,7 +68,9 @@
       "target": [
         "deb",
         "rpm",
-        "tar.gz"
+        "tar.gz",
+        "pacman",
+        "snap"
       ]
     },
     "publish": [

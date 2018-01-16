@@ -33,7 +33,9 @@ function runCommand (commands) {
 function runMacCommand (commands) {
   if (commands) {
     commands.forEach(command => {
-      exec(command, (err, stdout, stderr) => {
+      exec(command, {
+        name: 'ssrclient'
+      }, (err, stdout, stderr) => {
         if (err || stderr) {
           logger.error(err || stderr)
         } else {
