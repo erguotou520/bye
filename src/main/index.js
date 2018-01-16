@@ -17,7 +17,11 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  // pac服务
+  serverPac()
+})
 
 app.on('window-all-closed', () => {
   // logger.debug('Event:window-all-closed')
@@ -65,9 +69,6 @@ appConfig$.subscribe(data => {
     })
   }
 })
-
-// 下载pac文件
-serverPac()
 
 // 未捕获的rejections
 process.on('unhandledRejection', (reason, p) => {

@@ -1,48 +1,4 @@
 <template>
-  <!-- <app-view name="setup">
-    <h1 class="mb-4">请选择ssr的关联方式</h1>
-    <div class="flex">
-      <setup-card v-if="view!=='local'" @clicked="view='auto'" @back="view=''">
-        <span>自动下载ssr</span>
-        <template slot="detail">
-          <template v-if="!autoClicked">
-            <i-alert type="info" show-icon>
-              <i-icon slot="icon" type="ios-lightbulb-outline" size="32"></i-icon>
-              <div slot="desc">
-                <p>系统将会自动下载ShadowsocksR项目至指定位置并完成初始化</p>
-              </div>
-            </i-alert>
-            <i-button class="mt-2" type="primary" @click="autoStart">点击开始</i-button>
-          </template>
-          <i-circle v-else :persent="autoPercent">
-            <span v-if="autoPercent<100" class="font-24">{{autoPercent}}%</span>
-            <span v-else type="ios-checkmark-empty" size="60" style="color:#5cb85c"></span>
-          </i-circle>
-        </template>
-      </setup-card>
-      <setup-card v-if="view!=='auto'" @clicked="view='local'" @back="view=''">
-        <span>手动选择本地ssr</span>
-        <template slot="detail">
-          <i-alert type="info" show-icon>
-            <i-icon slot="icon" type="ios-lightbulb-outline" size="32"></i-icon>
-            <div slot="desc">
-              <p>请选择本地ShadowsocksR项目下的shadowsocks目录。</p>
-              <p class="mb-1">如果本地没有该项目可前往<external-link href="https://github.com/shadowsocksr-backup/shadowsocksr/tree/dev"></external-link>下载。</p>
-              <b>请确保所选的目录下有<code class="blue">local.py</code>文件</b>
-            </div>
-          </i-alert>
-          <i-form ref="form" class="mt-2" :model="form" :rules="rules" inline>
-            <i-form-item prop="ssrPath">
-              <i-input v-model="form.ssrPath" readonly placeholder="请选择shadowsocks目录" style="width:360px"/>
-            </i-form-item>
-            <i-form-item>
-              <i-button type="primary" @click="selectPath">选择ssr目录</i-button>
-            </i-form-item>
-          </i-form>
-        </template>
-      </setup-card>
-    </div>
-  </app-view> -->
   <app-view name="setup" class="px-2">
     <i-alert class="my-2" type="info" show-icon>
       <i-icon slot="icon" type="ios-lightbulb-outline" size="32"></i-icon>
@@ -66,7 +22,7 @@
               <i-alert type="error" show-icon style="margin-bottom:0">
                 {{autoError}}
               </i-alert>
-              <i-button class="mt-2" type="primary" @click="autoStart">重试</i-button>
+              <i-button class="mt-2" type="primary" @click="restart">重试</i-button>
             </template>
           </i-form-item>
         </i-form>
@@ -129,6 +85,11 @@ export default {
     back () {
       this.view = ''
     },
+    // 重试
+    restart () {
+      this.autoPercent = 0
+      this.autoStart()
+    },
     // 自动模式
     autoStart () {
       this.autoError = ''
@@ -184,19 +145,6 @@ export default {
   .px-2px
     padding-left 2px
     padding-right @padding-left
-  // > div
-  //   &::before
-  //     content ''
-  //     position absolute
-  //     left 0
-  //     top 0
-  //     width 100%
-  //     height 100%
-  //     background-color rgba(0, 0, 0, .3)
-  //     z-index 2
-  //     transition all .3s
-  //   &:hover
-  //     &::before
-  //       background-color transparent
-  //       z-index -1
+  .ivu-progress-inner
+    background-color lighten($color-light-primary, 60%)
 </style>

@@ -22,6 +22,8 @@ import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import Config from '../../../shared/ssr'
 import { groupConfigs } from '../../../shared/utils'
 
+// 避免因上/下移动分组/配置而导致index改变后选中项不是group的问题
+let preventIndexAffect = false
 export default {
   data () {
     return {
@@ -79,10 +81,12 @@ export default {
         // 选中的是分组
         const index = this.groupedNodes.findIndex(node => node.title === this.selectedGroupName)
         const isUngrouped = this.selectedGroupName === '未分组'
+        const isPrevUngrouped = index < 1 ? false : this.groupedNodes[index - 1].title === '未分组'
+        const isNextUngrouped = index > this.groupedNodes.length - 2 ? false : this.groupedNodes[index + 1].title === '未分组'
         return {
           remove: isUngrouped,
-          up: isUngrouped || index < 1,
-          down: isUngrouped || index > this.groupedNodes.length - 2
+          up: isUngrouped || isPrevUngrouped || index < 1,
+          down: isUngrouped || isNextUngrouped || index > this.groupedNodes.length - 2
         }
       }
       // 选中的是配置节点
@@ -100,14 +104,21 @@ export default {
   },
   watch: {
     'appConfig.index' (v) {
-      this.selectedGroupName = ''
-      this.selectedConfigId = this.selectedConfig ? this.selectedConfig.id : ''
+      if (preventIndexAffect) {
+        preventIndexAffect = false
+      } else {
+        this.selectedGroupName = ''
+        this.selectedConfigId = this.selectedConfig ? this.selectedConfig.id : ''
+      }
     },
     'editingGroup.updated' (v) {
       if (v) {
         this.updateEditingGroup({ updated: false })
         this.selectedGroupName = this.editingGroup.title
       }
+    },
+    'selectedConfigId' () {
+      this.setCurrentConfig(this.selectedConfigNode)
     }
   },
   methods: {
@@ -128,7 +139,6 @@ export default {
       if (!node.children) {
         // 选中配置项
         this.setSelected('', node.id)
-        this.setCurrentConfig(node)
         this.updateEditingGroup({ show: false })
       } else {
         // 选中分组
@@ -166,34 +176,28 @@ export default {
       const index = clone.findIndex(config => config.id === this.selectedConfigId)
       clone.splice(index, 1)
       this.updateConfigs(clone)
+      const next = clone[index]
+      const prev = clone[index - 1]
+      this.setSelected('', next ? next.id : (prev ? prev.id : ''))
     },
     // 上/下移 direction = 1 上移 其它 下移
     updown (direction = 1) {
-      const node = this.selectedNode
       const clone = this.groupedNodes.slice()
-      if (node.children) {
+      if (this.selectedGroupName) {
         // 分组上/下移
-        const index = this.groupedNodes.indexOf(node)
-        clone.splice(index, 1)
-        clone.splice(direction === 1 ? index - 1 : index + 1, 0, node)
+        const index = clone.findIndex(node => node.title === this.selectedGroupName)
+        const group = clone.splice(index, 1)
+        clone.splice(direction === 1 ? index - 1 : index + 1, 0, group[0])
       } else {
         // 节点上/下移
-        let keyCount = 0
-        for (let i = 0; i < clone.length; i++) {
-          // 计算分组中的nodeKey累计
-          keyCount = keyCount + clone[i].children.length + 1
-          // 如果nodeKey总和大于选中节点的nodeKey或者为最后一个分组，则选中节点在该分组
-          if (keyCount >= node.nodeKey || i === clone.length - 1) {
-            const cloneChildren = clone[i].children.slice()
-            const index = clone[i].children.indexOf(node)
-            cloneChildren.splice(index, 1)
-            cloneChildren.splice(direction === 1 ? index - 1 : index + 1, 0, node)
-            clone[i].children = cloneChildren
-            break
-          }
-        }
-        direction === 1 ? this.selectedNodeIndex-- : this.selectedNode.nodeKey++
+        const currentGroup = this.selectedConfigNode.group || '未分组'
+        const group = clone.find(node => node.title === currentGroup)
+        const childrenClone = group.children.slice()
+        const inGroupIndex = childrenClone.findIndex(node => node.id === this.selectedConfigId)
+        childrenClone.splice(direction === 1 ? inGroupIndex - 1 : inGroupIndex + 1, 0, childrenClone.splice(inGroupIndex, 1)[0])
+        group.children = childrenClone
       }
+      preventIndexAffect = true
       this.updateConfigs(this.flatNodeGroups(clone))
     }
   }

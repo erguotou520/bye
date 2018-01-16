@@ -19,6 +19,7 @@ export function runCommand (command) {
     child.stdout.on('data', logger.log)
     child.stderr.on('data', logger.error)
     child.on('close', logger.log)
+    return child
   }
 }
 

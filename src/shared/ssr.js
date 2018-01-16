@@ -22,8 +22,14 @@ export default class Config {
     this.group = ''
     merge(this, config)
     this.id = generateID()
-    this.remarks_base64 = this.remarks ? encode(this.remarks) : ''
     this.enable = true
+    Object.defineProperty(this, 'remarks_base64', {
+      enumerable: true,
+      get () {
+        return this.remarks ? encode(this.remarks) : ''
+      },
+      set () {}
+    })
   }
 
   isValid () {

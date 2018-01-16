@@ -81,7 +81,7 @@ export function importConfigFromClipboard () {
 // 打开配置文件
 export async function openConfigFile () {
   await bootstrapPromise
-  shell.showItemInFolder(appConfigPath)
+  shell.openItem(appConfigPath)
 }
 
 // 检查更新

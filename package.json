@@ -48,8 +48,7 @@
       "icon": "build/icons/icon.icns",
       "category": "public.app-category.developer-tools",
       "target": [
-        "dmg",
-        "zip"
+        "dmg"
       ],
       "extendInfo": {
         "LSUIElement": "YES"
@@ -58,8 +57,13 @@
     "win": {
       "icon": "build/icons/icon.ico",
       "target": [
-        "nsis",
-        "zip"
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "ia32"
+          ]
+        }
       ]
     },
     "linux": {
@@ -69,8 +73,7 @@
         "deb",
         "rpm",
         "tar.gz",
-        "pacman",
-        "snap"
+        "pacman"
       ]
     },
     "publish": [
@@ -86,7 +89,6 @@
     "fs-extra": "^5.0.0",
     "qr-image": "^3.2.0",
     "rxjs": "^5.5.5",
-    "sudo-prompt": "^8.1.0",
     "tree-kill": "^1.2.0",
     "urlsafe-base64": "^1.0.0",
     "vue": "^2.3.3",

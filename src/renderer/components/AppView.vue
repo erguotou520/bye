@@ -1,5 +1,5 @@
 <template>
-  <div class="app-view flex-1 flex-inline flex-ai-center flex-jc-center" :class="[`view-${name}`, { 'flex-column': !row, 'flex-row': row }]">
+  <div class="app-view flex-1 flex flex-ai-center flex-jc-center" :class="[`view-${name}`, { 'flex-column': !row, 'flex-row': row }]">
     <slot></slot>
   </div>
 </template>

@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import os from 'os'
 
 const STRING_PROTOTYPE = '[object String]'
 const NUMBER_PROTOTYPE = '[object Number]'
@@ -172,10 +171,13 @@ export function generateID () {
 }
 
 // 为配置分组
-export function groupConfigs (configs) {
+export function groupConfigs (configs, selectedIndex) {
   const groups = {}
   const ungrouped = []
-  configs.forEach(node => {
+  configs.forEach((node, index) => {
+    if (selectedIndex !== undefined) {
+      node.checked = index === selectedIndex
+    }
     if (node.group) {
       if (groups[node.group]) {
         groups[node.group].push(node)
@@ -202,7 +204,3 @@ export function isSSRPathAvaliable (folderPath) {
   return fs.existsSync(localPyPath)
 }
 
-export const platform = os.platform()
-export const isWin = platform === 'win32'
-export const isMac = platform === 'darwin'
-export const isLinux = platform === 'linux'

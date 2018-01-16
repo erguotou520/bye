@@ -11,6 +11,9 @@
 ## 环境要求
 - 只需要系统已安装 [python](https://www.python.org/downloads/) 可正常执行`shadowsocksr`的python版即可
 
+## FAQ
+[FAQ](./docs/FAQ.md)
+
 ## 打赏
 [如果觉得本项目对你有所帮助，欢迎打赏](https://github.com/erguotou520/donate)
 

@@ -4,7 +4,7 @@ import defaultConfig from '../../shared/config'
 import { merge, clone } from '../../shared/utils'
 import Config from '../../shared/ssr'
 import { syncConfig } from '../ipc'
-import { STORE_KEY_FEATURE } from '../constants'
+import { STORE_KEY_FEATURE, STORE_KEY_SSR_METHODS, STORE_KEY_SSR_PROTOCOLS, STORE_KEY_SSR_OBFSES } from '../constants'
 Vue.use(Vuex)
 
 // 当前编辑的配置项
@@ -18,7 +18,43 @@ const views = ['Feature', 'Setup', 'ManagePanel', 'Options']
 // 编辑组的名称
 let groupTitleBak = ''
 // 功能页面是否已展示过
-const featureReaded = !!window.localStorage.getItem(STORE_KEY_FEATURE)
+const ls = window.localStorage
+const featureReaded = !!ls.getItem(STORE_KEY_FEATURE)
+
+// 初始化读取存储，如果没有存储则保持
+const storedMethods = ls.getItem(STORE_KEY_SSR_METHODS)
+const storedProtocols = ls.getItem(STORE_KEY_SSR_PROTOCOLS)
+const storedObfses = ls.getItem(STORE_KEY_SSR_OBFSES)
+
+let methods
+let protocols
+let obfses
+// ssr methods
+if (storedMethods) {
+  methods = JSON.parse(storedMethods)
+} else {
+  methods = ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
+    'aes-128-ctr', 'aes-192-ctr', 'aes-256-ctr', 'camellia-128-cfb', 'camellia-192-cfb', 'camellia-256-cfb',
+    'bf-cfb', 'rc4', 'rc4-md5', 'rc4-md5-6', 'salsa20', 'chacha20', 'chacha20-ietf'
+  ]
+  ls.setItem(STORE_KEY_SSR_METHODS, JSON.stringify(methods))
+}
+// ssr protocols
+if (storedProtocols) {
+  protocols = JSON.parse(storedProtocols)
+} else {
+  protocols = ['origin', 'verify_deflate', 'verify_sha1', 'auth_sha1_v2',
+    'auth_sha1_v4', 'auth_aes128_md5', 'auth_aes128_sha1'
+  ]
+  ls.setItem(STORE_KEY_SSR_PROTOCOLS, JSON.stringify(protocols))
+}
+// ssr obfses
+if (storedObfses) {
+  obfses = JSON.parse(storedObfses)
+} else {
+  obfses = ['plain', 'http_simple', 'http_post', 'ramdom_head', 'tls1.2_ticket_auth']
+  ls.setItem(STORE_KEY_SSR_OBFSES, JSON.stringify(obfses))
+}
 
 export default new Vuex.Store({
   state: {
@@ -32,14 +68,9 @@ export default new Vuex.Store({
     },
     editingConfig,
     editingGroup: { show: false, title: '', updated: false },
-    methods: ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
-      'aes-128-ctr', 'aes-192-ctr', 'aes-256-ctr', 'camellia-128-cfb', 'camellia-192-cfb', 'camellia-256-cfb',
-      'bf-cfb', 'rc4', 'rc4-md5', 'rc4-md5-6', 'salsa20', 'chacha20', 'chacha20-ietf'
-    ],
-    protocols: ['origin', 'verify_deflate', 'verify_sha1', 'auth_sha1_v2',
-      'auth_sha1_v4', 'auth_aes128_md5', 'auth_aes128_sha1'
-    ],
-    obfses: ['plain', 'http_simple', 'http_post', 'ramdom_head', 'tls1.2_ticket_auth']
+    methods,
+    protocols,
+    obfses
   },
   mutations: {
     // 更新应用配置
@@ -83,6 +114,18 @@ export default new Vuex.Store({
     // 更新编辑项
     updateEditing (state, config) {
       merge(state.editingConfig, config)
+    },
+    updateMethods (state, methods) {
+      state.methods = methods
+      ls.setItem(STORE_KEY_SSR_METHODS, JSON.stringify(methods))
+    },
+    updateProtocols (state, protocols) {
+      state.protocols = protocols
+      ls.setItem(STORE_KEY_SSR_PROTOCOLS, JSON.stringify(protocols))
+    },
+    updateObfses (state, obfses) {
+      state.obfses = obfses
+      ls.setItem(STORE_KEY_SSR_OBFSES, JSON.stringify(obfses))
     }
   },
   actions: {
@@ -102,8 +145,9 @@ export default new Vuex.Store({
       if (targetConfig.configs && getters.selectedConfig) {
         index = targetConfig.configs.findIndex(config => config.id === getters.selectedConfig.id)
       }
-      commit('updateConfig', { ...targetConfig, index })
-      syncConfig(targetConfig)
+      const correctConfig = { ...targetConfig, index }
+      commit('updateConfig', correctConfig)
+      syncConfig(correctConfig)
     },
     updateConfigs ({ dispatch }, _configs) {
       const configs = _configs.map(config => {

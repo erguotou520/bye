@@ -3,7 +3,8 @@ import { appConfig$ } from './data'
 import * as handler from './tray-handler'
 import { startProxy } from './proxy'
 import trayIcon from '../trayicons'
-import { isMac, isWin, isLinux, groupConfigs } from '../shared/utils'
+import { groupConfigs } from '../shared/utils'
+import { isMac, isWin, isLinux } from '../shared/env'
 
 let tray
 let menus
@@ -14,7 +15,7 @@ let menus
  * @param {*Number} selectedIndex 选中的ssr配置的索引
  */
 function generateConfigSubmenus (configs, selectedIndex) {
-  const groups = groupConfigs(configs)
+  const groups = groupConfigs(configs, selectedIndex)
   const submenus = Object.keys(groups).map(key => {
     const configs = groups[key]
     return {
@@ -41,10 +42,36 @@ function generateConfigSubmenus (configs, selectedIndex) {
   return submenus
 }
 
+// 切换代理方式
 function toggleProxy (e, mode) {
   e.menu.items.forEach(item => { item.checked = false })
   e.checked = true
   startProxy(mode)
+}
+
+// 根据配置显示tray tooltip
+function getTooltip (appConfig) {
+  if (!appConfig.enable) {
+    return 'ShadowsocksR客户端：应用未启动'
+  }
+  const arr = []
+  if (appConfig.enable) {
+    arr.push('ShadowsocksR客户端：应用已启动\n')
+  }
+  arr.push('代理启动方式：')
+  if (appConfig.sysProxyMode === 0) {
+    arr.push('未启用代理')
+  } else if (appConfig.sysProxyMode === 1) {
+    arr.push('PAC代理')
+  } else if (appConfig.sysProxyMode === 2) {
+    arr.push('全局代理')
+  }
+  const selectedConfig = appConfig.configs[appConfig.index]
+  if (selectedConfig) {
+    arr.push('\n')
+    arr.push(`${selectedConfig.group ? selectedConfig.group + ' - ' : ''}${selectedConfig.remarks || (selectedConfig.server + ':' + selectedConfig.port)}`)
+  }
+  return arr.join('')
 }
 
 /**
@@ -53,7 +80,6 @@ function toggleProxy (e, mode) {
 export default function renderTray (appConfig) {
   // 生成tray
   tray = new Tray(trayIcon)
-  tray.setToolTip('ShadowsocksR客户端')
   menus = [
     { label: '启用系统代理        ', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
     { label: '系统代理模式', submenu: [
@@ -85,11 +111,8 @@ export default function renderTray (appConfig) {
   ]
   const contextMenu = Menu.buildFromTemplate(menus)
   tray.setContextMenu(contextMenu)
+  tray.setToolTip(getTooltip(appConfig))
   tray.on((isMac || isWin) ? 'double-click' : 'click', handler.showMainWindow)
-  // try fix linux dismiss bug
-  if (isLinux) {
-    process.env.XDG_CURRENT_DESKTOP = 'Unity'
-  }
 }
 
 /**
@@ -99,6 +122,11 @@ export function destroyTray () {
   if (tray) {
     tray.destroy()
   }
+}
+
+// try fix linux dismiss bug
+if (isLinux) {
+  process.env.XDG_CURRENT_DESKTOP = 'Unity'
 }
 
 // 监听数据变更
@@ -111,5 +139,8 @@ appConfig$.subscribe(data => {
     // configs或index字段修改时刷新服务器列表
     menus[3].submenu = generateConfigSubmenus(appConfig.configs, appConfig.index)
     tray.setContextMenu(Menu.buildFromTemplate(menus))
+  }
+  if (['configs', 'index', 'enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
+    tray.setToolTip(getTooltip(appConfig))
   }
 })
