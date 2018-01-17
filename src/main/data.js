@@ -6,14 +6,18 @@ import bootstrap, { appConfigPath } from './bootstrap'
 import { sendData } from './window'
 import { EVENT_RX_SYNC_MAIN } from '../shared/events'
 import { getUpdatedKeys, configMerge } from '../shared/utils'
-import { mergeConfig } from '../shared/config'
+import defaultConfig, { mergeConfig } from '../shared/config'
 
 let promise
 export let currentConfig
 
 // 读取配置
 async function read () {
-  return await readJson(appConfigPath)
+  try {
+    return await readJson(appConfigPath)
+  } catch (e) {
+    return Promise.resolve(defaultConfig)
+  }
 }
 
 // 应用起步后初始化

@@ -5,7 +5,7 @@ import * as events from '../shared/events'
 import { appConfigPath, defaultSSRDownloadDir } from './bootstrap'
 import { updateAppConfig } from './data'
 import { hideWindow } from './window'
-import { mergeConfig } from '../shared/config'
+import defaultConfig, { mergeConfig } from '../shared/config'
 import logger from './logger'
 /**
  * ipc-main事件
@@ -15,8 +15,13 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
 }).on(events.EVENT_APP_HIDE_WINDOW, () => {
   hideWindow()
 }).on(events.EVENT_APP_WEB_INIT, e => {
-  const stored = readJsonSync(appConfigPath)
-  mergeConfig(stored)
+  let stored
+  try {
+    stored = readJsonSync(appConfigPath)
+    mergeConfig(stored)
+  } catch (e) {
+    stored = defaultConfig
+  }
   e.returnValue = {
     config: stored,
     meta: {

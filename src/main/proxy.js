@@ -2,16 +2,20 @@
  * 自动设置系统代理
  * linux目前仅支持gnome桌面的系统
  */
+import { app } from 'electron'
 import path from 'path'
+import { existsSync } from 'fs'
 import { execSync } from 'child_process'
 import { currentConfig, appConfig$ } from './data'
 // import logger from './logger'
 import { isWin, isMac, isLinux } from '../shared/env'
 
+const userDir = app.getPath('userData')
 // windows sysproxy.exe文件的路径
 const winToolPath = path.resolve(__dirname, '../lib/sysproxy.exe')
 // mac 获取network_service的shell脚本
-const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
+// const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
+const macToolPath = path.resolve(userDir, 'proxy_conf_helper')
 
 /**
  * 运行命令
@@ -24,12 +28,12 @@ function runCommand (command) {
 /**
  * 获取mac当前的network_service
  */
-function getNetworkService () {
-  const service = execSync(`sh ${macServiceShellPath}`)
-  if (service) {
-    return service.toString().replace(/\n/, '')
-  }
-}
+// function getNetworkService () {
+//   const service = execSync(`sh ${macServiceShellPath}`)
+//   if (service) {
+//     return service.toString().replace(/\n/, '')
+//   }
+// }
 
 /**
  * 设置代理为空
@@ -39,10 +43,7 @@ export function setProxyToNone () {
   if (isWin) {
     command = `${winToolPath} pac ""`
   } else if (isMac) {
-    const service = getNetworkService()
-    if (service) {
-      command = `networksetup -setautoproxystate ${service} off && networksetup -setsocksfirewallproxystate ${service} off`
-    }
+    command = `"${macToolPath}" -m off`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'none'`
   }
@@ -57,10 +58,7 @@ export function setProxyToGlobal (host, port) {
   if (isWin) {
     command = `${winToolPath} global ${host}:${port}`
   } else if (isMac) {
-    const service = getNetworkService()
-    if (service) {
-      command = `networksetup -setautoproxystate ${service} off && networksetup -setsocksfirewallproxy ${service} ${host} ${port} off`
-    }
+    command = `"${macToolPath}" -m global -p ${port}`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'manual' && gsettings set org.gnome.system.proxy.socks host '${host}' && gsettings set org.gnome.system.proxy.socks port ${port}`
   }
@@ -75,10 +73,7 @@ export function setProxyToPac (pacUrl) {
   if (isWin) {
     command = `${winToolPath} pac ${pacUrl}`
   } else if (isMac) {
-    const service = getNetworkService()
-    if (service) {
-      command = `networksetup -setautoproxyurl ${service} ${pacUrl} && networksetup -setsocksfirewallproxystate ${service} off`
-    }
+    command = `"${macToolPath}" -m auto -u ${pacUrl}`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'auto' && gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`
   }
@@ -97,6 +92,12 @@ export function startProxy (mode) {
   } else if (mode === 2) {
     setProxyToGlobal('127.0.0.1', currentConfig.localPort)
   }
+}
+
+// 初始化确保文件存在
+if (!existsSync(macToolPath)) {
+  const localPath = path.join(__dirname, '../lib/proxy_conf_helper')
+  execSync(`sudo cp ${localPath} ${macToolPath} && sudo chown root:admin ${macToolPath} && sudo chmod a+rx ${macToolPath} && sudo chmod +s ${macToolPath}`)
 }
 
 // 监听配置变化

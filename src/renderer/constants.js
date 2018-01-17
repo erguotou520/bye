@@ -1,5 +1,7 @@
 // 功能页面是否已读
 export const STORE_KEY_FEATURE = 'view.feature'
+// 是否自动下载ssr
+export const STORE_KEY_AUTO_DOWNLOAD = 'ssr.autoDownload'
 // ssr methods
 export const STORE_KEY_SSR_METHODS = 'ssr.methods'
 // ssr protocols

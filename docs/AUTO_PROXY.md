@@ -32,6 +32,14 @@ sudo networksetup -setsocksfirewallproxystate Wi-Fi off
 sudo networksetup -listallhardwareports
 # 查看当前连接是否活跃
 ifconfig en0
+# 鉴于每次执行networksetup都需要sudo权限（不带sudo）会不停的弹出密码询问框，所以改用ShadowsocksX-NG的编译文件proxy_conf_helper
+# 安装参考https://github.com/shadowsocks/ShadowsocksX-NG/blob/develop/ShadowsocksX-NG/install_helper.sh
+# pac代理
+proxy_conf_helper -m auto -u http://127.0.0.1:7777/pac
+# socks代理
+proxy_conf_helper -m global -p 1080
+# 关闭代理
+proxy_conf_helper -m off
 ```
 
 # Linux

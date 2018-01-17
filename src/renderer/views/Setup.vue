@@ -1,43 +1,20 @@
 <template>
   <app-view name="setup" class="px-2">
-    <i-alert class="my-2" type="info" show-icon>
-      <i-icon slot="icon" type="ios-lightbulb-outline" size="32"></i-icon>
-      <div slot="desc">
-        <p class="mb-1" style="word-break: break-all;"><b>自动模式</b>&nbsp;该模式下系统将自动下载ShadowsocksR项目至
-          <span class="text-primary px-2px selectable">{{$store.state.meta.defaultSSRDownloadDir}}</span>
-          并完成初始化</p>
-        <p><b>本地模式</b>&nbsp;该模式下请选择本地ShadowsocksR项目下的shadowsocks目录。</p>
-        <p>如果本地没有该项目可前往<external-link href="https://github.com/shadowsocksr-backup/shadowsocksr/tree/dev"></external-link>下载。</p>
-        <b>请确保所选的目录下有<span class="text-primary px-2px selectable">local.py</span>文件</b>
-      </div>
-    </i-alert>
-    <div class="flex flex-1 w-100">
-      <div class="pos-r flex-1 h-100 flex flex-column flex-ai-center flex-jc-center">
-        <h1>自动模式</h1>
-        <i-form class="mt-2">
-          <i-form-item class="text-center">
-            <i-button v-if="!autoClicked" type="primary" @click="autoStart">点击开始</i-button>
-            <i-progress v-else-if="!autoError" :percent="autoPercent" status="active" hide-info style="width:320px"></i-progress>
-            <template v-else>
-              <i-alert type="error" show-icon style="margin-bottom:0">
-                {{autoError}}
-              </i-alert>
-              <i-button class="mt-2" type="primary" @click="restart">重试</i-button>
-            </template>
-          </i-form-item>
-        </i-form>
-      </div>
-      <div class="pos-r flex-1 h-100 flex flex-column flex-ai-center flex-jc-center border-1px-l pl-2">
-        <h1>本地模式</h1>
-        <i-form ref="form" class="mt-2" :model="form" :rules="rules" inline>
-          <i-form-item prop="ssrPath">
-            <i-input v-model="form.ssrPath" readonly placeholder="请选择shadowsocks目录" style="width:200px"/>
-          </i-form-item>
-          <i-form-item>
-            <i-button type="primary" @click="selectPath">选择ssr目录</i-button>
-          </i-form-item>
-        </i-form>
-      </div>
+    <i-spin v-if="!autoError"/>
+    <div v-else class="flex flex-column flex-ai-center">
+      <i-alert type="error" show-icon>
+        {{autoError}}
+      </i-alert>
+      <i-button type="primary" @click="restart">重试</i-button>
+      <br/>OR</br/>
+      <i-form ref="form" class="mt-2" :model="form" :rules="rules" inline>
+        <i-form-item prop="ssrPath">
+          <i-input v-model="form.ssrPath" readonly placeholder="所选目录下需有local.py文件" style="width:200px"/>
+        </i-form-item>
+        <i-form-item>
+          <i-button type="primary" @click="selectPath">选择ssr目录</i-button>
+        </i-form-item>
+      </i-form>
     </div>
   </app-view>
 </template>
@@ -47,17 +24,16 @@ import { remote } from 'electron'
 import { mapState } from 'vuex'
 import { syncConfig } from '../ipc'
 import { isSSRPathAvaliable } from '../../shared/utils'
-import * as events from '../../shared/events'
+// import { STORE_KEY_AUTO_DOWNLOAD } from '../constants'
+import { EVENT_SSR_DOWNLOAD_RENDERER, EVENT_SSR_DOWNLOAD_MAIN } from '../../shared/events'
 
 const { dialog } = remote.require('electron')
 export default {
   data () {
     return {
-      view: '',
-      // 自动模式是否已点击开始
-      autoClicked: false,
-      // 自动模式百分比
-      autoPercent: 0,
+      // localStorage.getItem(STORE_KEY_AUTO_DOWNLOAD) === '1'
+      autoDownload: false,
+      // view: '',
       // 自动模式下载出错
       autoError: '',
       form: {
@@ -81,41 +57,29 @@ export default {
     ...mapState(['meta'])
   },
   methods: {
-    // 返回当前主页面
-    back () {
-      this.view = ''
-    },
-    // 重试
     restart () {
-      this.autoPercent = 0
+      this.autoError = ''
       this.autoStart()
     },
     // 自动模式
     autoStart () {
       this.autoError = ''
-      this.autoClicked = true
       const self = this
 
       function callback (e, err) {
         console.log('download ssr result', e, err)
-        ipcRenderer.removeListener(events.EVENT_SSR_DOWNLOAD_MAIN, callback)
+        ipcRenderer.removeListener(EVENT_SSR_DOWNLOAD_MAIN, callback)
         if (err) {
           self.autoError = err.message
         } else {
-          self.autoPercent = 100
           self.$nextTick(() => {
             self.setup(self.meta.defaultSSRDownloadDir)
           })
         }
-        clearInterval(interval)
       }
 
-      ipcRenderer.send(events.EVENT_SSR_DOWNLOAD_RENDERER)
-      ipcRenderer.on(events.EVENT_SSR_DOWNLOAD_MAIN, callback)
-      const interval = setInterval(() => {
-        // 模拟进度
-        this.autoPercent += (Math.random() * ((100 - this.autoPercent) / 5))
-      }, 1000)
+      ipcRenderer.send(EVENT_SSR_DOWNLOAD_RENDERER)
+      ipcRenderer.on(EVENT_SSR_DOWNLOAD_MAIN, callback)
     },
     // 选择目录
     selectPath () {
@@ -136,15 +100,80 @@ export default {
       syncConfig({ ssrPath: ssrPath || this.form.ssrPath })
       this.$emit('finished')
     }
+  },
+  created () {
+    if (this.autoDownload) {
+      this.autoStart()
+    }
   }
 }
 </script>
 <style lang="stylus">
 @import '../assets/styles/variable'
 .view-setup
-  .px-2px
-    padding-left 2px
-    padding-right @padding-left
-  .ivu-progress-inner
-    background-color lighten($color-light-primary, 60%)
+  .ivu-spin-dot
+    width 48px
+    height @width
+//   .loader
+//     width: 30px;
+//     height: 30px;
+//     position: relative;
+//     margin: 0 auto;
+//     svg
+//       animation: rotate 2s linear infinite;
+//       height: 100%;
+//       -webkit-transform-origin: center center;
+//       transform-origin: center center;
+//       width: 100%;
+//       position: absolute;
+//       top: 0;
+//       bottom: 0;
+//       left: 0;
+//       right: 0;
+//       margin: auto;
+//       circle
+//         stroke-dasharray: 1,200;
+//         stroke-dashoffset: 0;
+//         -webkit-animation: dash 1.5s ease-in-out infinite,color 6s ease-in-out infinite;
+//         animation: dash 1.5s ease-in-out infinite,color 6s ease-in-out infinite;
+//         stroke-linecap: round;
+//   @keyframes rotate {
+//     to {
+//       -webkit-transform: rotate(1turn);
+//       transform: rotate(1turn)
+//     }
+//   }
+//   @keyframes dash {
+//     0% {
+//       stroke-dasharray: 1,200;
+//       stroke-dashoffset: 0
+//     }
+//
+//     50% {
+//       stroke-dasharray: 89,200;
+//       stroke-dashoffset: -35
+//     }
+//
+//     to {
+//       stroke-dasharray: 89,200;
+//       stroke-dashoffset: -124
+//     }
+//   }
+//   @keyframes color {
+//     0%,to {
+//       stroke: #d62d20
+//     }
+//
+//     40% {
+//       stroke: #0057e7
+//     }
+//
+//     66% {
+//       stroke: #008744
+//     }
+//
+//     80%,90% {
+//       stroke: #ffa700
+//     }
+//   }
 </style>

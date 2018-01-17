@@ -13,15 +13,13 @@ import {
   Icon,
   Input,
   InputNumber,
-  Radio,
   Tabs,
   Table,
   Tag,
   Tree,
   Tooltip,
   Poptip,
-  Upload,
-  Progress
+  Spin
 } from 'erguotou-iview'
 
 const components = {
@@ -37,7 +35,6 @@ const components = {
   InputNumber,
   Option,
   OptionGroup,
-  Radio,
   Row,
   Select,
   Tabs,
@@ -47,8 +44,7 @@ const components = {
   Tree,
   Tooltip,
   Poptip,
-  Upload,
-  Progress
+  Spin
 }
 
 Object.keys(components).forEach(key => {
