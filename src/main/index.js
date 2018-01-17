@@ -17,18 +17,18 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-app.on('ready', () => {
-  createWindow()
-  // pac服务
-  // serverPac()
-})
+app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
+  console.log('window-all-closed')
   // logger.debug('Event:window-all-closed')
   if (process.platform !== 'darwin') {
     app.quit()
   }
 })
+
+app.on('before-quit', () => console.log('before-quit'))
+app.on('quit', () => console.log('quit'))
 
 app.on('will-quit', () => {
   console.log('will-quit')
@@ -55,7 +55,7 @@ const AutoLauncher = new AutoLaunch({
 
 appConfig$.subscribe(data => {
   const [appConfig, changed] = data
-  if (!changed.length || (changed.length && changed.indexOf('autoLaunch') > -1)) {
+  if (!changed.length || changed.indexOf('autoLaunch') > -1) {
     // 初始化或者选项变更时
     AutoLauncher.isEnabled().then(enabled => {
       // 状态不相同时

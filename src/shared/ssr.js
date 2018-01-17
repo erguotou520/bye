@@ -1,5 +1,5 @@
 import Base64 from 'urlsafe-base64'
-import { merge, generateID } from './utils'
+import { generateID, isNumber, isObject } from './utils'
 
 function encode (str) {
   return Base64.encode(Buffer.from(str, 'utf-8'))
@@ -7,6 +7,16 @@ function encode (str) {
 
 function decode (str) {
   return Base64.decode(str).toString('utf-8')
+}
+
+function merge (ssr, target) {
+  if (isObject(target)) {
+    Object.keys(target).forEach(key => {
+      if (ssr[key] !== undefined) {
+        ssr[key] = isNumber(ssr[key]) ? +target[key] : target[key]
+      }
+    })
+  }
 }
 
 export default class Config {
@@ -61,7 +71,7 @@ export default class Config {
           otherSplit[_params[0]] = _params[1]
         })
         this.server = requiredSplit[0]
-        this.server_port = requiredSplit[1]
+        this.server_port = +requiredSplit[1]
         this.protocol = requiredSplit[2]
         this.method = requiredSplit[3]
         this.obfs = requiredSplit[4]
@@ -104,7 +114,7 @@ export default class Config {
         this.method = split2[0]
         this.password = split2[1]
         this.server = split3[0]
-        this.server_port = split3[1]
+        this.server_port = +split3[1]
         this.protocol = 'origin'
         this.obfs = 'plain'
         this.obfsparam = ''

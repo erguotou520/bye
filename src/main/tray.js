@@ -37,8 +37,12 @@ function generateConfigSubmenus (configs, selectedIndex) {
       })
     }
   })
-  submenus.push({ label: '订阅管理', click: handler.showSubscribes })
+  if (!configs || !configs.length) {
+    submenus.push({ label: 'none', enabled: false })
+  }
+  submenus.push({ type: 'separator' })
   submenus.push({ label: '编辑服务器', click: handler.showMainWindow })
+  submenus.push({ label: '订阅管理', click: handler.showSubscribes })
   return submenus
 }
 
@@ -91,7 +95,6 @@ export default function renderTray (appConfig) {
       { label: '更新PAC', click: handler.updatePac }
     ] },
     { label: '服务器', submenu: generateConfigSubmenus(appConfig.configs, appConfig.index) },
-    { label: '开机自启', type: 'checkbox', checked: appConfig.autoLaunch, click: handler.toggleAutoLaunch },
     { label: '二维码扫描', click: handler.scanQRCode },
     { label: '配置', submenu: [
       { label: '选项设置...', click: handler.showOptions },

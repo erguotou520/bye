@@ -6,6 +6,7 @@ const path = require('path')
 const { say } = require('cfonts')
 const { spawn } = require('child_process')
 const webpack = require('webpack')
+const treeKill = require('tree-kill')
 const WebpackDevServer = require('webpack-dev-server')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 
@@ -43,9 +44,9 @@ function startRenderer () {
     rendererConfig.entry.renderer = [path.join(__dirname, 'dev-client')].concat(rendererConfig.entry.renderer)
 
     const compiler = webpack(rendererConfig)
-    hotMiddleware = webpackHotMiddleware(compiler, { 
-      log: false, 
-      heartbeat: 2500 
+    hotMiddleware = webpackHotMiddleware(compiler, {
+      log: false,
+      heartbeat: 2500
     })
 
     compiler.plugin('compilation', compilation => {
@@ -98,8 +99,9 @@ function startMain () {
       logStats('Main', stats)
 
       if (electronProcess && electronProcess.kill) {
+        console.log('kill preview electron process')
         manualRestart = true
-        process.kill(electronProcess.pid)
+        treeKill(electronProcess.pid)
         electronProcess = null
         startElectron()
 

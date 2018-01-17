@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { net } from 'electron'
 
 const STRING_PROTOTYPE = '[object String]'
 const NUMBER_PROTOTYPE = '[object Number]'
@@ -202,4 +203,57 @@ export function isSSRPathAvaliable (folderPath) {
   const localPyPath = path.join(folderPath, 'local.py')
   console.log(localPyPath, fs.existsSync(localPyPath))
   return fs.existsSync(localPyPath)
+}
+
+/**
+ * 发起网络请求
+ * @param {String} url 请求的路径
+ */
+export function request (url, fromRenderer) {
+  let _net = net
+  if (fromRenderer) {
+    const { remote } = require('electron')
+    const { net } = remote.require('electron')
+    _net = net
+  }
+  return new Promise((resolve, reject) => {
+    _net.request(url)
+      .on('response', response => {
+        const body = []
+        response.on('data', chunk => {
+          body.push(chunk.toString())
+        })
+        response.on('end', () => {
+          const stringRes = body.join('')
+          if (response.headers['content-type'] === 'application/json') {
+            try {
+              resolve(JSON.parse(stringRes))
+            } catch (error) {
+              resolve(stringRes)
+            }
+          } else {
+            resolve(stringRes)
+          }
+        })
+      })
+      .on('error', reject)
+      .end()
+  })
+}
+
+/**
+ * 发起ajax请求
+ * @param {String} url 请求的地址
+ */
+export function ajax (url) {
+  return new Promise((resolve, reject) => {
+    const oReq = new XMLHttpRequest()
+    oReq.onload = function () {
+      resolve(this.responseText)
+    }
+    oReq.onerror = reject
+    oReq.ontimeout = reject
+    oReq.open('get', url, true)
+    oReq.send()
+  })
 }

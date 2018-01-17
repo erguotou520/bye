@@ -4,9 +4,9 @@
 import http from 'http'
 import { parse } from 'url'
 import { readFile, writeFile, pathExists } from 'fs-extra'
-import { request } from './tools'
+import { request } from '../shared/utils'
 import bootstrapPromise, { pacPath } from './bootstrap'
-import dataPromise, { currentConfig } from './data'
+import dataPromise, { currentConfig, appConfig$ } from './data'
 
 let pacContent
 let pacServer
@@ -37,10 +37,10 @@ function readPac () {
 /**
  * pac server
  */
-export async function serverPac () {
+export async function serverPac (pacPort) {
   await dataPromise
   const host = currentConfig.shareOverLan ? '0.0.0.0' : 'localhost'
-  const port = currentConfig.pacPort || 1240
+  const port = pacPort !== undefined ? pacPort : currentConfig.pacPort || 1240
   pacServer = http.createServer((req, res) => {
     if (parse(req.url).pathname === '/pac') {
       downloadPac().then(() => {
@@ -78,3 +78,17 @@ export function stopPacServer () {
     })
   }
 }
+
+// 监听配置变化
+appConfig$.subscribe(data => {
+  const [appConfig, changed] = data
+  // 初始化
+  if (changed.length === 0) {
+    serverPac()
+  } else {
+    if (changed.indexOf('pacPort') > -1) {
+      stopPacServer()
+      serverPac(appConfig.pacPort)
+    }
+  }
+})

@@ -87,6 +87,7 @@
     "download-git-repo": "^1.0.1",
     "erguotou-iview": "2.8.1-alpha-2",
     "fs-extra": "^5.0.0",
+    "lodash.debounce": "^4.0.8",
     "qr-image": "^3.2.0",
     "rxjs": "^5.5.5",
     "tree-kill": "^1.2.0",

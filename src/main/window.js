@@ -13,7 +13,8 @@ export function createWindow () {
     height: 440,
     width: 800,
     center: true,
-    resizable: false
+    resizable: false,
+    webPreferences: { webSecurity: process.env.NODE_ENV !== 'development' }
   })
   mainWindow.setMenu(null)
   mainWindow.loadURL(winURL)

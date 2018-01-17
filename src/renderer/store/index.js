@@ -145,7 +145,7 @@ export default new Vuex.Store({
       if (targetConfig.configs && getters.selectedConfig) {
         index = targetConfig.configs.findIndex(config => config.id === getters.selectedConfig.id)
       }
-      const correctConfig = { ...targetConfig, index }
+      const correctConfig = index !== undefined ? { ...targetConfig, index } : targetConfig
       commit('updateConfig', correctConfig)
       syncConfig(correctConfig)
     },

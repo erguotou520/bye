@@ -90,7 +90,7 @@ appConfig$.subscribe(data => {
         stop()
       }
     } else if (appConfig.enable) {
-      if (['ssrPath', 'index', 'localPort', 'configs'].some(key => changed.indexOf(key) > -1)) {
+      if (['ssrPath', 'index', 'localPort', 'configs', 'shareOverLan'].some(key => changed.indexOf(key) > -1)) {
         // TODO: 优化 只有选中的配置发生改变时才重新运行
         runWithConfig(appConfig)
       }

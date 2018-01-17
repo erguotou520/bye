@@ -6,17 +6,12 @@ import { updateAppConfig, currentConfig } from './data'
 import { downloadPac } from './pac'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
-import { request } from './tools'
+import { request } from '../shared/utils'
 import pkg from '../../package.json'
 
 // 切换启用状态
 export function toggleEnable () {
   updateAppConfig({ enable: !currentConfig.enable })
-}
-
-// 切换开机自启动
-export function toggleAutoLaunch () {
-  updateAppConfig({ autoLaunch: !currentConfig.autoLaunch })
 }
 
 // 更改选中的ssr配置
