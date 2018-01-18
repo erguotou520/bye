@@ -1,20 +1,24 @@
 <template>
   <app-view name="setup" class="px-2">
-    <i-spin v-if="!autoError"/>
-    <div v-else class="flex flex-column flex-ai-center">
-      <i-alert type="error" show-icon>
-        {{autoError}}
-      </i-alert>
-      <i-button type="primary" @click="restart">重试</i-button>
-      <br/>OR</br/>
-      <i-form ref="form" class="mt-2" :model="form" :rules="rules" inline>
-        <i-form-item prop="ssrPath">
-          <i-input v-model="form.ssrPath" readonly placeholder="所选目录下需有local.py文件" style="width:200px"/>
-        </i-form-item>
-        <i-form-item>
-          <i-button type="primary" @click="selectPath">选择ssr目录</i-button>
-        </i-form-item>
-      </i-form>
+    <template v-if="(autoDownload || manualDownload) && !autoError">
+      <i-spin/>
+      <p class="text-center mt-1">正在为您下载<dot></dot></p>
+    </template>
+    <div v-else class="flex flex-column flex-ai-center w-100">
+      <div class="flex flex-ai-center w-100">
+        <div class="flex-1 flex flex-ai-center flex-jc-end">
+          <i-button type="primary" class="w-6r" @click="restart">{{autoError ? '点击重试' : '自动下载'}}</i-button>
+        </div>
+        <span class="mx-2">OR</span>
+        <div class="flex-1 flex flex-ai-center">
+          <i-form ref="form" class="flex-1" :model="form" :rules="rules" inline>
+            <i-form-item prop="ssrPath" style="margin-bottom:0">
+              <i-button type="primary" class="w-6r" @click="selectPath">手动选择</i-button>
+              <i-input v-model="form.ssrPath" readonly placeholder="所选目录下需有local.py文件" style="width:180px"/>
+            </i-form-item>
+          </i-form>
+        </div>
+      </div>
     </div>
   </app-view>
 </template>
@@ -24,16 +28,17 @@ import { remote } from 'electron'
 import { mapState } from 'vuex'
 import { syncConfig } from '../ipc'
 import { isSSRPathAvaliable } from '../../shared/utils'
-// import { STORE_KEY_AUTO_DOWNLOAD } from '../constants'
+import { STORE_KEY_AUTO_DOWNLOAD } from '../constants'
 import { EVENT_SSR_DOWNLOAD_RENDERER, EVENT_SSR_DOWNLOAD_MAIN } from '../../shared/events'
+import Dot from '../components/Dot'
 
 const { dialog } = remote.require('electron')
 export default {
   data () {
     return {
-      // localStorage.getItem(STORE_KEY_AUTO_DOWNLOAD) === '1'
-      autoDownload: false,
-      // view: '',
+      autoDownload: localStorage.getItem(STORE_KEY_AUTO_DOWNLOAD) === '1',
+      // 手动下载
+      manualDownload: false,
       // 自动模式下载出错
       autoError: '',
       form: {
@@ -56,6 +61,21 @@ export default {
   computed: {
     ...mapState(['meta'])
   },
+  components: {
+    Dot
+  },
+  watch: {
+    autoError (v) {
+      if (v) {
+        this.$Message.error({
+          content: v,
+          duration: 0
+        })
+      } else {
+        this.$Message.destroy()
+      }
+    }
+  },
   methods: {
     restart () {
       this.autoError = ''
@@ -63,6 +83,7 @@ export default {
     },
     // 自动模式
     autoStart () {
+      this.manualDownload = true
       this.autoError = ''
       const self = this
 
@@ -83,6 +104,7 @@ export default {
     },
     // 选择目录
     selectPath () {
+      this.manualDownload = false
       const path = dialog.showOpenDialog({
         properties: ['openDirectory']
       })
@@ -97,6 +119,7 @@ export default {
     },
     // 完成初始化
     setup (ssrPath) {
+      this.$Message.destroy()
       syncConfig({ ssrPath: ssrPath || this.form.ssrPath })
       this.$emit('finished')
     }
@@ -114,66 +137,4 @@ export default {
   .ivu-spin-dot
     width 48px
     height @width
-//   .loader
-//     width: 30px;
-//     height: 30px;
-//     position: relative;
-//     margin: 0 auto;
-//     svg
-//       animation: rotate 2s linear infinite;
-//       height: 100%;
-//       -webkit-transform-origin: center center;
-//       transform-origin: center center;
-//       width: 100%;
-//       position: absolute;
-//       top: 0;
-//       bottom: 0;
-//       left: 0;
-//       right: 0;
-//       margin: auto;
-//       circle
-//         stroke-dasharray: 1,200;
-//         stroke-dashoffset: 0;
-//         -webkit-animation: dash 1.5s ease-in-out infinite,color 6s ease-in-out infinite;
-//         animation: dash 1.5s ease-in-out infinite,color 6s ease-in-out infinite;
-//         stroke-linecap: round;
-//   @keyframes rotate {
-//     to {
-//       -webkit-transform: rotate(1turn);
-//       transform: rotate(1turn)
-//     }
-//   }
-//   @keyframes dash {
-//     0% {
-//       stroke-dasharray: 1,200;
-//       stroke-dashoffset: 0
-//     }
-//
-//     50% {
-//       stroke-dasharray: 89,200;
-//       stroke-dashoffset: -35
-//     }
-//
-//     to {
-//       stroke-dasharray: 89,200;
-//       stroke-dashoffset: -124
-//     }
-//   }
-//   @keyframes color {
-//     0%,to {
-//       stroke: #d62d20
-//     }
-//
-//     40% {
-//       stroke: #0057e7
-//     }
-//
-//     66% {
-//       stroke: #008744
-//     }
-//
-//     80%,90% {
-//       stroke: #ffa700
-//     }
-//   }
 </style>

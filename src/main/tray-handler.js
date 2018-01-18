@@ -57,7 +57,7 @@ export function importConfigFromFile () {
 export function exportConfigToFile () {
   dialog.showOpenDialog({
     title: '选择导出的目录',
-    properties: ['openDirectory']
+    properties: ['openDirectory', 'createDirectory']
   }, pathes => {
     if (pathes.length === 1) {
       writeJSON(currentConfig)

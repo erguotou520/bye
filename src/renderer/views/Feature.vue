@@ -32,15 +32,13 @@
         <p>ssr和electron-ssr源代码均开放</p>
       </i-col>
     </i-row>
-    <div class="flex flex-column flex-ai-center mt-64">
-      <div>
-        <i-checkbox v-model="autoDownload" @on-change="updateAutoDownload">自动下载SSR</i-checkbox>
-        <i-tooltip placement="top" content="勾选上后系统将自动为您下载shadowsocksr-python项目" style="margin-top:2px">
-          <i-icon color="#495060" type="help-circled"></i-icon>
-        </i-tooltip>
-      </div>
-      <i-button type="primary" class="w-6r mt-1" @click="done">知道了</i-button>
+    <div class="flex flex-ai-center mt-64">
+      <i-checkbox v-model="autoDownload" @on-change="updateAutoDownload">自动下载SSR</i-checkbox>
+      <i-tooltip placement="top" content="勾选上后系统将自动为您下载shadowsocksr-python项目" style="margin-top:2px">
+        <i-icon color="#495060" type="help-circled"></i-icon>
+      </i-tooltip>
     </div>
+    <i-button type="primary" class="w-6r mt-1" @click="done">知道了</i-button>
   </app-view>
 </template>
 <script>

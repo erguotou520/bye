@@ -6,6 +6,7 @@ import { app } from 'electron'
 import path from 'path'
 import { existsSync } from 'fs'
 import { execSync } from 'child_process'
+import { exec } from 'sudo-prompt'
 import { currentConfig, appConfig$ } from './data'
 // import logger from './logger'
 import { isWin, isMac, isLinux } from '../shared/env'
@@ -26,14 +27,24 @@ function runCommand (command) {
 }
 
 /**
- * 获取mac当前的network_service
+ * 在mac上运行sudo 命令
+ * @param {String} command 需要在mac上运行的命令
  */
-// function getNetworkService () {
-//   const service = execSync(`sh ${macServiceShellPath}`)
-//   if (service) {
-//     return service.toString().replace(/\n/, '')
-//   }
-// }
+function sudoMacCommand (command) {
+  return new Promise((resolve, reject) => {
+    exec(command, {
+      name: 'ssrclient',
+      icns: path.join(__dirname, '../../build/icons/icon.icns')
+    }, (error, stdout, stderr) => {
+      if (error || stderr) {
+        console.log('error: %s, stderr: %s', error, stderr)
+        app.quit()
+      } else {
+        resolve()
+      }
+    })
+  })
+}
 
 /**
  * 设置代理为空
@@ -95,9 +106,15 @@ export function startProxy (mode) {
 }
 
 // 初始化确保文件存在
-if (!existsSync(macToolPath)) {
+if (isMac && !existsSync(macToolPath)) {
   const localPath = path.join(__dirname, '../lib/proxy_conf_helper')
-  execSync(`sudo cp ${localPath} ${macToolPath} && sudo chown root:admin ${macToolPath} && sudo chmod a+rx ${macToolPath} && sudo chmod +s ${macToolPath}`)
+  sudoMacCommand(`cp ${localPath} "${macToolPath}"`).then(() => {
+    return sudoMacCommand(`chown root:admin "${macToolPath}"`)
+  }).then(() => {
+    return sudoMacCommand(`chmod a+rx "${macToolPath}"`)
+  }).then(() => {
+    return sudoMacCommand(`chmod +s "${macToolPath}"`)
+  })
 }
 
 // 监听配置变化

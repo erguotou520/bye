@@ -13,6 +13,7 @@ import {
   Icon,
   Input,
   InputNumber,
+  Message,
   Tabs,
   Table,
   Tag,
@@ -33,6 +34,7 @@ const components = {
   Icon,
   Input,
   InputNumber,
+  Message,
   Option,
   OptionGroup,
   Row,
@@ -54,5 +56,6 @@ Object.keys(components).forEach(key => {
   Vue.component('i' + key, components[key])
 })
 
+Vue.prototype.$Message = Message
 Vue.component('AppView', AppView)
 Vue.component('ExternalLink', ExternalLink)
