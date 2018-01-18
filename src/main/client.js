@@ -48,7 +48,7 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
   config.timeout && params.push(`-t ${config.timeout}`)
   params.push(`--log-file ${ssrLogPath}`)
   // FIXME
-  const command = `python ${path.join(ssrPath, 'local.py')} ${params.join(' ')}`
+  const command = `python "${path.join(ssrPath, 'local.py')}" ${params.join(' ')}`
   console.log('run command: %s', command)
   // logger.debug('run command: %s', command)
   child = runCommand(command)

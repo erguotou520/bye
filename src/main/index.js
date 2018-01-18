@@ -17,7 +17,12 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
-app.on('ready', createWindow)
+app.on('ready', () => {
+  createWindow()
+  const ssrSchemaRegisted = app.setAsDefaultProtocolClient('ssr')
+  const ssSchemaRegisted = app.setAsDefaultProtocolClient('ss')
+  console.log(`ssrSchemaRegisted`, ssrSchemaRegisted, `ssSchemaRegisted`, ssSchemaRegisted)
+})
 
 app.on('window-all-closed', () => {
   console.log('window-all-closed')

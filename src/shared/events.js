@@ -25,6 +25,9 @@ export const EVENT_SSR_DOWNLOAD_RENDERER = 'ssr.download.render'
 // 由`ipc-main`发出 自动下载ssr的进度
 export const EVENT_SSR_DOWNLOAD_MAIN = 'ssr.download.main'
 
+// 由`ipc-main`发出 更新订阅服务器
+export const EVENT_SUBSCRIBE_UPDATE_MAIN = 'subscribe.update.main'
+
 // 由`ipc-main`发出 同步`rx`数据
 export const EVENT_RX_SYNC_MAIN = 'rx.sync.main'
 

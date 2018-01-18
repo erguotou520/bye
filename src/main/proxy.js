@@ -108,13 +108,7 @@ export function startProxy (mode) {
 // 初始化确保文件存在
 if (isMac && !existsSync(macToolPath)) {
   const localPath = path.join(__dirname, '../lib/proxy_conf_helper')
-  sudoMacCommand(`cp ${localPath} "${macToolPath}"`).then(() => {
-    return sudoMacCommand(`chown root:admin "${macToolPath}"`)
-  }).then(() => {
-    return sudoMacCommand(`chmod a+rx "${macToolPath}"`)
-  }).then(() => {
-    return sudoMacCommand(`chmod +s "${macToolPath}"`)
-  })
+  sudoMacCommand(`cp ${localPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
 }
 
 // 监听配置变化

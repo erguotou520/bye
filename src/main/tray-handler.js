@@ -38,6 +38,12 @@ export function openOptionsWindow () {
   sendData(events.EVENT_APP_SHOW_PAGE, 'Options')
 }
 
+// 更新订阅服务器
+export function updateSubscribes () {
+  // TODO
+  // sendData(events.EVENT_SUBSCRIBE_UPDATE_MAIN)
+}
+
 // 导入配置文件
 export function importConfigFromFile () {
   dialog.showOpenDialog({

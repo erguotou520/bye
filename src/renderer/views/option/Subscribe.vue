@@ -16,6 +16,7 @@
 <script>
 import Base64 from 'urlsafe-base64'
 import { mapState, mapActions } from 'vuex'
+import { showNotification } from '../../ipc'
 import { request } from '../../../shared/utils'
 import { loadConfigsFromString } from '../../../shared/ssr'
 
@@ -113,13 +114,17 @@ export default {
       }
     },
     update () {
-      this.selectedRows.map(row => {
+      Promise.all(this.selectedRows.map(row => {
         return this.requestSubscribeUrl(row.URL).then(res => {
           const [valid, configs] = this.isSubscribeContentValid(res)
           if (valid) {
             this.updateSubscribedConfigs(configs)
           }
         })
+      })).then(() => {
+        showNotification('订阅更新通知', '服务器订阅成功')
+      }).catch(() => {
+        showNotification('订阅更新通知', '服务器订阅失败')
       })
     },
     remove () {

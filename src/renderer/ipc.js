@@ -5,7 +5,7 @@ import scanQrcode from './qrcode/scan-screenshot'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
 
-function showNotification (title, body) {
+export function showNotification (title, body) {
   new Notification(title, {
     icon: path.join(__dirname, '../trayicons/tray_win@3x.png'),
     body: body
@@ -36,8 +36,8 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
 }).on(events.EVENT_APP_SHOW_PAGE, (e, targetView) => {
   console.log('received view update: ', targetView.page, targetView.tab)
   store.commit('updateView', { ...targetView, fromMain: true })
-}).on(events.EVENT_APP_ERROR_MAIN, () => {
-
+}).on(events.EVENT_APP_ERROR_MAIN, (e, err) => {
+  alert(JSON.stringify(err))
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
   console.log('received sync data: %o', appConfig)
   store.commit('updateConfig', appConfig)
