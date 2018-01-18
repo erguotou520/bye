@@ -17,7 +17,6 @@
 import { mapState, mapActions } from 'vuex'
 import { showNotification } from '../../ipc'
 import { request, isSubscribeContentValid } from '../../../shared/utils'
-import { loadConfigsFromString } from '../../../shared/ssr'
 
 const URL_REGEX = /^https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
 export default {
