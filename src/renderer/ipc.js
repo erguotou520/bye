@@ -38,6 +38,12 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
   store.commit('updateView', { ...targetView, fromMain: true })
 }).on(events.EVENT_APP_ERROR_MAIN, (e, err) => {
   alert(JSON.stringify(err))
+}).on(events.EVENT_SUBSCRIBE_UPDATE_MAIN, (e, err) => {
+  store.dispatch('updateSubscribes').then(() => {
+    showNotification('订阅更新通知', '服务器订阅成功')
+  }).catch(() => {
+    showNotification('订阅更新通知', '服务器订阅失败')
+  })
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
   console.log('received sync data: %o', appConfig)
   store.commit('updateConfig', appConfig)

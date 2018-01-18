@@ -40,8 +40,7 @@ export function openOptionsWindow () {
 
 // 更新订阅服务器
 export function updateSubscribes () {
-  // TODO
-  // sendData(events.EVENT_SUBSCRIBE_UPDATE_MAIN)
+  sendData(events.EVENT_SUBSCRIBE_UPDATE_MAIN)
 }
 
 // 导入配置文件

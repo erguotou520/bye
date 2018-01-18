@@ -14,10 +14,9 @@
   </div>
 </template>
 <script>
-import Base64 from 'urlsafe-base64'
 import { mapState, mapActions } from 'vuex'
 import { showNotification } from '../../ipc'
-import { request } from '../../../shared/utils'
+import { request, isSubscribeContentValid } from '../../../shared/utils'
 import { loadConfigsFromString } from '../../../shared/ssr'
 
 const URL_REGEX = /^https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
@@ -48,7 +47,7 @@ export default {
                       const url = self.editingRowUrl
                       self.requestSubscribeUrl(url).then(res => {
                         self.loading = false
-                        const [valid, configs] = self.isSubscribeContentValid(res)
+                        const [valid, configs] = isSubscribeContentValid(res)
                         if (valid) {
                           const clone = self.appConfig.serverSubscribes.slice()
                           clone.splice(params.index, 1)
@@ -116,7 +115,7 @@ export default {
     update () {
       Promise.all(this.selectedRows.map(row => {
         return this.requestSubscribeUrl(row.URL).then(res => {
-          const [valid, configs] = this.isSubscribeContentValid(res)
+          const [valid, configs] = isSubscribeContentValid(res)
           if (valid) {
             this.updateSubscribedConfigs(configs)
           }
@@ -132,21 +131,6 @@ export default {
       const clone = this.appConfig.serverSubscribes.filter(config => removeGroup.indexOf(config.Group) < 0)
       this.updateConfig({ serverSubscribes: clone })
       this.selectedRows = []
-    },
-    // 根据订阅返回值判断其是否为可用的订阅内容
-    isSubscribeContentValid (content) {
-      if (!content) {
-        return [false]
-      }
-      const decoded = Base64.decode(content).toString('utf-8')
-      const configs = loadConfigsFromString(decoded)
-      if (!configs.length) {
-        return [false]
-      } else {
-        const group = configs[0].group
-        const inOneGroup = configs.slice(1).every(config => config.group === group)
-        return [inOneGroup, inOneGroup ? configs : []]
-      }
     },
     // 同时使用electron的net和fetch api请求
     requestSubscribeUrl (url) {
@@ -180,7 +164,7 @@ export default {
         const url = this.url
         this.requestSubscribeUrl(url).then(res => {
           this.loading = false
-          const [valid, configs] = this.isSubscribeContentValid(res)
+          const [valid, configs] = isSubscribeContentValid(res)
           if (valid) {
             const clone = this.appConfig.serverSubscribes.slice()
             clone.push({ URL: url, Group: configs[0].group })

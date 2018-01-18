@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import defaultConfig from '../../shared/config'
-import { merge, clone } from '../../shared/utils'
+import { merge, clone, request, isSubscribeContentValid } from '../../shared/utils'
 import Config from '../../shared/ssr'
 import { syncConfig } from '../ipc'
 import { STORE_KEY_FEATURE, STORE_KEY_SSR_METHODS, STORE_KEY_SSR_PROTOCOLS, STORE_KEY_SSR_OBFSES } from '../constants'
@@ -166,6 +166,19 @@ export default new Vuex.Store({
       if (configs.length) {
         dispatch('updateConfig', { configs: [...state.appConfig.configs, ...configs] })
       }
+    },
+    // 更新所有订阅服务器
+    updateSubscribes ({ state, dispatch }) {
+      return Promise.all(state.appConfig.serverSubscribes.map(subscribe => {
+        return Promise.race([request(subscribe.URL, true), fetch(subscribe.URL).then(res => res.text())]).then(res => {
+          const [valid, configs] = isSubscribeContentValid(res)
+          if (valid) {
+            const group = configs[0].group
+            const notInGroup = state.appConfig.configs.filter(config => config.group !== group)
+            dispatch('updateConfigs', notInGroup.concat(configs))
+          }
+        })
+      }))
     }
   },
   getters: {

@@ -1,6 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import { net } from 'electron'
+import Base64 from 'urlsafe-base64'
+import { loadConfigsFromString } from './ssr'
 
 const STRING_PROTOTYPE = '[object String]'
 const NUMBER_PROTOTYPE = '[object Number]'
@@ -242,18 +244,19 @@ export function request (url, fromRenderer) {
 }
 
 /**
- * 发起ajax请求
- * @param {String} url 请求的地址
+ * 根据订阅返回值判断其是否为可用的订阅内容
  */
-export function ajax (url) {
-  return new Promise((resolve, reject) => {
-    const oReq = new XMLHttpRequest()
-    oReq.onload = function () {
-      resolve(this.responseText)
-    }
-    oReq.onerror = reject
-    oReq.ontimeout = reject
-    oReq.open('get', url, true)
-    oReq.send()
-  })
+export function isSubscribeContentValid (content) {
+  if (!content) {
+    return [false]
+  }
+  const decoded = Base64.decode(content).toString('utf-8')
+  const configs = loadConfigsFromString(decoded)
+  if (!configs.length) {
+    return [false]
+  } else {
+    const group = configs[0].group
+    const inOneGroup = configs.slice(1).every(config => config.group === group)
+    return [inOneGroup, inOneGroup ? configs : []]
+  }
 }
