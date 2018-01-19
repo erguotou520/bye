@@ -1,0 +1,24 @@
+version: 2
+machine:
+  xcode:
+    version: 8.3
+jobs:
+  build:
+    filters:
+      branches:
+        only:
+          - redesign
+    docker:
+      # specify the version you desire here
+      - image: node:7
+    steps:
+      - checkout
+      - run:
+          name: Install git-lfs
+          command: brew install git-lfs
+      - run:
+          name: Install dep
+          command: npm i
+      - run:
+          name: Build
+          command: npm run build
