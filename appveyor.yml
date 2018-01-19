@@ -3,8 +3,10 @@
 version: 0.1.{build}
 
 branches:
-  only:
-    - redesign
+  on:
+    appveyor_repo_tag: true
+  # only:
+  #   - redesign
 
 image: Visual Studio 2017
 platform:
@@ -32,6 +34,3 @@ build_script:
 
 test: off
 
-deploy:
-  on:
-    appveyor_repo_tag: true        # deploy on tag push only
