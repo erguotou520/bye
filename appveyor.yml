@@ -3,10 +3,8 @@
 version: 0.1.{build}
 
 branches:
-  on:
-    appveyor_repo_tag: true
-  # only:
-  #   - redesign
+  only:
+    - redesign
 
 image: Visual Studio 2017
 platform:
