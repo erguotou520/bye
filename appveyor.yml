@@ -2,18 +2,9 @@
 # https://simulatedgreg.gitbooks.io/electron-vue/content/en/testing.html#on-the-subject-of-ci-testing
 version: 0.1.{build}
 
-deploy:
-  - provider: Environment
-    name: production
-    on:
-      branch: redesign
-  - provider: Environment
-    name: production
-    on:
-      appveyor_repo_tag: true
-# branches:
-#   only:
-#     - redesign
+branches:
+  only:
+    - redesign
 
 image: Visual Studio 2017
 platform:
@@ -40,3 +31,7 @@ build_script:
   - yarn build
 
 test: off
+
+deploy:
+  on:
+    appveyor_repo_tag: true        # deploy on tag push only
