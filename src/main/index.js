@@ -9,11 +9,12 @@ import { stop as stopCommand } from './client'
 import { createWindow, getWindow, destroyWindow } from './window'
 import logger from './logger'
 
+const isProduction = process.env.NODE_ENV !== 'development'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (process.env.NODE_ENV !== 'development') {
+if (isProduction) {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
@@ -75,7 +76,10 @@ appConfig$.subscribe(data => {
   }
 })
 
-// 未捕获的rejections
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
-})
+if (isProduction) {
+  var Raven = require('raven')
+
+  Raven.config('https://35792a16213c4c6b89710f3e3dfa7806@sentry.io/258151', {
+    captureUnhandledRejections: true
+  }).install()
+}
