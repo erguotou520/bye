@@ -2,23 +2,32 @@ version: 2
 machine:
   xcode:
     version: 8.3
+dependencies:
+  pre:
+    - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+    - nvm install stable
+    - brew install git-lfs
 jobs:
   build:
     filters:
       branches:
         only:
           - redesign
-    docker:
-      # specify the version you desire here
-      - image: node:7
     steps:
       - checkout
-      - run:
-          name: Install git-lfs
-          command: brew install git-lfs
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
       - run:
           name: Install dep
           command: npm i
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: Build
           command: npm run build
