@@ -9,6 +9,7 @@ dependencies:
     - brew install git-lfs
 jobs:
   build:
+    machine: true
     filters:
       branches:
         only:
