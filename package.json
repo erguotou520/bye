@@ -2,8 +2,13 @@
   "name": "electron-ssr",
   "version": "0.2.0-alpha.2",
   "author": "erguotou <erguotou525@gmail.com>",
-  "description": "Shadowsocksr client using electron",
+  "description": "Shadowsocksr client build with electron",
+  "homepage": "https://github.com/erguotou520/electron-ssr/",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/erguotou520/electron-ssr"
+  },
   "main": "./dist/electron/main.js",
   "scripts": {
     "build": "node .electron-vue/build.js && electron-builder",
