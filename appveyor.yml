@@ -2,9 +2,15 @@
 # https://simulatedgreg.gitbooks.io/electron-vue/content/en/testing.html#on-the-subject-of-ci-testing
 version: 0.1.{build}
 
-branches:
-  only:
-    - redesign
+- provider: Environment
+  name: production
+  on:
+    branch: redesign
+    appveyor_repo_tag: true
+
+# branches:
+#   only:
+#     - redesign
 
 image: Visual Studio 2017
 platform:

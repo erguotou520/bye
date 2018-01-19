@@ -7,6 +7,8 @@ import { updateAppConfig } from './data'
 import { hideWindow } from './window'
 import defaultConfig, { mergeConfig } from '../shared/config'
 import logger from './logger'
+
+const pkg = require('../../package.json')
 /**
  * ipc-main事件
  */
@@ -25,6 +27,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   e.returnValue = {
     config: stored,
     meta: {
+      version: pkg.version,
       defaultSSRDownloadDir
     }
   }

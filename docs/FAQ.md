@@ -18,3 +18,11 @@
   <summary>为什么我点击切换系统代理模式却没有效果？</summary>
   <p>我们暂时只支持<code>Gnome</code>桌面的Linux系统，其它桌面环境的如果你有解决方案请发issue。Windows和Mac应该正常。</p>
 </details>
+<details>
+  <summary>错误日志option -O not recognized</summary>
+  <p>该错误的原因是因为<code>shadowsocksr-python</code>版本过低而不支持<code>-O</code>参数导致，请升级<code>shadowsocksr-python</code>版本。其它相类似的错误采用同样的处理方案。</p>
+</details>
+<details>
+  <summary>错误日志Exception: libsodium not found</summary>
+  <p>该错误是因为当前系统缺少libsodium库导致，Mac下使用<code>brew install libsodium</code>安装，Ubuntu可参考<a>https://gist.github.com/jonathanpmartins/2510f38abee1e65c6d92</a>安装，其它系统请自行搜索。</p>
+</details>

@@ -1,11 +1,12 @@
-import { Menu, Tray } from 'electron'
+import path from 'path'
+import { Menu, Tray, nativeImage } from 'electron'
 import { appConfig$ } from './data'
 import * as handler from './tray-handler'
 import { startProxy } from './proxy'
-import trayIcon from '../trayicons'
 import { groupConfigs } from '../shared/utils'
 import { isMac, isWin, isLinux } from '../shared/env'
 
+const osTrayIcon = isMac ? 'tray_mac.png' : 'tray_win.png'
 let tray
 let menus
 
@@ -84,7 +85,7 @@ function getTooltip (appConfig) {
  */
 export default function renderTray (appConfig) {
   // 生成tray
-  tray = new Tray(trayIcon)
+  tray = new Tray(nativeImage.createFromPath(path.join(__static, osTrayIcon)))
   menus = [
     { label: '启用系统代理        ', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
     { label: '系统代理模式', submenu: [
@@ -109,7 +110,8 @@ export default function renderTray (appConfig) {
       { label: '查看日志', click: handler.openLog },
       { label: '项目主页', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr') } },
       { label: 'Bug反馈', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr/issues') } },
-      { label: '捐赠', click: () => { handler.openURL('https://github.com/erguotou520/donate') } }
+      { label: '捐赠', click: () => { handler.openURL('https://github.com/erguotou520/donate') } },
+      { label: '打开开发者工具', click: handler.openDevtool }
     ] },
     { label: '退出', click: handler.exitApp }
   ]

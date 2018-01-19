@@ -60,6 +60,7 @@ export default new Vuex.Store({
   state: {
     appConfig: defaultConfig,
     meta: {
+      version: '',
       defaultSSRDownloadDir: ''
     },
     view: {
@@ -132,6 +133,9 @@ export default new Vuex.Store({
     initConfig ({ commit }, { config, meta }) {
       commit('updateConfig', config)
       commit('updateMeta', meta)
+      if (meta.version) {
+        document.title = `${document.title} v${meta.version}`
+      }
       const initialSelected = config.configs[config.index]
       if (initialSelected) {
         commit('setCurrentConfig', initialSelected)

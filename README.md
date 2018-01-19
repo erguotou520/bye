@@ -14,6 +14,9 @@
 ## FAQ
 [FAQ](./docs/FAQ.md)
 
+## 已知Bug
+- Linux中非gnome桌面无法切换系统代理模式，如果你知道如何实现，欢迎发issue告知。
+
 ## 打赏
 [如果觉得本项目对你有所帮助，欢迎打赏](https://github.com/erguotou520/donate)
 

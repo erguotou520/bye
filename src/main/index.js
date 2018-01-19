@@ -1,7 +1,7 @@
 import { app } from 'electron'
 import AutoLaunch from 'auto-launch'
 import './bootstrap'
-import { appConfig$ } from './data'
+import { isQuiting, appConfig$ } from './data'
 import { destroyTray } from './tray'
 import './ipc'
 import { stopPacServer } from './pac'
@@ -9,12 +9,11 @@ import { stop as stopCommand } from './client'
 import { createWindow, getWindow, destroyWindow } from './window'
 import logger from './logger'
 
-const isProduction = process.env.NODE_ENV !== 'development'
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
  */
-if (isProduction) {
+if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
@@ -33,8 +32,8 @@ app.on('window-all-closed', () => {
   }
 })
 
-app.on('before-quit', () => console.log('before-quit'))
-app.on('quit', () => console.log('quit'))
+// 由main进程发起的退出
+app.on('before-quit', () => { isQuiting(true) })
 
 app.on('will-quit', () => {
   console.log('will-quit')
@@ -76,9 +75,8 @@ appConfig$.subscribe(data => {
   }
 })
 
-if (isProduction) {
+if (process.env.NODE_ENV !== 'development') {
   var Raven = require('raven')
-
   Raven.config('https://35792a16213c4c6b89710f3e3dfa7806@sentry.io/258151', {
     captureUnhandledRejections: true
   }).install()

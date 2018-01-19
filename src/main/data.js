@@ -9,6 +9,8 @@ import { getUpdatedKeys, configMerge } from '../shared/utils'
 import defaultConfig, { mergeConfig } from '../shared/config'
 
 let promise
+// 是因为调用app.quit还是手动点击窗口的叉号引起的关闭事件, true表示app.quit
+let _isQuiting = false
 export let currentConfig
 
 // 读取配置
@@ -55,6 +57,15 @@ export function updateAppConfig (targetConfig) {
 }
 
 export const appConfig$ = source.multicast(subject).refCount()
+
+// 传参用于设定是退出应用还是关闭窗口 不传参表示返回当前状态
+export function isQuiting (target) {
+  if (target !== undefined) {
+    _isQuiting = target
+  } else {
+    return _isQuiting
+  }
+}
 
 // 配置文件变化时
 appConfig$.subscribe(data => {

@@ -7,7 +7,7 @@ import { loadConfigsFromString } from '../shared/ssr'
 
 export function showNotification (title, body) {
   new Notification(title, {
-    icon: path.join(__dirname, '../trayicons/tray_win@3x.png'),
+    icon: path.join(__static, 'tray_win@3x.png'),
     body: body
   })
 }

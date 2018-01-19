@@ -1,10 +1,12 @@
 import { BrowserWindow } from 'electron'
-let mainWindow
-let readyPromise
+import { isQuiting } from './data'
+
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
+let mainWindow
+let readyPromise
 /**
  * 创建主视图
  */
@@ -21,8 +23,11 @@ export function createWindow () {
 
   // hide to tray when window closed
   mainWindow.on('close', (e) => {
-    e.preventDefault()
-    mainWindow.hide()
+    // 当前不是退出APP的时候才去隐藏窗口
+    if (!isQuiting()) {
+      e.preventDefault()
+      mainWindow.hide()
+    }
   })
 
   mainWindow.on('closed', () => {
@@ -54,6 +59,7 @@ export function showWindow () {
  * 隐藏主视图
  */
 export function hideWindow () {
+  isQuiting(false)
   if (mainWindow) {
     mainWindow.hide()
   }
@@ -75,6 +81,18 @@ export async function sendData (channel, ...args) {
   if (mainWindow) {
     await readyPromise
     mainWindow.webContents.send(channel, ...args)
+  } else {
+    console.log('not ready')
+  }
+}
+
+/**
+ * 打开开发者工具
+ */
+export async function openDevtool () {
+  if (mainWindow) {
+    await readyPromise
+    mainWindow.webContents.openDevTools()
   } else {
     console.log('not ready')
   }

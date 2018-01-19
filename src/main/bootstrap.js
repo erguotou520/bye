@@ -7,7 +7,7 @@ import defaultConfig from '../shared/config'
 // 应用配置存储目录
 export const appConfigDir = app.getPath('userData')
 // 应用配置存储路径
-export const appConfigPath = path.join(appConfigDir, 'shadowsocksr.json')
+export const appConfigPath = path.join(appConfigDir, 'gui-config.json')
 // 日志路径
 export const logPath = path.join(appConfigDir, 'logs/shadowsocksr-client.log')
 // ssr运行日志路径

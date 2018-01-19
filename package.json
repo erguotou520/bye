@@ -1,6 +1,6 @@
 {
   "name": "electron-ssr",
-  "version": "0.2.0-alpha-1",
+  "version": "0.2.0-alpha-2",
   "author": "erguotou <erguotou525@gmail.com>",
   "description": "Shadowsocksr client using electron",
   "license": "MIT",
@@ -20,14 +20,17 @@
     "unit": "karma start test/unit/karma.conf.js"
   },
   "build": {
-    "productName": "electron-ssr",
+    "productName": "ShadowsocksR客户端",
     "appId": "me.erguotou.ssr",
     "compression": "maximum",
     "directories": {
       "output": "build"
     },
     "files": [
-      "dist/electron/**/*"
+      "dist/electron/**/*",
+      "!dist/electron/imgs/ionicons--fonts.svg",
+      "!dist/electron/fonts/ionicons--fonts.eot",
+      "!dist/electron/fonts/ionicons--fonts.ttf"
     ],
     "dmg": {
       "contents": [
