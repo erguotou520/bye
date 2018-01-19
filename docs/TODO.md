@@ -2,3 +2,4 @@
 - 合并到`master`后要修改检查更新的地址
 - dropdown button
 - update subscribes automatically
+- inner http proxy
