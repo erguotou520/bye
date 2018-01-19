@@ -47,5 +47,5 @@ script:
 branches:
   only:
   - redesign
-on:
+  on:
     tags: true
