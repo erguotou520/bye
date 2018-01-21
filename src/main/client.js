@@ -6,8 +6,6 @@ import { appConfig$ } from './data'
 import logger from './logger'
 
 let child
-// 当前运行的ssr配置
-// let currentConfig
 
 /**
  * 运行shell命令并写入到日志中
@@ -49,8 +47,11 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
   params.push(`--log-file ${ssrLogPath}`)
   // FIXME
   const command = `python "${path.join(ssrPath, 'local.py')}" ${params.join(' ')}`
-  console.log('run command: %s', command)
-  // logger.debug('run command: %s', command)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('run command: %s', command)
+  } else {
+    logger.debug('run command: %s', command)
+  }
   child = runCommand(command)
 }
 
@@ -59,8 +60,11 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
  */
 export function stop () {
   if (child && child.pid) {
-    console.log('Kill python client')
-    // logger.log('Kill python client')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Kill python client')
+    } else {
+      logger.log('Kill python client')
+    }
     treeKill(child.pid)
     child = null
   }

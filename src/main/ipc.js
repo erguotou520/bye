@@ -35,10 +35,18 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   console.log('received sync data: ', data)
   updateAppConfig(data)
 }).on(events.EVENT_SSR_DOWNLOAD_RENDERER, e => {
-  console.log('start download ssr')
+  if (process.env.NODE_ENV === 'development') {
+    console.log('start download ssr')
+  } else {
+    logger.debug('start download ssr')
+  }
   // 自动下载ssr项目
   downloadGitRepo('shadowsocksr-backup/shadowsocksr#dev', defaultSSRDownloadDir, err => {
-    console.log('ssr download', err ? 'error' : 'success')
+    if (process.env.NODE_ENV === 'development') {
+      console.log('ssr download', err ? 'error' : 'success')
+    } else {
+      logger.debug(`ssr download ${err ? 'error' : 'success'}`)
+    }
     e.sender.send(events.EVENT_SSR_DOWNLOAD_MAIN, err)
   })
 })

@@ -6,14 +6,21 @@ import { app } from 'electron'
 import path from 'path'
 import { existsSync } from 'fs'
 import { execSync } from 'child_process'
-import { exec } from 'sudo-prompt'
+// import { exec } from 'sudo-prompt'
 import { currentConfig, appConfig$ } from './data'
 // import logger from './logger'
 import { isWin, isMac, isLinux } from '../shared/env'
 
 const userDir = app.getPath('userData')
 // windows sysproxy.exe文件的路径
-const winToolPath = path.resolve(__dirname, '../lib/sysproxy.exe')
+let winToolPath
+if (isWin) {
+  if (process.env.NODE_ENV === 'development') {
+    winToolPath = path.resolve(__dirname, '../lib/sysproxy.exe')
+  } else {
+    winToolPath = path.join(__dirname, 'sysproxy.exe')
+  }
+}
 // mac 获取network_service的shell脚本
 // const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
 const macToolPath = path.resolve(userDir, 'proxy_conf_helper')
@@ -30,21 +37,21 @@ function runCommand (command) {
  * 在mac上运行sudo 命令
  * @param {String} command 需要在mac上运行的命令
  */
-function sudoMacCommand (command) {
-  return new Promise((resolve, reject) => {
-    exec(command, {
-      name: 'ssrclient',
-      icns: path.join(__dirname, '../../build/icons/icon.icns')
-    }, (error, stdout, stderr) => {
-      if (error || stderr) {
-        console.log('error: %s, stderr: %s', error, stderr)
-        app.quit()
-      } else {
-        resolve()
-      }
-    })
-  })
-}
+// function sudoMacCommand (command) {
+//   return new Promise((resolve, reject) => {
+//     exec(command, {
+//       name: 'ssrclient',
+//       icns: path.join(__dirname, '../../build/icons/icon.icns')
+//     }, (error, stdout, stderr) => {
+//       if (error || stderr) {
+//         console.log('error: %s, stderr: %s', error, stderr)
+//         app.quit()
+//       } else {
+//         resolve()
+//       }
+//     })
+//   })
+// }
 
 /**
  * 设置代理为空
@@ -107,8 +114,10 @@ export function startProxy (mode) {
 
 // 初始化确保文件存在
 if (isMac && !existsSync(macToolPath)) {
-  const localPath = path.join(__dirname, '../lib/proxy_conf_helper')
-  sudoMacCommand(`cp ${localPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
+  const localPath = process.env.NODE_ENV === 'development'
+    ? path.join(__dirname, '../lib/proxy_conf_helper')
+    : path.join(__dirname, 'proxy_conf_helper')
+  execSync(`cp ${localPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
 }
 
 // 监听配置变化

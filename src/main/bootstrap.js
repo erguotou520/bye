@@ -1,7 +1,7 @@
 import path from 'path'
 import { app } from 'electron'
 import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
-// import logger from './logger'
+import logger from './logger'
 import defaultConfig from '../shared/config'
 
 // 应用配置存储目录
@@ -30,8 +30,11 @@ async function init () {
   await ensureDir(path.join(appConfigDir, 'logs'))
   await ensureFile(logPath)
   await ensureFile(ssrLogPath)
-  console.log('Config file\'s path: %s\nLog file\'s path: %s\nSSR log file \'s path: %s', appConfigPath, logPath, ssrLogPath)
-  // logger.debug('Config file\'s path: %s', appConfigPath)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Config file\'s path: %s\nLog file\'s path: %s\nSSR log file \'s path: %s', appConfigPath, logPath, ssrLogPath)
+  } else {
+    logger.info('file ensured')
+  }
 }
 
 export default init()

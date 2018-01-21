@@ -21,12 +21,17 @@ app.on('ready', () => {
   createWindow()
   const ssrSchemaRegisted = app.setAsDefaultProtocolClient('ssr')
   const ssSchemaRegisted = app.setAsDefaultProtocolClient('ss')
-  console.log(`ssrSchemaRegisted`, ssrSchemaRegisted, `ssSchemaRegisted`, ssSchemaRegisted)
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`ssrSchemaRegisted`, ssrSchemaRegisted, `ssSchemaRegisted`, ssSchemaRegisted)
+  } else {
+    logger.debug(`ssrSchemaRegisted:${ssrSchemaRegisted} ssSchemaRegisted${ssSchemaRegisted}`)
+  }
 })
 
 app.on('window-all-closed', () => {
-  console.log('window-all-closed')
-  // logger.debug('Event:window-all-closed')
+  if (process.env.NODE_ENV === 'development') {
+    console.log('window-all-closed')
+  }
   if (process.platform !== 'darwin') {
     app.quit()
   }

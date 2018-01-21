@@ -4,6 +4,7 @@
 import http from 'http'
 import { parse } from 'url'
 import { readFile, writeFile, pathExists } from 'fs-extra'
+import logger from './logger'
 import { request } from '../shared/utils'
 import bootstrapPromise, { pacPath } from './bootstrap'
 import dataPromise, { currentConfig, appConfig$ } from './data'
@@ -18,6 +19,7 @@ export async function downloadPac (force = false) {
   await bootstrapPromise
   const pacExisted = await pathExists(pacPath)
   if (force || !pacExisted) {
+    logger.debug('start download pac')
     const pac = await request('https://softs.fun/Other/pac.txt')
     pacContent = pac
     return await writeFile(pacPath, pac)
@@ -57,12 +59,20 @@ export async function serverPac (pacPort) {
   }).listen(port, host)
   pacServer
     .on('listening', () => {
-      console.log('pac server listen at: %s:%s', host, port)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('pac server listen at: %s:%s', host, port)
+      } else {
+        logger.debug(`pac server listen at: ${host}:${port}`)
+      }
     })
     .on('error', err => {
       if (err.code === 'EADDRINUSE') {
         // 端口已经被使用
-        console.log(`pac端口${port}已被占用`)
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`pac端口${port}已被占用`)
+        } else {
+          logger.warn(`pac端口${port}已被占用`)
+        }
       }
       pacServer.close()
     })

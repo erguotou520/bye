@@ -37,6 +37,9 @@
       "!dist/electron/fonts/ionicons--fonts.eot",
       "!dist/electron/fonts/ionicons--fonts.ttf"
     ],
+    "extraFiles": [
+      "src/lib/*"
+    ],
     "dmg": {
       "contents": [
         {
