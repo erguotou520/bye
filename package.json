@@ -83,7 +83,7 @@
       ]
     },
     "nsis": {
-      "license": "MIT"
+      "license": "LICENSE"
     },
     "linux": {
       "icon": "build/icons",
