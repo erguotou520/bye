@@ -38,7 +38,12 @@
       "!dist/electron/fonts/ionicons--fonts.ttf"
     ],
     "extraFiles": [
-      "src/lib/*"
+      {
+        "from": "src/lib/sysproxy.exe"
+      },
+      {
+        "from": "src/lib/proxy_conf_helper"
+      }
     ],
     "dmg": {
       "contents": [

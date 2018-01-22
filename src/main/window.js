@@ -16,11 +16,14 @@ export function createWindow () {
     width: 800,
     center: true,
     resizable: false,
+    show: false,
     webPreferences: { webSecurity: process.env.NODE_ENV !== 'development' }
   })
   mainWindow.setMenu(null)
   mainWindow.loadURL(winURL)
-
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show()
+  })
   // hide to tray when window closed
   mainWindow.on('close', (e) => {
     // 当前不是退出APP的时候才去隐藏窗口

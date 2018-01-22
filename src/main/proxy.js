@@ -8,19 +8,21 @@ import { existsSync } from 'fs'
 import { execSync } from 'child_process'
 // import { exec } from 'sudo-prompt'
 import { currentConfig, appConfig$ } from './data'
-// import logger from './logger'
+import logger from './logger'
 import { isWin, isMac, isLinux } from '../shared/env'
 
 const userDir = app.getPath('userData')
+const exePath = app.getPath('exe')
 // windows sysproxy.exe文件的路径
 let winToolPath
 if (isWin) {
   if (process.env.NODE_ENV === 'development') {
     winToolPath = path.resolve(__dirname, '../lib/sysproxy.exe')
   } else {
-    winToolPath = path.join(__dirname, 'sysproxy.exe')
+    winToolPath = path.join(exePath, '../sysproxy.exe')
   }
 }
+logger.debug('winToolPath: ' + winToolPath)
 // mac 获取network_service的shell脚本
 // const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
 const macToolPath = path.resolve(userDir, 'proxy_conf_helper')
@@ -116,7 +118,7 @@ export function startProxy (mode) {
 if (isMac && !existsSync(macToolPath)) {
   const localPath = process.env.NODE_ENV === 'development'
     ? path.join(__dirname, '../lib/proxy_conf_helper')
-    : path.join(__dirname, 'proxy_conf_helper')
+    : path.join(exePath, '../Contents/proxy_conf_helper')
   execSync(`cp ${localPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
 }
 

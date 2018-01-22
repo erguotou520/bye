@@ -24,7 +24,7 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'development') {
     console.log(`ssrSchemaRegisted`, ssrSchemaRegisted, `ssSchemaRegisted`, ssSchemaRegisted)
   } else {
-    logger.debug(`ssrSchemaRegisted:${ssrSchemaRegisted} ssSchemaRegisted${ssSchemaRegisted}`)
+    logger.debug(`ssrSchemaRegisted: ${ssrSchemaRegisted} ssSchemaRegisted: ${ssSchemaRegisted}`)
   }
 })
 
