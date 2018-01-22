@@ -82,6 +82,9 @@
         }
       ]
     },
+    "nsis": {
+      "license": "MIT"
+    },
     "linux": {
       "icon": "build/icons",
       "category": "Development",

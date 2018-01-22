@@ -6,7 +6,7 @@ import { groupConfigs } from '../shared/utils'
 import { isMac, isWin, isLinux } from '../shared/env'
 import { toggleProxy } from './tray-handler'
 
-const osTrayIcon = isMac ? 'tray_mac.png' : 'tray_win.png'
+const osTrayIcon = isMac ? 'tray_mac.png' : (isWin ? 'tray_win.png' : 'tray_win@2x.png')
 let tray
 let menus
 let contextMenu

@@ -48,4 +48,4 @@ branches:
   only:
   - redesign
 
-if: tag IS present
+# if: tag IS present

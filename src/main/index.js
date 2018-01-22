@@ -6,7 +6,7 @@ import { destroyTray } from './tray'
 import './ipc'
 import { stopPacServer } from './pac'
 import { stop as stopCommand } from './client'
-import { createWindow, getWindow, destroyWindow } from './window'
+import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import logger from './logger'
 
 /**
@@ -65,6 +65,12 @@ const AutoLauncher = new AutoLaunch({
 
 appConfig$.subscribe(data => {
   const [appConfig, changed] = data
+  if (!changed.length) {
+    // 初始化时没有配置则打开页面，有配置则不显示主页面
+    if (!appConfig.configs.length) {
+      showWindow()
+    }
+  }
   if (!changed.length || changed.indexOf('autoLaunch') > -1) {
     // 初始化或者选项变更时
     AutoLauncher.isEnabled().then(enabled => {
