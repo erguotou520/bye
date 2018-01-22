@@ -6,6 +6,7 @@ import { app } from 'electron'
 import path from 'path'
 import { existsSync } from 'fs'
 import { execSync } from 'child_process'
+import Sudoer from 'electron-sudo'
 // import { exec } from 'sudo-prompt'
 import { currentConfig, appConfig$ } from './data'
 import logger from './logger'
@@ -42,11 +43,15 @@ function runCommand (command) {
 // function sudoMacCommand (command) {
 //   return new Promise((resolve, reject) => {
 //     exec(command, {
-//       name: 'ssrclient',
-//       icns: path.join(__dirname, '../../build/icons/icon.icns')
+//       name: 'ssrclient'
+//       // icns: path.join(__dirname, '../../build/icons/icon.icns')
 //     }, (error, stdout, stderr) => {
 //       if (error || stderr) {
-//         console.log('error: %s, stderr: %s', error, stderr)
+//         if (process.env.NODE_ENV === 'development') {
+//           console.log('error: %s, stderr: %s', error, stderr)
+//         } else {
+//           logger.debug(`error: ${error}, stderr: ${stderr}`)
+//         }
 //         app.quit()
 //       } else {
 //         resolve()
@@ -54,6 +59,24 @@ function runCommand (command) {
 //     })
 //   })
 // }
+async function sudoMacCommand (command) {
+  const sudoer = new Sudoer({ name: 'ShadowsocksR客户端' })
+  try {
+    const result = await sudoer.exec(command)
+    result.on('close', () => {
+      if (process.env.NODE_ENV === 'development') {
+        result.output.stdout && console.log(result.output.stdout.toString())
+        result.output.stderr && console.error(result.output.stderr.toString())
+      } else {
+        result.output.stdout && logger.log(result.output.stdout.toString())
+        result.output.stderr && logger.error(result.output.stderr.toString())
+      }
+    })
+    return result
+  } catch (e) {
+    app.quit()
+  }
+}
 
 /**
  * 设置代理为空
@@ -118,8 +141,8 @@ export function startProxy (mode) {
 if (isMac && !existsSync(macToolPath)) {
   const localPath = process.env.NODE_ENV === 'development'
     ? path.join(__dirname, '../lib/proxy_conf_helper')
-    : path.join(exePath, '../Contents/proxy_conf_helper')
-  execSync(`cp ${localPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
+    : path.join(exePath, '../../../Contents/proxy_conf_helper')
+  sudoMacCommand(`cp ${localPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
 }
 
 // 监听配置变化

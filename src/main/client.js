@@ -38,7 +38,7 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
   params.push(`-k ${config.password}`)
   params.push(`-m ${config.method}`)
   params.push(`-O ${config.protocol}`)
-  config.protocol_param && params.push(`-G ${config.protocol_param}`)
+  config.protocolparam && params.push(`-G ${config.protocolparam}`)
   config.obfs && params.push(`-o ${config.obfs}`)
   config.obfs_param && params.push(`-g ${config.obfs_param}`)
   params.push(`-b ${shareOverLan ? '0.0.0.0' : '127.0.0.1'}`)
