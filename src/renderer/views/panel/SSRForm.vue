@@ -22,6 +22,9 @@
         <i-option v-for="protocol in protocols" :key="protocol" :value="protocol">{{protocol}}</i-option>
       </i-select>
     </i-form-item>
+    <i-form-item label="协议参数">
+      <i-input :value="editingConfig.protocolparam" @input="v=>onInput('protocolparam', v)"/>
+    </i-form-item>
     <i-form-item label="混淆" prop="obfs">
       <i-select :value="editingConfig.obfs" @input="v=>onInput('obfs', v)" @on-change="onObfsChange">
         <i-option v-for="obfs in obfses" :key="obfs" :value="obfs">{{obfs}}</i-option>
@@ -85,7 +88,7 @@ export default {
       this.$store.commit('updateEditing', { [field]: v })
     },
     onObfsChange (v) {
-      console.log('c')
+      this.onInput('obfs', v)
       if (v === 'plain') {
         this.onInput('obfsparam', '')
       }

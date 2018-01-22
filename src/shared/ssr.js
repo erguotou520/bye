@@ -26,6 +26,7 @@ export default class Config {
     this.password = '0'
     this.method = 'aes-256-cfb'
     this.protocol = 'origin'
+    this.protocolparam = ''
     this.obfs = 'plain'
     this.obfsparam = ''
     this.remarks = ''
@@ -50,6 +51,7 @@ export default class Config {
     const required = [this.server, this.server_port, this.protocol, this.method, this.obfs, encode(this.password)]
     const others = []
     this.obfsparam && others.push(`obfsparam=${encode(this.obfsparam)}`)
+    this.protocolparam && others.push(`protoparam=${encode(this.protocolparam)}`)
     this.remarks && others.push(`remarks=${encode(this.remarks)}`)
     this.group && others.push(`group=${encode(this.group)}`)
     const link = `ssr://${encode(required.join(':') + '/?' + others.join('&'))}`
@@ -78,6 +80,9 @@ export default class Config {
         this.password = decode(requiredSplit[5])
         if (otherSplit.obfsparam) {
           this.obfsparam = decode(otherSplit.obfsparam)
+        }
+        if (otherSplit.protoparam) {
+          this.protocolparam = decode(otherSplit.protoparam)
         }
         if (otherSplit.remarks) {
           this.remarks = decode(otherSplit.remarks)

@@ -21,6 +21,7 @@ describe('Config', function () {
       password: 'aaabbb',
       method: 'aes-128-cfb',
       protocol: 'auth_aes128_md5',
+      protocolparam: '',
       obfs: 'tls1.2_ticket_auth',
       obfsparam: 'breakwa11.moe'
     }
@@ -38,6 +39,7 @@ describe('Config', function () {
     expect(base.password).to.equal('aaabbb')
     expect(base.method).to.equal('aes-128-cfb')
     expect(base.protocol).to.equal('auth_aes128_md5')
+    expect(base.protocolparam).to.equal('')
     expect(base.obfs).to.equal('tls1.2_ticket_auth')
     expect(base.obfsparam).to.equal('breakwa11.moe')
 
@@ -48,6 +50,7 @@ describe('Config', function () {
     expect(withRemark.password).to.equal('aaabbb')
     expect(withRemark.method).to.equal('aes-128-cfb')
     expect(withRemark.protocol).to.equal('auth_aes128_md5')
+    expect(base.protocolparam).to.equal('')
     expect(withRemark.obfs).to.equal('tls1.2_ticket_auth')
     expect(withRemark.obfsparam).to.equal('breakwa11.moe')
     expect(withRemark.remark).to.equal('测试中文')
