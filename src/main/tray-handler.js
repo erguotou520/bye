@@ -5,6 +5,7 @@ import { showWindow, sendData } from './window'
 export { openDevtool } from './window'
 import { updateAppConfig, currentConfig } from './data'
 import { downloadPac } from './pac'
+import { startProxy } from './proxy'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
 import { request } from '../shared/utils'
@@ -13,6 +14,14 @@ import pkg from '../../package.json'
 // 切换启用状态
 export function toggleEnable () {
   updateAppConfig({ enable: !currentConfig.enable })
+}
+
+// 切换代理方式
+export function toggleProxy (e, mode) {
+  e.menu.items.forEach(item => { item.checked = false })
+  e.checked = true
+  startProxy(mode)
+  updateAppConfig({ sysProxyMode: mode })
 }
 
 // 更改选中的ssr配置

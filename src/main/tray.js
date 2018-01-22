@@ -2,13 +2,14 @@ import path from 'path'
 import { Menu, Tray, nativeImage } from 'electron'
 import { appConfig$ } from './data'
 import * as handler from './tray-handler'
-import { startProxy } from './proxy'
 import { groupConfigs } from '../shared/utils'
 import { isMac, isWin, isLinux } from '../shared/env'
+import { toggleProxy } from './tray-handler'
 
 const osTrayIcon = isMac ? 'tray_mac.png' : 'tray_win.png'
 let tray
 let menus
+let contextMenu
 
 /**
  * 生成服务器子菜单
@@ -48,11 +49,11 @@ function generateConfigSubmenus (configs, selectedIndex) {
   return submenus
 }
 
-// 切换代理方式
-function toggleProxy (e, mode) {
-  e.menu.items.forEach(item => { item.checked = false })
-  e.checked = true
-  startProxy(mode)
+// 切换代理模式
+function toggleProxyMode (e, mode) {
+  toggleProxy(e, mode)
+  // 在Linux上，为了改变单独的MenuItem，你必须再次调用setContextMenu
+  tray.setContextMenu(contextMenu)
 }
 
 // 根据配置显示tray tooltip
@@ -89,9 +90,9 @@ export default function renderTray (appConfig) {
   menus = [
     { label: '启用系统代理        ', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
     { label: '系统代理模式', submenu: [
-      { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => toggleProxy(e, 0) },
-      { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => toggleProxy(e, 1) },
-      { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => toggleProxy(e, 2) }
+      { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => toggleProxyMode(e, 0) },
+      { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => toggleProxyMode(e, 1) },
+      { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => toggleProxyMode(e, 2) }
     ] },
     { label: 'PAC', submenu: [
       { label: '更新PAC', click: handler.updatePac }
@@ -115,7 +116,7 @@ export default function renderTray (appConfig) {
     ] },
     { label: '退出', click: handler.exitApp }
   ]
-  const contextMenu = Menu.buildFromTemplate(menus)
+  contextMenu = Menu.buildFromTemplate(menus)
   tray.setContextMenu(contextMenu)
   tray.setToolTip(getTooltip(appConfig))
   tray.on((isMac || isWin) ? 'double-click' : 'click', handler.showMainWindow)
