@@ -1,18 +1,31 @@
 import { tmpdir } from 'os'
-// import { watchFile, unwatchFile, unlink, createReadStream, createWriteStream} from 'fs'
+import { app } from 'electron'
 import { normalize, join, dirname } from 'path'
 import { createHash } from 'crypto'
 
-import { readFile, exec, mkdir } from '~/lib/utils'
+import { readFile, exec, mkdir } from './promisify'
 
 const { platform, env } = process
 
-class Sudoer {
-  constructor (options) {
+export default class SudoerDarwin {
+  constructor (options = {}) {
     this.platform = platform
     this.options = options
     this.cp = null
     this.tmpdir = tmpdir()
+    if (options.icns && typeof options.icns !== 'string') {
+      throw new Error('options.icns must be a string if provided.')
+    } else if (options.icns && options.icns.trim().length === 0) {
+      throw new Error('options.icns must be a non-empty string if provided.')
+    }
+    if (options.name && !this.isValidName(options.name)) {
+      throw new Error('options.name must be a-z 0-9 and 1~69 character length after trimed.')
+    }
+    this.up = false
+  }
+
+  isValidName (name) {
+    return /^[a-z0-9 ]+$/i.test(name) && name.trim().length > 0 && name.length < 70
   }
 
   hash (buffer) {
@@ -21,6 +34,14 @@ class Sudoer {
     hash.update(this.options.name || '')
     hash.update(buffer || new Buffer(0))
     return hash.digest('hex').slice(-32)
+  }
+
+  escapeDoubleQuotes (string) {
+    return string.replace(/"/g, '\\"')
+  }
+
+  encloseDoubleQuotes (string) {
+    return string.replace(/(.+)/g, '"$1"')
   }
 
   joinEnv (options) {
@@ -32,29 +53,6 @@ class Sudoer {
       }
     }
     return spreaded
-  }
-
-  escapeDoubleQuotes (string) {
-    return string.replace(/"/g, '\\"')
-  }
-
-  encloseDoubleQuotes (string) {
-    return string.replace(/(.+)/g, '"$1"')
-  }
-
-  kill (pid) {
-    if (!pid) {
-      return
-    } else {
-      return
-    }
-  }
-}
-
-class SudoerUnix extends Sudoer {
-  constructor (options = {}) {
-    super(options)
-    if (!this.options.name) { this.options.name = 'Electron' }
   }
 
   async copy (source, target) {
@@ -88,33 +86,6 @@ class SudoerUnix extends Sudoer {
 
   async reset () {
     await exec('/usr/bin/sudo -k')
-  }
-}
-
-class SudoerDarwin extends SudoerUnix {
-  constructor (options = {}) {
-    super(options)
-    if (options.icns && typeof options.icns !== 'string') {
-      throw new Error('options.icns must be a string if provided.')
-    } else if (options.icns && options.icns.trim().length === 0) {
-      throw new Error('options.icns must be a non-empty string if provided.')
-    }
-    this.up = false
-  }
-
-  isValidName (name) {
-    return /^[a-z0-9 ]+$/i.test(name) && name.trim().length > 0 && name.length < 70
-  }
-
-  joinEnv (options) {
-    const { env } = options
-    const spreaded = []
-    if (env && typeof env === 'object') {
-      for (const key in env) {
-        spreaded.push(key.concat('=', env[key]))
-      }
-    }
-    return spreaded
   }
 
   async exec (command, options = {}) {
@@ -160,7 +131,12 @@ class SudoerDarwin extends SudoerUnix {
       const icon = await self.readIcns()
       const hash = self.hash(icon)
       // Copy applet to temporary directory
-      const source = join(`${dirname(__filename)}/bin`, 'applet.app')
+      let source
+      if (process.env.NODE_ENV === 'development') {
+        source = join(__dirname, '../lib/applet.app')
+      } else {
+        source = join(app.getPath('exe'), '../../../Contents/applet.app')
+      }
       const target = join(self.tmpdir, hash, `${self.options.name}.app`)
       try {
         await mkdir(dirname(target))
@@ -239,5 +215,3 @@ class SudoerDarwin extends SudoerUnix {
     })
   }
 }
-
-export { SudoerDarwin }
