@@ -67,7 +67,7 @@ appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   if (!changed.length) {
     // 初始化时没有配置则打开页面，有配置则不显示主页面
-    if (!appConfig.configs.length) {
+    if (!appConfig.configs.length || !appConfig.ssrPath) {
       showWindow()
     }
   }

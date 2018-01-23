@@ -43,7 +43,7 @@ function generateConfigSubmenus (configs, selectedIndex) {
     submenus.push({ label: 'none', enabled: false })
   }
   submenus.push({ type: 'separator' })
-  submenus.push({ label: '编辑服务器', click: handler.showMainWindow })
+  submenus.push({ label: '编辑服务器', click: handler.showManagePanel })
   submenus.push({ label: '订阅管理', click: handler.showSubscribes })
   submenus.push({ label: '更新订阅服务器', click: handler.updateSubscribes })
   return submenus
@@ -53,7 +53,9 @@ function generateConfigSubmenus (configs, selectedIndex) {
 function toggleProxyMode (e, mode) {
   toggleProxy(e, mode)
   // 在Linux上，为了改变单独的MenuItem，你必须再次调用setContextMenu
-  tray.setContextMenu(contextMenu)
+  if (isLinux) {
+    tray.setContextMenu(contextMenu)
+  }
 }
 
 // 根据配置显示tray tooltip
@@ -145,7 +147,8 @@ appConfig$.subscribe(data => {
   } else if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
     // configs或index字段修改时刷新服务器列表
     menus[3].submenu = generateConfigSubmenus(appConfig.configs, appConfig.index)
-    tray.setContextMenu(Menu.buildFromTemplate(menus))
+    contextMenu = Menu.buildFromTemplate(menus)
+    tray.setContextMenu(contextMenu)
   }
   if (['configs', 'index', 'enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
     tray.setToolTip(getTooltip(appConfig))

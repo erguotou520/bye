@@ -86,6 +86,10 @@ export function importConfigFromClipboard () {
   if (parsed.length) {
     updateAppConfig({ configs: [...currentConfig.configs, ...parsed] })
   }
+  sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, {
+    title: '导入通知',
+    body: parsed.length ? `已导入${parsed.length}条数据` : '从粘贴板中导入失败'
+  })
 }
 
 // 打开配置文件
@@ -124,6 +128,12 @@ export function showOptions () {
 export function showSubscribes () {
   showWindow()
   sendData(events.EVENT_APP_SHOW_PAGE, { page: 'Options', tab: 'subscribes' })
+}
+
+// 打开服务器编辑窗口
+export function showManagePanel () {
+  showWindow()
+  sendData(events.EVENT_APP_SHOW_PAGE, { page: 'ManagePanel' })
 }
 
 // 打开窗口

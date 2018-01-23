@@ -120,9 +120,10 @@ export default {
           }
         })
       })).then(() => {
-        showNotification('订阅更新通知', '服务器订阅成功')
+        showNotification('订阅更新通知', '服务器订阅更新成功')
+        this.selectedRows = []
       }).catch(() => {
-        showNotification('订阅更新通知', '服务器订阅失败')
+        showNotification('订阅更新通知', '服务器订阅更新失败')
       })
     },
     remove () {

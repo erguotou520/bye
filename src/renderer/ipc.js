@@ -40,9 +40,9 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
   alert(JSON.stringify(err))
 }).on(events.EVENT_SUBSCRIBE_UPDATE_MAIN, (e, err) => {
   store.dispatch('updateSubscribes').then(() => {
-    showNotification('订阅更新通知', '服务器订阅成功')
+    showNotification('订阅更新通知', '服务器订阅更新成功')
   }).catch(() => {
-    showNotification('订阅更新通知', '服务器订阅失败')
+    showNotification('订阅更新通知', '服务器订阅更新失败')
   })
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
   console.log('received sync data: %o', appConfig)

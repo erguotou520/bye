@@ -24,6 +24,7 @@
 </template>
 <script>
 import { ipcRenderer } from 'electron'
+import { join } from 'path'
 import { remote } from 'electron'
 import { mapState } from 'vuex'
 import { syncConfig } from '../ipc'
@@ -94,7 +95,8 @@ export default {
           self.autoError = err.message
         } else {
           self.$nextTick(() => {
-            self.setup(self.meta.defaultSSRDownloadDir)
+            // 需要在下载目录后追加shadowsocks子目录
+            self.setup(join(self.meta.defaultSSRDownloadDir, 'shadowsocks'))
           })
         }
       }

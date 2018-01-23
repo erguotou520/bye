@@ -2,32 +2,13 @@
  * 自动设置系统代理
  * linux目前仅支持gnome桌面的系统
  */
-import { app } from 'electron'
-import path from 'path'
-import { existsSync } from 'fs'
 import { execSync } from 'child_process'
-// import Sudoer from 'electron-sudo'
-// import { exec } from 'sudo-prompt'
-import Sudoer from './mac-sudo'
+import { winToolPath, macToolPath } from './bootstrap'
 import { currentConfig, appConfig$ } from './data'
-import logger from './logger'
 import { isWin, isMac, isLinux } from '../shared/env'
 
-const userDir = app.getPath('userData')
-const exePath = app.getPath('exe')
-// windows sysproxy.exe文件的路径
-let winToolPath
-if (isWin) {
-  if (process.env.NODE_ENV === 'development') {
-    winToolPath = path.resolve(__dirname, '../lib/sysproxy.exe')
-  } else {
-    winToolPath = path.join(exePath, '../sysproxy.exe')
-  }
-}
-logger.debug('winToolPath: ' + winToolPath)
 // mac 获取network_service的shell脚本
 // const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
-const macToolPath = path.resolve(userDir, 'proxy_conf_helper')
 
 /**
  * 运行命令
@@ -35,48 +16,6 @@ const macToolPath = path.resolve(userDir, 'proxy_conf_helper')
  */
 function runCommand (command) {
   execSync(command)
-}
-
-/**
- * 在mac上运行sudo 命令
- * @param {String} command 需要在mac上运行的命令
- */
-// function sudoMacCommand (command) {
-//   return new Promise((resolve, reject) => {
-//     exec(command, {
-//       name: 'ssrclient'
-//       // icns: path.join(__dirname, '../../build/icons/icon.icns')
-//     }, (error, stdout, stderr) => {
-//       if (error || stderr) {
-//         if (process.env.NODE_ENV === 'development') {
-//           console.log('error: %s, stderr: %s', error, stderr)
-//         } else {
-//           logger.debug(`error: ${error}, stderr: ${stderr}`)
-//         }
-//         app.quit()
-//       } else {
-//         resolve()
-//       }
-//     })
-//   })
-// }
-async function sudoMacCommand (command) {
-  const sudoer = new Sudoer({ name: 'ShadowsocksR客户端' })
-  try {
-    const result = await sudoer.exec(command)
-    result.on('close', () => {
-      if (process.env.NODE_ENV === 'development') {
-        result.output.stdout && console.log(result.output.stdout.toString())
-        result.output.stderr && console.error(result.output.stderr.toString())
-      } else {
-        result.output.stdout && logger.log(result.output.stdout.toString())
-        result.output.stderr && logger.error(result.output.stderr.toString())
-      }
-    })
-    return result
-  } catch (e) {
-    app.quit()
-  }
 }
 
 /**
@@ -136,14 +75,6 @@ export function startProxy (mode) {
   } else if (mode === 2) {
     setProxyToGlobal('127.0.0.1', currentConfig.localPort)
   }
-}
-
-// 初始化确保文件存在
-if (isMac && !existsSync(macToolPath)) {
-  const localPath = process.env.NODE_ENV === 'development'
-    ? path.join(__dirname, '../lib/proxy_conf_helper')
-    : path.join(exePath, '../../../Contents/proxy_conf_helper')
-  sudoMacCommand(`cp ${localPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
 }
 
 // 监听配置变化
