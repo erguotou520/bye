@@ -80,7 +80,7 @@ export function exportConfigToFile () {
   })
 }
 
-// 从粘贴板批量导入
+// 从剪贴板批量导入
 export function importConfigFromClipboard () {
   const parsed = loadConfigsFromString(clipboard.readText())
   if (parsed.length) {
@@ -88,7 +88,7 @@ export function importConfigFromClipboard () {
   }
   sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, {
     title: '导入通知',
-    body: parsed.length ? `已导入${parsed.length}条数据` : '从粘贴板中导入失败'
+    body: parsed.length ? `已导入${parsed.length}条数据` : '从剪贴板中导入失败'
   })
 }
 

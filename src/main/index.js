@@ -1,13 +1,15 @@
 import { app } from 'electron'
 import AutoLaunch from 'auto-launch'
 import './bootstrap'
-import { isQuiting, appConfig$ } from './data'
+import { isQuiting, appConfig$, addConfigs } from './data'
 import { destroyTray } from './tray'
 import './ipc'
 import { stopPacServer } from './pac'
 import { stop as stopCommand } from './client'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import logger from './logger'
+import { loadConfigsFromString } from '../shared/ssr'
+import { isMac, isWin } from '../shared/env'
 
 /**
  * Set `__static` path to static files in production
@@ -17,14 +19,33 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+const isSecondInstance = app.makeSingleInstance((argv, workingDirectory) => {
+  // Someone tried to run a second instance, we should focus our window.
+  const _window = getWindow()
+  if (_window) {
+    if (_window.isMinimized()) {
+      _window.restore()
+    }
+    _window.focus()
+  }
+  // 如果是通过链接打开的应用，则添加记录
+  if (argv[1]) {
+    const configs = loadConfigsFromString(argv[1])
+    if (configs.length) {
+      addConfigs(configs)
+    }
+  }
+})
+
+if (isSecondInstance) {
+  app.quit()
+}
+
 app.on('ready', () => {
   createWindow()
-  const ssrSchemaRegisted = app.setAsDefaultProtocolClient('ssr')
-  const ssSchemaRegisted = app.setAsDefaultProtocolClient('ss')
-  if (process.env.NODE_ENV === 'development') {
-    console.log(`ssrSchemaRegisted`, ssrSchemaRegisted, `ssSchemaRegisted`, ssSchemaRegisted)
-  } else {
-    logger.debug(`ssrSchemaRegisted: ${ssrSchemaRegisted} ssSchemaRegisted: ${ssSchemaRegisted}`)
+  if (isWin || isMac) {
+    app.setAsDefaultProtocolClient('ssr')
+    app.setAsDefaultProtocolClient('ss')
   }
 })
 

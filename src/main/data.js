@@ -5,7 +5,7 @@ import { readJson, writeJson } from 'fs-extra'
 import bootstrap, { appConfigPath } from './bootstrap'
 import { sendData } from './window'
 import { EVENT_RX_SYNC_MAIN } from '../shared/events'
-import { getUpdatedKeys, configMerge } from '../shared/utils'
+import { isArray, getUpdatedKeys, configMerge } from '../shared/utils'
 import defaultConfig, { mergeConfig } from '../shared/config'
 
 let promise
@@ -54,6 +54,18 @@ export function updateAppConfig (targetConfig) {
     configMerge(currentConfig, targetConfig)
     _observe.next([currentConfig, changedKeys])
   }
+}
+
+/**
+ * 新增单/多个配置
+ * @param {Array} configs 要添加的配置数组
+ */
+export function addConfigs (configs) {
+  if (!isArray(configs)) {
+    configs = [configs]
+  }
+  configMerge(currentConfig, { configs: currentConfig.configs.slice().concat(configs) })
+  _observe.next([currentConfig, ['configs']])
 }
 
 export const appConfig$ = source.multicast(subject).refCount()

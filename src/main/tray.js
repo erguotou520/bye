@@ -105,7 +105,7 @@ export default function renderTray (appConfig) {
       { label: '选项设置...', click: handler.showOptions },
       { label: '导入gui-config.json文件', click: handler.importConfigFromFile },
       { label: '导出gui-confi.gjson文件', click: handler.exportConfigToFile },
-      { label: '从粘贴板批量导入ssr://地址', click: handler.importConfigFromClipboard },
+      { label: '从剪贴板批量导入ssr://地址', click: handler.importConfigFromClipboard },
       { label: '打开配置文件', click: handler.openConfigFile }
     ] },
     { label: '帮助', submenu: [

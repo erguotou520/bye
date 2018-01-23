@@ -80,6 +80,9 @@ async function init () {
   } else {
     logger.info('file ensured')
   }
+  return new Promise((resolve, reject) => {
+    app.on('ready', resolve())
+  })
 }
 
 export default init()
