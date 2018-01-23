@@ -18,9 +18,6 @@ export default class SudoerDarwin {
     } else if (options.icns && options.icns.trim().length === 0) {
       throw new Error('options.icns must be a non-empty string if provided.')
     }
-    if (options.name && !this.isValidName(options.name)) {
-      throw new Error('options.name must be a-z 0-9 and 1~69 character length after trimed.')
-    }
     this.up = false
   }
 

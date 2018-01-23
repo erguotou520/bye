@@ -11,11 +11,22 @@
 ## 环境要求
 - 只需要系统已安装 [python](https://www.python.org/downloads/) 可正常执行`shadowsocksr`的python版即可
 
-## FAQ
-[FAQ](./docs/FAQ.md)
+## 功能特性
+- 支持手动、服务器订阅、二维码扫描、粘贴板复制、配置文件导入等方式添加配置
+- 支持切换系统代理模式:PAC、全局、不代理
+- 支持配置项变更
+- 更多功能尽在任务栏菜单中
 
 ## 已知Bug
 - Linux中非gnome桌面无法切换系统代理模式，如果你知道如何实现，欢迎发issue告知。
+
+## 应用截图
+![](doc/assets/main.jpg)
+![](doc/assets/subscribe.jpg)
+![](doc/assets/tray.jpg)
+
+## FAQ
+[FAQ](./docs/FAQ.md)
 
 ## 打赏
 [如果觉得本项目对你有所帮助，欢迎打赏](https://github.com/erguotou520/donate)

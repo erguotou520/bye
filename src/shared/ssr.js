@@ -47,6 +47,10 @@ export default class Config {
     return !!(this.server && this.server_port && this.password && this.method && this.protocol && this.obfs)
   }
 
+  isEqual (otherConfig) {
+    return isObject(otherConfig) && Object.keys(this).every(key => this[key] === otherConfig[key])
+  }
+
   getSSRLink () {
     const required = [this.server, this.server_port, this.protocol, this.method, this.obfs, encode(this.password)]
     const others = []

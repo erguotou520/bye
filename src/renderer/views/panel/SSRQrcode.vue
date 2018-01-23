@@ -24,7 +24,7 @@
 </template>
 <script>
 import qr from 'qr-image'
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import { clipboard } from 'electron'
 import { hideWindow } from '../../ipc'
 import { clone } from '../../../shared/utils'
@@ -42,6 +42,7 @@ export default {
   },
   computed: {
     ...mapState(['appConfig', 'editingConfig']),
+    ...mapGetters(['isEditingConfigUpdated']),
     editingConfigLink () {
       return this.isSSR ? this.editingConfig.getSSRLink() : this.editingConfig.getSSLink()
     },
@@ -77,12 +78,15 @@ export default {
     },
     save () {
       if (this.editingConfig.isValid()) {
-        const copy = this.appConfig.configs.slice()
-        const index = copy.findIndex(config => config.id === this.editingConfig.id)
-        copy.splice(index, 1)
-        copy.splice(index, 0, clone(this.editingConfig))
-        this.updateConfigs(copy)
-        hideWindow()
+        if (this.isEditingConfigUpdated) {
+          const copy = this.appConfig.configs.slice()
+          const index = copy.findIndex(config => config.id === this.editingConfig.id)
+          copy.splice(index, 1)
+          copy.splice(index, 0, clone(this.editingConfig))
+          this.updateConfigs(copy)
+        } else {
+          hideWindow()
+        }
       } else {
         window.alert('服务器配置信息不完整')
       }

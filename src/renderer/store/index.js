@@ -186,6 +186,7 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    selectedConfig: state => state.appConfig.configs[state.appConfig.index]
+    selectedConfig: state => state.appConfig.configs[state.appConfig.index],
+    isEditingConfigUpdated: state => !editingConfigBak.isEqual(state.editingConfig)
   }
 })
