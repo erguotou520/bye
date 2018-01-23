@@ -4,7 +4,7 @@ import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
 import logger from './logger'
 import Sudoer from './mac-sudo'
 import defaultConfig from '../shared/config'
-import { isWin, isMac } from '../shared/env'
+import { isWin, isMac, isLinux } from '../shared/env'
 
 // 应用配置存储目录
 export const appConfigDir = app.getPath('userData')
@@ -33,6 +33,11 @@ export const winToolPath = _winToolPath
 // mac proxy_conf_helper工具目录
 export const macToolPath = path.resolve(appConfigDir, 'proxy_conf_helper')
 
+// try fix linux dismiss bug
+if (isLinux) {
+  process.env.XDG_CURRENT_DESKTOP = 'Unity'
+}
+
 // 在mac上执行sudo命令
 async function sudoMacCommand (command) {
   const sudoer = new Sudoer({ name: 'ShadowsocksR客户端' })
@@ -49,6 +54,11 @@ async function sudoMacCommand (command) {
     })
     return result
   } catch (e) {
+    if (process.env.NODE_ENV === 'development') {
+      console.error(e)
+    } else {
+      logger.error(e)
+    }
     app.quit()
   }
 }
@@ -72,7 +82,10 @@ async function init () {
     const helperPath = process.env.NODE_ENV === 'development'
       ? path.join(__dirname, '../lib/proxy_conf_helper')
       : path.join(exePath, '../../../Contents/proxy_conf_helper')
-    sudoMacCommand(`cp ${helperPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
+    await sudoMacCommand(`cp ${helperPath} "${macToolPath}"`)
+    await sudoMacCommand(`chown root:admin "${macToolPath}"`)
+    await sudoMacCommand(`chmod a+rx "${macToolPath}"`)
+    await sudoMacCommand(`chmod +s "${macToolPath}"`)
   }
 
   if (process.env.NODE_ENV === 'development') {

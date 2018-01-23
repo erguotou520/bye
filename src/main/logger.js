@@ -7,7 +7,7 @@ const logger = tracer.console({
     bootstrapPromise.then(() => {
       fs.createWriteStream(logPath, {
         flags: 'a+'
-      }).write(data.output + '\n')
+      }).write(data.output + '\n', 'utf8')
     })
   }
 })

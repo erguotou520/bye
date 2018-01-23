@@ -89,7 +89,7 @@ export default class SudoerDarwin {
     return new Promise(async (resolve, reject) => {
       const self = this
       const env = self.joinEnv(options)
-      const sudoCommand = ['/usr/bin/sudo -n', env.join(' '), '-s', command].join(' ')
+      const sudoCommand = ['/usr/bin/sudo -n', env.join(' '), command].join(' ')
       let result
       await self.reset()
       try {

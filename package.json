@@ -39,13 +39,7 @@
     ],
     "extraFiles": [
       {
-        "from": "src/lib/sysproxy.exe"
-      },
-      {
-        "from": "src/lib/proxy_conf_helper"
-      },
-      {
-        "from": "src/lib/applet.app"
+        "from": "src/lib", "to": "./"
       }
     ],
     "dmg": {

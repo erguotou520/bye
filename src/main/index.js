@@ -2,7 +2,7 @@ import { app } from 'electron'
 import AutoLaunch from 'auto-launch'
 import './bootstrap'
 import { isQuiting, appConfig$, addConfigs } from './data'
-import { destroyTray } from './tray'
+import renderTray, { destroyTray } from './tray'
 import './ipc'
 import { stopPacServer } from './pac'
 import { stop as stopCommand } from './client'
@@ -47,6 +47,37 @@ app.on('ready', () => {
     app.setAsDefaultProtocolClient('ssr')
     app.setAsDefaultProtocolClient('ss')
   }
+  // 开机自启动配置
+  const AutoLauncher = new AutoLaunch({
+    name: 'ShadowsocksR Client',
+    isHidden: true,
+    mac: {
+      useLaunchAgent: true
+    }
+  })
+  appConfig$.subscribe(data => {
+    const [appConfig, changed] = data
+    if (!changed.length) {
+      // 初始化时没有配置则打开页面，有配置则不显示主页面
+      if (!appConfig.configs.length || !appConfig.ssrPath) {
+        showWindow()
+      }
+      renderTray(appConfig)
+    }
+    if (!changed.length || changed.indexOf('autoLaunch') > -1) {
+      // 初始化或者选项变更时
+      AutoLauncher.isEnabled().then(enabled => {
+        // 状态不相同时
+        if (appConfig.autoLaunch !== enabled) {
+          return AutoLauncher[appConfig.autoLaunch ? 'enable' : 'disable']().catch(() => {
+            logger.error(`${appConfig.autoLaunch ? '执行' : '取消'}开机自启动失败`)
+          })
+        }
+      }).catch(() => {
+        logger.error('获取开机自启状态失败')
+      })
+    }
+  })
 })
 
 app.on('window-all-closed', () => {
@@ -72,38 +103,6 @@ app.on('will-quit', () => {
 app.on('activate', () => {
   if (getWindow() === null) {
     createWindow()
-  }
-})
-
-// 开机自启动配置
-const AutoLauncher = new AutoLaunch({
-  name: 'ShadowsocksR Client',
-  isHidden: true,
-  mac: {
-    useLaunchAgent: true
-  }
-})
-
-appConfig$.subscribe(data => {
-  const [appConfig, changed] = data
-  if (!changed.length) {
-    // 初始化时没有配置则打开页面，有配置则不显示主页面
-    if (!appConfig.configs.length || !appConfig.ssrPath) {
-      showWindow()
-    }
-  }
-  if (!changed.length || changed.indexOf('autoLaunch') > -1) {
-    // 初始化或者选项变更时
-    AutoLauncher.isEnabled().then(enabled => {
-      // 状态不相同时
-      if (appConfig.autoLaunch !== enabled) {
-        return AutoLauncher[appConfig.autoLaunch ? 'enable' : 'disable']().catch(() => {
-          logger.error(`${appConfig.autoLaunch ? '执行' : '取消'}开机自启动失败`)
-        })
-      }
-    }).catch(() => {
-      logger.error('获取开机自启状态失败')
-    })
   }
 })
 

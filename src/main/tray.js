@@ -133,18 +133,10 @@ export function destroyTray () {
   }
 }
 
-// try fix linux dismiss bug
-if (isLinux) {
-  process.env.XDG_CURRENT_DESKTOP = 'Unity'
-}
-
 // 监听数据变更
 appConfig$.subscribe(data => {
   const [appConfig, changed] = data
-  // 初始化数据用于渲染菜单
-  if (changed.length === 0) {
-    renderTray(appConfig)
-  } else if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
+  if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
     // configs或index字段修改时刷新服务器列表
     menus[3].submenu = generateConfigSubmenus(appConfig.configs, appConfig.index)
     contextMenu = Menu.buildFromTemplate(menus)
