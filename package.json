@@ -11,8 +11,8 @@
   },
   "main": "./dist/electron/main.js",
   "scripts": {
-    "build": "node .electron-vue/build.js && electron-builder",
-    "build:dir": "node .electron-vue/build.js && electron-builder --dir",
+    "build": "node .electron-vue/build.js",
+    "build:dir": "cross-env DIR=true node .electron-vue/build.js",
     "build:clean": "cross-env BUILD_TARGET=clean node .electron-vue/build.js",
     "build:web": "cross-env BUILD_TARGET=web node .electron-vue/build.js",
     "dev": "node .electron-vue/dev-runner.js –debug-brk=5858",
@@ -23,85 +23,6 @@
     "pack:renderer": "cross-env NODE_ENV=production webpack --progress --colors --config .electron-vue/webpack.renderer.config.js",
     "test": "npm run unit",
     "unit": "karma start test/unit/karma.conf.js"
-  },
-  "build": {
-    "productName": "ShadowsocksR客户端",
-    "appId": "me.erguotou.ssr",
-    "compression": "maximum",
-    "directories": {
-      "output": "build"
-    },
-    "files": [
-      "dist/electron/**/*",
-      "!dist/electron/imgs/ionicons--fonts.svg",
-      "!dist/electron/fonts/ionicons--fonts.eot",
-      "!dist/electron/fonts/ionicons--fonts.ttf"
-    ],
-    "extraFiles": [
-      {
-        "from": "src/lib",
-        "to": "./"
-      },
-      {
-        "from": "node_modules/electron-sudo/dist/bin/applet.app",
-        "to": "./applet.app"
-      }
-    ],
-    "dmg": {
-      "contents": [
-        {
-          "x": 410,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        },
-        {
-          "x": 130,
-          "y": 150,
-          "type": "file"
-        }
-      ]
-    },
-    "mac": {
-      "icon": "build/icons/icon.icns",
-      "category": "public.app-category.developer-tools",
-      "target": [
-        "dmg"
-      ],
-      "extendInfo": {
-        "LSUIElement": "YES"
-      }
-    },
-    "win": {
-      "icon": "build/icons/icon.ico",
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64",
-            "ia32"
-          ]
-        }
-      ]
-    },
-    "nsis": {
-      "license": "LICENSE"
-    },
-    "linux": {
-      "icon": "build/icons",
-      "category": "Development",
-      "target": [
-        "deb",
-        "rpm",
-        "tar.gz",
-        "pacman"
-      ]
-    },
-    "publish": [
-      {
-        "provider": "github"
-      }
-    ]
   },
   "dependencies": {
     "auto-launch": "^5.0.5",

@@ -8,7 +8,7 @@ const del = require('del')
 const { spawn } = require('child_process')
 const webpack = require('webpack')
 const Multispinner = require('multispinner')
-
+const release = require('./release')
 
 const mainConfig = require('./webpack.main.config')
 const rendererConfig = require('./webpack.renderer.config')
@@ -46,7 +46,10 @@ function build () {
     process.stdout.write('\x1B[2J\x1B[0f')
     console.log(`\n\n${results}`)
     console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
-    process.exit()
+    // 打包发布版本
+    release(process.env.DIR === 'true').then(function () {
+      process.exit()
+    })
   })
 
   pack(mainConfig).then(result => {
