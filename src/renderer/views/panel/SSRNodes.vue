@@ -4,7 +4,16 @@
       empty-text="暂无节点，点击添加添加新节点" :enable-cancel-select="false"
       :data="groupedNodes" @on-select-change="onSelect" ref="tree"></i-tree>
     <div class="flex mt-1 flex-jc-center">
-      <i-button type="primary" class="w-6r mr-1" @click="create">添加</i-button>
+      <i-button-group class="w-6r mr-1 flex-inline">
+        <i-button class="flex-1" type="primary" @click="create">添加</i-button>
+        <i-dropdown trigger="click" placement="top-end">
+          <i-button class="ivu-dropdown-btn-trigger" type="primary" icon="arrow-down-b"></i-button>
+          <i-dropdown-menu slot="list">
+            <i-dropdown-item @click.native="copyFromClipboard">从剪切板导入</i-dropdown-item>
+            <i-dropdown-item @click.native="toSubscribe">添加订阅地址</i-dropdown-item>
+          </i-dropdown-menu>
+        </i-dropdown>
+      </i-button-group>
       <i-poptip v-if="selectedGroupName" confirm title="确定删除该分组下所有节点？"
         @on-ok="removeGroup">
         <i-button class="w-6r" :disabled="disabled.remove">删除</i-button>
@@ -18,9 +27,11 @@
   </div>
 </template>
 <script>
+import { ipcRenderer } from 'electron'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
 import Config from '../../../shared/ssr'
 import { groupConfigs } from '../../../shared/utils'
+import { EVENT_CONFIG_COPY_CLIPBOARD } from '../../../shared/events'
 
 // 避免因上/下移动分组/配置而导致index改变后选中项不是group的问题
 let preventIndexAffect = false
@@ -122,7 +133,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentConfig', 'updateEditingGroup']),
+    ...mapMutations(['setCurrentConfig', 'updateEditingGroup', 'updateView']),
     ...mapActions(['updateConfigs']),
     // 复制节点并带上title和选中参数
     cloneConfig (config, selected) {
@@ -154,6 +165,14 @@ export default {
         flatArr.push(...group.children)
       })
       return flatArr
+    },
+    // 从剪切板导入
+    copyFromClipboard () {
+      ipcRenderer.send(EVENT_CONFIG_COPY_CLIPBOARD)
+    },
+    // 跳转到订阅管理页面
+    toSubscribe () {
+      this.updateView({ page: 'Options', tab: 'subscribes', active: true })
     },
     // 新增
     create () {

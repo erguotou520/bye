@@ -19,3 +19,5 @@
   * `ssr.download.main` 由`ipc-main`发出 自动下载ssr的进度
 - 订阅
   * `subscribe.update.main` 由`ipc-main`发出 更新订阅服务器
+- 配置
+  * `config.copy.board` 由`ipc-renderer`发出 从剪切板复制

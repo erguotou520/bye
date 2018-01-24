@@ -65,7 +65,9 @@ export default new Vuex.Store({
     },
     view: {
       page: featureReaded ? views[1] : views[0],
-      tab: 'common'
+      tab: 'common',
+      // 是否激活当前页面的主要操作
+      active: false
     },
     editingConfig,
     editingGroup: { show: false, title: '', updated: false },
@@ -104,7 +106,7 @@ export default new Vuex.Store({
     // 重置状态
     resetState (state) {
       merge(state.editingConfig, editingConfigBak)
-      merge(state.view, { page: views.indexOf(state.view.page) >= 2 ? views[2] : state.view.page, tab: 'common' })
+      merge(state.view, { page: views.indexOf(state.view.page) >= 2 ? views[2] : state.view.page, tab: 'common', active: false })
       state.editingGroup.title = groupTitleBak
     },
     // 更新当前编辑的组

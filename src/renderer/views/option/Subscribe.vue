@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 import { showNotification } from '../../ipc'
 import { request, isSubscribeContentValid } from '../../../shared/utils'
 
@@ -98,6 +98,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateView']),
     ...mapActions(['updateConfig', 'updateConfigs']),
     selectRows (rows) {
       this.selectedRows = rows
@@ -152,6 +153,7 @@ export default {
       this.showNewUrl = false
       this.url = ''
       this.urlError = false
+      this.updateView({ active: false })
     },
     cancelEditing () {
       this.editingRowIndex = -1
@@ -177,6 +179,15 @@ export default {
       } else {
         this.urlError = true
       }
+    }
+  },
+  mounted () {
+    // 支持初始化打开新增输入框
+    if (this.$store.state.view.active) {
+      this.showNewUrl = true
+      this.$nextTick(() => {
+        this.$refs.input.focus()
+      })
     }
   }
 }
