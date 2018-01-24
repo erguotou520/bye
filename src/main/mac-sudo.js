@@ -130,7 +130,7 @@ export default class SudoerDarwin {
       // Copy applet to temporary directory
       let source
       if (process.env.NODE_ENV === 'development') {
-        source = join(__dirname, '../lib/applet.app')
+        source = join(__dirname, '../../node_modules/electron-sudo/dist/bin/applet.app')
       } else {
         source = join(app.getPath('exe'), '../../../Contents/applet.app')
       }

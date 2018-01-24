@@ -39,7 +39,12 @@
     ],
     "extraFiles": [
       {
-        "from": "src/lib", "to": "./"
+        "from": "src/lib",
+        "to": "./"
+      },
+      {
+        "from": "node_modules/electron-sudo/dist/bin/applet.app",
+        "to": "./applet.app"
       }
     ],
     "dmg": {
@@ -101,6 +106,7 @@
   "dependencies": {
     "auto-launch": "^5.0.5",
     "download-git-repo": "^1.0.1",
+    "electron-sudo": "^4.0.12",
     "erguotou-iview": "2.8.1-alpha-2",
     "fs-extra": "^5.0.0",
     "lodash.debounce": "^4.0.8",
