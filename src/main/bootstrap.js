@@ -2,7 +2,8 @@ import path from 'path'
 import { app } from 'electron'
 import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
 import logger from './logger'
-import Sudoer from './mac-sudo'
+// import Sudoer from './mac-sudo'
+import sudo from 'sudo-prompt'
 import defaultConfig from '../shared/config'
 import { isWin, isMac, isLinux } from '../shared/env'
 
@@ -40,27 +41,36 @@ if (isLinux) {
 
 // 在mac上执行sudo命令
 async function sudoMacCommand (command) {
-  const sudoer = new Sudoer({ name: 'ShadowsocksR客户端' })
-  try {
-    const result = await sudoer.exec(command)
-    result.on('close', () => {
-      if (process.env.NODE_ENV === 'development') {
-        result.output.stdout && console.log(result.output.stdout.toString())
-        result.output.stderr && console.error(result.output.stderr.toString())
+  // const sudoer = new Sudoer({ name: 'ShadowsocksR客户端' })
+  // try {
+  //   const result = await sudoer.exec(command)
+  //   result.on('close', () => {
+  //     if (process.env.NODE_ENV === 'development') {
+  //       result.output.stdout && console.log(result.output.stdout.toString())
+  //       result.output.stderr && console.error(result.output.stderr.toString())
+  //     } else {
+  //       result.output.stdout && logger.log(result.output.stdout.toString())
+  //       result.output.stderr && logger.error(result.output.stderr.toString())
+  //     }
+  //   })
+  //   return result
+  // } catch (e) {
+  //   if (process.env.NODE_ENV === 'development') {
+  //     console.error(e)
+  //   } else {
+  //     logger.error(e)
+  //   }
+  //   app.quit()
+  // }
+  return new Promise((resolve, reject) => {
+    sudo.exec(command, { name: 'ShadowsocksR Client' }, (error, stdout, stderr) => {
+      if (error || stderr) {
+        reject(error || stderr)
       } else {
-        result.output.stdout && logger.log(result.output.stdout.toString())
-        result.output.stderr && logger.error(result.output.stderr.toString())
+        resolve(stdout)
       }
     })
-    return result
-  } catch (e) {
-    if (process.env.NODE_ENV === 'development') {
-      console.error(e)
-    } else {
-      logger.error(e)
-    }
-    app.quit()
-  }
+  })
 }
 
 /**

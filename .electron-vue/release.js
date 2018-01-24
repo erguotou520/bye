@@ -16,7 +16,6 @@ function release (dir) {
     case 'darwin':
       targets = Platform.MAC.createTarget()
       extraFiles.push({ from: 'src/lib/proxy_conf_helper', to: './' })
-      extraFiles.push({ from: 'node_modules/electron-sudo/dist/bin/applet.app', 'to': './applet.app' })
       break
     case 'win32':
       targets = Platform.WINDOWS.createTarget()
