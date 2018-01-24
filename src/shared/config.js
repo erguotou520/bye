@@ -18,7 +18,11 @@ const defaultConfig = {
   // 系统代理启用模式 0 不启用 1 PAC 2 全局
   sysProxyMode: 0,
   // 订阅列表
-  serverSubscribes: []
+  serverSubscribes: [],
+  // 是否开启http proxy
+  httpProxyEnable: true,
+  // http proxy端口
+  httpProxyPort: 12333
 }
 
 export default defaultConfig

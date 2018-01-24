@@ -5,6 +5,7 @@ import { isQuiting, appConfig$, addConfigs } from './data'
 import renderTray, { destroyTray } from './tray'
 import './ipc'
 import { stopPacServer } from './pac'
+import { stopHttpProxyServer } from './http-proxy'
 import { stop as stopCommand } from './client'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import logger from './logger'
@@ -98,6 +99,7 @@ app.on('will-quit', () => {
   destroyWindow()
   destroyTray()
   stopPacServer()
+  stopHttpProxyServer()
 })
 
 app.on('activate', () => {

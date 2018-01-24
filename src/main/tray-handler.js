@@ -1,5 +1,6 @@
 import { app, shell, clipboard, dialog } from 'electron'
 import { readJson, writeJSON } from 'fs-extra'
+import { autoUpdater } from 'electron-updater'
 import bootstrapPromise, { logPath, appConfigPath } from './bootstrap'
 import { showWindow, sendData } from './window'
 export { openDevtool } from './window'
@@ -8,8 +9,8 @@ import { downloadPac } from './pac'
 import { startProxy } from './proxy'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
-import { request } from '../shared/utils'
-import pkg from '../../package.json'
+// import { request } from '../shared/utils'
+// import pkg from '../../package.json'
 
 // 切换启用状态
 export function toggleEnable () {
@@ -100,16 +101,17 @@ export async function openConfigFile () {
 
 // 检查更新
 export function checkUpdate () {
-  request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/app/package.json').then(data => {
-    const remotePkg = JSON.parse(data)
-    const currentVersion = pkg.version
-    const isOutdated = remotePkg.version > currentVersion
-    sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, {
-      title: '更新通知',
-      body: isOutdated ? `最新版本为 v${remotePkg.version}，点击前往下载。` : '当前已是最新版',
-      url: isOutdated ? 'https://github.com/erguotou520/electron-ssr/releases' : ''
-    })
-  })
+  autoUpdater.checkForUpdatesAndNotify()
+  // request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/app/package.json').then(data => {
+  //   const remotePkg = JSON.parse(data)
+  //   const currentVersion = pkg.version
+  //   const isOutdated = remotePkg.version > currentVersion
+  //   sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, {
+  //     title: '更新通知',
+  //     body: isOutdated ? `最新版本为 v${remotePkg.version}，点击前往下载。` : '当前已是最新版',
+  //     url: isOutdated ? 'https://github.com/erguotou520/electron-ssr/releases' : ''
+  //   })
+  // })
 }
 
 // 打开日志文件
@@ -134,6 +136,12 @@ export function showSubscribes () {
 export function showManagePanel () {
   showWindow()
   sendData(events.EVENT_APP_SHOW_PAGE, { page: 'ManagePanel' })
+}
+
+// 复制http代理命令行代码
+export function copyHttpProxyCode () {
+  clipboard.writeText(`export http_proxy="http:127.0.0.1:${currentConfig.httpProxyPort}"
+export https_proxy="http:127.0.0.1:${currentConfig.httpProxyPort}"`)
 }
 
 // 打开窗口

@@ -6,13 +6,16 @@
 
 - 支持手动添加配置
 - 支持服务器订阅更新，复制该地址测试
+
   `https://raw.githubusercontent.com/erguotou520/electron-ssr/redesign/docs/assets/subscribe.txt`
 - 支持二维码扫描(请确保屏幕中只有一个有效的二维码)，扫描该二维码测试
+
   ![](docs/assets/scan.jpg)
 - 剪贴板复制、配置文件导入等方式添加配置
 - 支持复制二维码图片(右键菜单)，SSR链接
-- 支持链接打开应用(仅Mac和Windows)，<a href="ssr://MTI3LjAuMC4xOjEyMzQ6YXV0aF9hZXMxMjhfbWQ1OmFlcy0xMjgtY2ZiOnRsczEuMl90aWNrZXRfYXV0aDpZV0ZoWW1KaS8_b2Jmc3BhcmFtPVluSmxZV3QzWVRFeExtMXZaUSZyZW1hcmtzPTVyV0w2Sy1WNUxpdDVwYUg">点击测试
+- 支持链接打开应用(仅Mac和Windows)，<a href="ssr://MTI3LjAuMC4xOjEyMzQ6YXV0aF9hZXMxMjhfbWQ1OmFlcy0xMjgtY2ZiOnRsczEuMl90aWNrZXRfYXV0aDpZV0ZoWW1KaS8_b2Jmc3BhcmFtPVluSmxZV3QzWVRFeExtMXZaUSZyZW1hcmtzPTVyV0w2Sy1WNUxpdDVwYUg">点击测试</a>
 - 支持切换系统代理模式:PAC、全局、不代理
+- [内置http_proxy服务](docs/HTTP_PROXY.md)，可在选项中开启或关闭
 - 支持配置项变更
 - 更多功能尽在任务栏菜单中
 

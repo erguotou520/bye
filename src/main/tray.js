@@ -90,8 +90,8 @@ export default function renderTray (appConfig) {
   // 生成tray
   tray = new Tray(nativeImage.createFromPath(path.join(__static, osTrayIcon)))
   menus = [
-    { label: '启用系统代理        ', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
-    { label: '系统代理模式', submenu: [
+    { label: '开启应用', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
+    { label: '系统代理模式        ', submenu: [
       { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => toggleProxyMode(e, 0) },
       { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => toggleProxyMode(e, 1) },
       { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => toggleProxyMode(e, 2) }
@@ -108,6 +108,7 @@ export default function renderTray (appConfig) {
       { label: '从剪贴板批量导入ssr://地址', click: handler.importConfigFromClipboard },
       { label: '打开配置文件', click: handler.openConfigFile }
     ] },
+    { label: '复制http代理设置', click: handler.copyHttpProxyCode },
     { label: '帮助', submenu: [
       { label: '检查更新', click: handler.checkUpdate },
       { label: '查看日志', click: handler.openLog },

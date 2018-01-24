@@ -65,7 +65,7 @@ export async function serverPac (pacPort) {
         logger.debug(`pac server listen at: ${host}:${port}`)
       }
     })
-    .on('error', err => {
+    .once('error', err => {
       if (err.code === 'EADDRINUSE') {
         // 端口已经被使用
         if (process.env.NODE_ENV === 'development') {
@@ -81,12 +81,16 @@ export async function serverPac (pacPort) {
 /**
  * 关闭pac服务
  */
-export function stopPacServer () {
+export async function stopPacServer () {
   if (pacServer) {
-    pacServer.close(() => {
-      console.log('pac server closed.')
+    return new Promise((resolve, reject) => {
+      pacServer.once('close', () => {
+        console.log('pac server closed.')
+        resolve()
+      }).once('error', reject)
     })
   }
+  return Promise.resolve()
 }
 
 // 监听配置变化
@@ -97,8 +101,9 @@ appConfig$.subscribe(data => {
     serverPac()
   } else {
     if (changed.indexOf('pacPort') > -1) {
-      stopPacServer()
-      serverPac(appConfig.pacPort)
+      stopPacServer().then(() => {
+        serverPac(appConfig.pacPort)
+      })
     }
   }
 })

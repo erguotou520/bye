@@ -65,6 +65,7 @@ function release (dir) {
         icon: 'build/icons/icon.icns',
         category: 'public.app-category.developer-tools',
         target: [
+          'zip',
           'dmg'
         ],
         extendInfo: {
@@ -93,8 +94,7 @@ function release (dir) {
       publish: {
         provider: 'github'
       }
-    },
-    publish: 'onTagOrDraft'
+    }
   }).then(() => {
     console.log(`${BLUE}Done${END}`)
   }).catch(error => {
