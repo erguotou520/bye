@@ -18,6 +18,8 @@ export const ssrLogPath = path.join(appConfigDir, 'logs/shadowsocksr.log')
 export const defaultSSRDownloadDir = path.join(appConfigDir, 'shadowsocksr')
 // pac文件下载目录
 export const pacPath = path.join(appConfigDir, 'pac.txt')
+// 记录上次订阅更新时间的文件
+export const subscribeUpdateFile = path.join(appConfigDir, '.subscribe.update.last')
 // 当前可执行程序的路径
 const exePath = app.getPath('exe')
 // windows sysproxy.exe文件的路径

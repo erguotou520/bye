@@ -4,6 +4,7 @@ import { autoUpdater } from 'electron-updater'
 import bootstrapPromise, { logPath, appConfigPath } from './bootstrap'
 import { showWindow, sendData } from './window'
 export { openDevtool } from './window'
+export { updateSubscribes } from './subscribe'
 import { updateAppConfig, currentConfig } from './data'
 import { downloadPac } from './pac'
 import { startProxy } from './proxy'
@@ -45,11 +46,6 @@ export function scanQRCode () {
 // 打开选项设置页面
 export function openOptionsWindow () {
   sendData(events.EVENT_APP_SHOW_PAGE, 'Options')
-}
-
-// 更新订阅服务器
-export function updateSubscribes () {
-  sendData(events.EVENT_SUBSCRIBE_UPDATE_MAIN)
 }
 
 // 导入配置文件

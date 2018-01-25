@@ -1,4 +1,4 @@
-import fs from 'fs'
+import { readFile as _readFile, writeFile as _writeFIle } from 'fs'
 import child from 'child_process'
 
 function promisify (fn) {
@@ -15,7 +15,7 @@ function promisify (fn) {
   }
 }
 
-async function exec (cmd, options = {}) {
+export async function exec (cmd, options = {}) {
   return new Promise((resolve, reject) => {
     child.exec(cmd, options, (err, stdout, stderr) => {
       if (err) { return reject(err) }
@@ -24,7 +24,5 @@ async function exec (cmd, options = {}) {
   })
 }
 
-const readFile = promisify(fs.readFile)
-const mkdir = promisify(fs.mkdir)
-
-export { exec, readFile, mkdir }
+export const readFile = promisify(_readFile)
+export const writeFile = promisify(_writeFIle)
