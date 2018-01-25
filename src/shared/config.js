@@ -22,7 +22,11 @@ const defaultConfig = {
   // 是否开启http proxy
   httpProxyEnable: true,
   // http proxy端口
-  httpProxyPort: 12333
+  httpProxyPort: 12333,
+  // 是否自动更新订阅服务器
+  autoUpdateSubscribes: true,
+  // 订阅服务器自动更新周期，单位：小时
+  subscribeUpdateInterval: 24
 }
 
 export default defaultConfig

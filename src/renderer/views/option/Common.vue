@@ -107,7 +107,7 @@ export default {
       if (this.form[field] !== this.$store.state.appConfig[field]) {
         this.updateConfig({ [field]: this.form[field] })
       }
-    }, 600)
+    }, 1000)
   }
 }
 </script>

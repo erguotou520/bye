@@ -98,8 +98,8 @@ app.on('will-quit', () => {
   stopCommand()
   destroyWindow()
   destroyTray()
-  stopPacServer()
   stopHttpProxyServer()
+  stopPacServer()
 })
 
 app.on('activate', () => {

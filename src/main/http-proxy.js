@@ -18,7 +18,7 @@ export function startHttpProxyServer (appConfig) {
         if (process.env.NODE_ENV === 'development') {
           console.log('http proxy server listen at: %s:%s', appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1', appConfig.httpProxyPort)
         } else {
-          logger.debug(`pac server listen at: ${appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'}:${appConfig.httpProxyPort}`)
+          logger.debug(`http proxy server listen at: ${appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'}:${appConfig.httpProxyPort}`)
         }
       })
       .once('error', err => {
@@ -43,10 +43,21 @@ export async function stopHttpProxyServer () {
     return new Promise((resolve, reject) => {
       server.close()
         .once('close', () => {
-          console.log('http proxy server closed.')
+          if (process.env.NODE_ENV === 'development') {
+            console.log('http proxy server closed.')
+          } else {
+            logger.debug('http proxy server closed.')
+          }
           resolve()
         })
-        .once('error', reject)
+        .once('error', (...args) => {
+          if (process.env.NODE_ENV === 'development') {
+            console.log(args)
+          } else {
+            logger.warn(`close http proxy server error: ${args}`)
+          }
+          reject()
+        })
     })
   }
   return Promise.resolve()

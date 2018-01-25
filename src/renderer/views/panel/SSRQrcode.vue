@@ -1,6 +1,7 @@
 <template>
   <!-- 二维码 -->
   <div class="app-qrcode flex flex-column flex-ai-center flex-jc-center pos-r">
+    <p class="tip mb-1">截图请注意打码</p>
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="280" height="280"
       :view-box.camel="`0 0 ${editingConfigQR.size} ${editingConfigQR.size}`"
       @contextmenu="onRightClick" ref="svg">
@@ -11,7 +12,7 @@
       <li @click="copyImage">复制图像</li>
       <li @click="copyLink">复制链接</li>
     </ul>
-    <div class="link flex flex-ai-center mt-2">
+    <div class="link flex flex-ai-center mt-1">
       <i-checkbox v-model="isSSR">SSR链接</i-checkbox>
       <i-input class="flex-1" ref="input" :value="editingConfigLink" readonly style="width:auto">
         <template slot="append">
@@ -142,7 +143,11 @@ export default {
 }
 </script>
 <style lang="stylus">
+@import '../../assets/styles/variable'
 .app-qrcode
+  .tip
+    line-height 0
+    color $color-sub-title
   .contextmenu
     position absolute
     display block

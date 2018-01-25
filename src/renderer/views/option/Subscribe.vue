@@ -4,9 +4,22 @@
       <i-button type="primary" class="w-6r" @click="onCreate">添加</i-button>
       <i-button type="primary" class="w-6r ml-1" :disabled="selectedRows.length<1" @click="update">更新</i-button>
       <i-button type="warning" class="w-6r ml-1" @click="remove" :disabled="selectedRows.length<1">删除</i-button>
-      <i-input v-show="showNewUrl" class="ml-auto url-input" :class="{'input-error': urlError}"
-        v-model="url" placeholder="请输入合法的URL并回车" icon="plus" ref="input"
-        @keyup.enter.native="save" @keyup.esc.native="cancel"/>
+      <div class="ml-auto flex-inline flex-ai-center">
+        <i-input v-show="showNewUrl" class="mr-2 url-input" :class="{'input-error': urlError}"
+          v-model="url" placeholder="请输入合法的URL并回车" icon="plus" ref="input"
+          @keyup.enter.native="save" @keyup.esc.native="cancel"/>
+        <i-checkbox :value="appConfig.autoUpdateSubscribes" @on-change="onUpdateChange">自动更新</i-checkbox>
+        <div v-if="appConfig.autoUpdateSubscribes" class="flex-inline flex-ai-center cycle-wrapper">
+          <span>每&nbsp;</span>
+          <i-input :value="cycle.number" :maxlength="2" number @input="onChangeCycleNumber"/>
+          <i-select :value="cycle.unit" @input="onChangeCycleUnit">
+            <i-option value="hour">时</i-option>
+            <i-option value="day">天</i-option>
+            <i-option value="week">周</i-option>
+          </i-select>
+          <span>&nbsp;更新</span>
+        </div>
+      </div>
     </div>
     <i-table stripe border :columns="columns" :data="tableData" size="small"
       :loading="loading" no-data-text="暂无订阅服务器" height="252"
@@ -19,6 +32,12 @@ import { showNotification } from '../../ipc'
 import { request, isSubscribeContentValid } from '../../../shared/utils'
 
 const URL_REGEX = /^https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
+// 单位对应的小时倍数
+const unitMap = {
+  hour: 1,
+  day: 24,
+  week: 168
+}
 export default {
   data () {
     return {
@@ -83,6 +102,22 @@ export default {
     ...mapState(['appConfig']),
     tableData () {
       return this.appConfig.serverSubscribes
+    },
+    cycle () {
+      const interval = this.appConfig.subscribeUpdateInterval
+      const cycle = { number: 1, unit: 'hour' }
+      if (interval % 24 === 0) {
+        if (interval % 168 === 0) {
+          cycle.unit = 'week'
+          cycle.number = interval / 168
+        } else {
+          cycle.unit = 'day'
+          cycle.number = interval / 24
+        }
+      } else {
+        cycle.number = interval
+      }
+      return cycle
     }
   },
   watch: {
@@ -106,11 +141,21 @@ export default {
     onRowDBClick (row, index) {
       if (this.editingRowIndex > -1) {
         // 有正在编辑项
-        this.$refs.url.focus()
+        this.$nextTick(() => this.$refs.url.focus)
       } else {
         this.editingRowIndex = index
         this.editingRowUrl = row.URL
       }
+    },
+    onUpdateChange (v) {
+      this.updateConfig({ autoUpdateSubscribes: v })
+    },
+    onChangeCycleNumber (v) {
+      const value = parseInt(v) || 1
+      this.updateConfig({ subscribeUpdateInterval: value * unitMap[this.cycle.unit] })
+    },
+    onChangeCycleUnit (v) {
+      this.updateConfig({ subscribeUpdateInterval: this.cycle.number * unitMap[v] })
     },
     update () {
       Promise.all(this.selectedRows.map(row => {
@@ -122,7 +167,6 @@ export default {
         })
       })).then(() => {
         showNotification('订阅更新通知', '服务器订阅更新成功')
-        this.selectedRows = []
       }).catch(() => {
         showNotification('订阅更新通知', '服务器订阅更新失败')
       })
@@ -192,3 +236,45 @@ export default {
   }
 }
 </script>
+<style lang="stylus">
+.options-container
+  .cycle-wrapper
+    .ivu-input-wrapper
+      width auto
+    .ivu-input
+      padding 0
+      width 24px
+      height 24px
+      border-left none
+      border-top none
+      border-right none
+      border-radius 0
+      text-align center
+      &:focus
+        box-shadow none
+    .ivu-select
+      width 24px
+      height 24px
+      &.ivu-select-visible
+        .ivu-select-selection
+          box-shadow none
+      .ivu-select-selection
+        height 24px
+        border-left none
+        border-top none
+        border-right none
+        border-radius 0
+      .ivu-select-selected-value
+        margin-right 0
+        padding 0
+        height 24px
+        text-align center
+        line-height 24px
+      .ivu-select-arrow
+        display none
+      .ivu-select-dropdown
+        .ivu-select-item
+          padding-left 0
+          padding-right 0
+          text-align center
+</style>

@@ -41,7 +41,7 @@ function readPac () {
  */
 export async function serverPac (pacPort) {
   await dataPromise
-  const host = currentConfig.shareOverLan ? '0.0.0.0' : 'localhost'
+  const host = currentConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
   const port = pacPort !== undefined ? pacPort : currentConfig.pacPort || 1240
   pacServer = http.createServer((req, res) => {
     if (parse(req.url).pathname === '/pac') {
@@ -57,7 +57,6 @@ export async function serverPac (pacPort) {
       res.end()
     }
   }).listen(port, host)
-  pacServer
     .on('listening', () => {
       if (process.env.NODE_ENV === 'development') {
         console.log('pac server listen at: %s:%s', host, port)
@@ -84,10 +83,23 @@ export async function serverPac (pacPort) {
 export async function stopPacServer () {
   if (pacServer) {
     return new Promise((resolve, reject) => {
-      pacServer.once('close', () => {
-        console.log('pac server closed.')
-        resolve()
-      }).once('error', reject)
+      pacServer.close()
+        .once('close', () => {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('pac server closed.')
+          } else {
+            logger.debug('pac server closed.')
+          }
+          resolve()
+        })
+        .once('error', (...args) => {
+          if (process.env.NODE_ENV === 'development') {
+            console.log(args)
+          } else {
+            logger.warn(`close pac server error: ${args}`)
+          }
+          reject()
+        })
     })
   }
   return Promise.resolve()

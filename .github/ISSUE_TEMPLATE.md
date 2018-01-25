@@ -1,4 +1,5 @@
 <!-- 请注意，发起issue一般都是为了报错错误，如果只是提问请加入TG群，如果非要在issue中提问，请在issue上加上question的Label。另外在发起issue请请先阅读FAQ -->
+<!-- 请再次注意，不要在issue的任何地方出现你的服务器配置，包括截图！ -->
 ## Your os
 <!-- Mac?Windows?Linux(Ubuntu?CentOs?...etc)? -->
 

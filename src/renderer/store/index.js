@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import defaultConfig from '../../shared/config'
-import { merge, clone, request, isSubscribeContentValid } from '../../shared/utils'
+import { merge, clone, request, isSubscribeContentValid, getUpdatedKeys } from '../../shared/utils'
 import Config from '../../shared/ssr'
 import { syncConfig } from '../ipc'
 import { STORE_KEY_FEATURE, STORE_KEY_SSR_METHODS, STORE_KEY_SSR_PROTOCOLS, STORE_KEY_SSR_OBFSES } from '../constants'
@@ -78,8 +78,13 @@ export default new Vuex.Store({
   mutations: {
     // 更新应用配置
     updateConfig (state, targetConfig) {
-      merge(state.appConfig, targetConfig)
-      console.log('config updated: ', targetConfig)
+      const changed = getUpdatedKeys(state.appConfig, targetConfig)
+      if (changed.length) {
+        const extractConfig = {}
+        changed.forEach(key => { extractConfig[key] = targetConfig[key] })
+        merge(state.appConfig, extractConfig)
+        console.log('config updated: ', extractConfig)
+      }
     },
     // 更新应用元数据
     updateMeta (state, targetMeta) {

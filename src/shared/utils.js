@@ -107,9 +107,11 @@ export function getUpdatedKeys (appConfig, targetConfig) {
     switch (protoString(value)) {
       case OBJECT_PROTOTYPE:
         return getUpdatedKeys(appConfig[key], value).length
-      // 配置数组对象，直接使用新的
       case ARRAY_PROTOTYPE:
-        return true
+        if (appConfig[key] === value) {
+          return false
+        }
+        return appConfig[key].length !== value.length || appConfig[key].some((item, index) => getUpdatedKeys(item, value[index]).length > 0)
       default:
         return appConfig[key] !== value
     }
