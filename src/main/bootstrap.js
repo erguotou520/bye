@@ -2,7 +2,6 @@ import path from 'path'
 import { app } from 'electron'
 import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
 import logger from './logger'
-// import Sudoer from './mac-sudo'
 import sudo from 'sudo-prompt'
 import defaultConfig from '../shared/config'
 import { isWin, isMac, isLinux } from '../shared/env'
@@ -41,27 +40,6 @@ if (isLinux) {
 
 // 在mac上执行sudo命令
 async function sudoMacCommand (command) {
-  // const sudoer = new Sudoer({ name: 'ShadowsocksR客户端' })
-  // try {
-  //   const result = await sudoer.exec(command)
-  //   result.on('close', () => {
-  //     if (process.env.NODE_ENV === 'development') {
-  //       result.output.stdout && console.log(result.output.stdout.toString())
-  //       result.output.stderr && console.error(result.output.stderr.toString())
-  //     } else {
-  //       result.output.stdout && logger.log(result.output.stdout.toString())
-  //       result.output.stderr && logger.error(result.output.stderr.toString())
-  //     }
-  //   })
-  //   return result
-  // } catch (e) {
-  //   if (process.env.NODE_ENV === 'development') {
-  //     console.error(e)
-  //   } else {
-  //     logger.error(e)
-  //   }
-  //   app.quit()
-  // }
   return new Promise((resolve, reject) => {
     sudo.exec(command, { name: 'ShadowsocksR Client' }, (error, stdout, stderr) => {
       if (error || stderr) {
@@ -92,10 +70,7 @@ async function init () {
     const helperPath = process.env.NODE_ENV === 'development'
       ? path.join(__dirname, '../lib/proxy_conf_helper')
       : path.join(exePath, '../../../Contents/proxy_conf_helper')
-    await sudoMacCommand(`cp ${helperPath} "${macToolPath}"`)
-    await sudoMacCommand(`chown root:admin "${macToolPath}"`)
-    await sudoMacCommand(`chmod a+rx "${macToolPath}"`)
-    await sudoMacCommand(`chmod +s "${macToolPath}"`)
+    await sudoMacCommand(`cp ${helperPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
   }
 
   if (process.env.NODE_ENV === 'development') {

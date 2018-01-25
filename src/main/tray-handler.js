@@ -18,9 +18,7 @@ export function toggleEnable () {
 }
 
 // 切换代理方式
-export function toggleProxy (e, mode) {
-  e.menu.items.forEach(item => { item.checked = false })
-  e.checked = true
+export function toggleProxy (mode) {
   startProxy(mode)
   updateAppConfig({ sysProxyMode: mode })
 }

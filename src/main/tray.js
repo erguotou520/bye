@@ -3,13 +3,10 @@ import { Menu, Tray, nativeImage } from 'electron'
 import { appConfig$ } from './data'
 import * as handler from './tray-handler'
 import { groupConfigs } from '../shared/utils'
-import { isMac, isWin, isLinux } from '../shared/env'
-import { toggleProxy } from './tray-handler'
+import { isMac, isWin } from '../shared/env'
 
 const osTrayIcon = isMac ? 'tray_mac.png' : (isWin ? 'tray_win.png' : 'tray_win@2x.png')
 let tray
-let menus
-let contextMenu
 
 /**
  * 生成服务器子菜单
@@ -28,11 +25,6 @@ function generateConfigSubmenus (configs, selectedIndex) {
           type: 'checkbox',
           checked: config.checked,
           click (e) {
-            // set others to false
-            e.menu.items.forEach(submenu => {
-              submenu.checked = false
-            })
-            e.checked = true
             handler.switchConfig(e.menu.items.indexOf(e))
           }
         }
@@ -49,13 +41,41 @@ function generateConfigSubmenus (configs, selectedIndex) {
   return submenus
 }
 
-// 切换代理模式
-function toggleProxyMode (e, mode) {
-  toggleProxy(e, mode)
-  // 在Linux上，为了改变单独的MenuItem，你必须再次调用setContextMenu
-  if (isLinux) {
-    tray.setContextMenu(contextMenu)
-  }
+/**
+ * 根据应用配置生成菜单
+ * @param {Object} appConfig 应用配置
+ */
+function generateMenus (appConfig) {
+  return [
+    { label: '开启应用', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
+    { label: '系统代理模式        ', submenu: [
+      { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: () => handler.toggleProxy(0) },
+      { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: () => handler.toggleProxy(1) },
+      { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: () => handler.toggleProxy(2) }
+    ] },
+    { label: 'PAC', submenu: [
+      { label: '更新PAC', click: handler.updatePac }
+    ] },
+    { label: '服务器', submenu: generateConfigSubmenus(appConfig.configs, appConfig.index) },
+    { label: '二维码扫描', click: handler.scanQRCode },
+    { label: '配置', submenu: [
+      { label: '选项设置...', click: handler.showOptions },
+      { label: '导入gui-config.json文件', click: handler.importConfigFromFile },
+      { label: '导出gui-confi.gjson文件', click: handler.exportConfigToFile },
+      { label: '从剪贴板批量导入ssr://地址', click: handler.importConfigFromClipboard },
+      { label: '打开配置文件', click: handler.openConfigFile }
+    ] },
+    { label: '复制http代理设置', click: handler.copyHttpProxyCode },
+    { label: '帮助', submenu: [
+      { label: '检查更新', click: handler.checkUpdate },
+      { label: '查看日志', click: handler.openLog },
+      { label: '项目主页', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr') } },
+      { label: 'Bug反馈', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr/issues') } },
+      { label: '捐赠', click: () => { handler.openURL('https://github.com/erguotou520/donate') } },
+      { label: '打开开发者工具', click: handler.openDevtool }
+    ] },
+    { label: '退出', click: handler.exitApp }
+  ]
 }
 
 // 根据配置显示tray tooltip
@@ -84,44 +104,23 @@ function getTooltip (appConfig) {
 }
 
 /**
+ * 更新任务栏菜单
+ * @param {Object} appConfig 应用配置
+ */
+function updateTray (appConfig) {
+  const menus = generateMenus(appConfig)
+  const contextMenu = Menu.buildFromTemplate(menus)
+  tray.setContextMenu(contextMenu)
+  tray.setToolTip(getTooltip(appConfig))
+}
+
+/**
  * 渲染托盘图标和托盘菜单
  */
 export default function renderTray (appConfig) {
   // 生成tray
   tray = new Tray(nativeImage.createFromPath(path.join(__static, osTrayIcon)))
-  menus = [
-    { label: '开启应用', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
-    { label: '系统代理模式        ', submenu: [
-      { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => toggleProxyMode(e, 0) },
-      { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => toggleProxyMode(e, 1) },
-      { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => toggleProxyMode(e, 2) }
-    ] },
-    { label: 'PAC', submenu: [
-      { label: '更新PAC', click: handler.updatePac }
-    ] },
-    { label: '服务器', submenu: generateConfigSubmenus(appConfig.configs, appConfig.index) },
-    { label: '二维码扫描', click: handler.scanQRCode },
-    { label: '配置', submenu: [
-      { label: '选项设置...', click: handler.showOptions },
-      { label: '导入gui-config.json文件', click: handler.importConfigFromFile },
-      { label: '导出gui-confi.gjson文件', click: handler.exportConfigToFile },
-      { label: '从剪贴板批量导入ssr://地址', click: handler.importConfigFromClipboard },
-      { label: '打开配置文件', click: handler.openConfigFile }
-    ] },
-    { label: '复制http代理设置', click: handler.copyHttpProxyCode },
-    { label: '帮助', submenu: [
-      { label: '检查更新', click: handler.checkUpdate },
-      { label: '查看日志', click: handler.openLog },
-      { label: '项目主页', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr') } },
-      { label: 'Bug反馈', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr/issues') } },
-      { label: '捐赠', click: () => { handler.openURL('https://github.com/erguotou520/donate') } },
-      { label: '打开开发者工具', click: handler.openDevtool }
-    ] },
-    { label: '退出', click: handler.exitApp }
-  ]
-  contextMenu = Menu.buildFromTemplate(menus)
-  tray.setContextMenu(contextMenu)
-  tray.setToolTip(getTooltip(appConfig))
+  updateTray(appConfig)
   tray.on((isMac || isWin) ? 'double-click' : 'click', handler.showMainWindow)
 }
 
@@ -137,13 +136,7 @@ export function destroyTray () {
 // 监听数据变更
 appConfig$.subscribe(data => {
   const [appConfig, changed] = data
-  if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
-    // configs或index字段修改时刷新服务器列表
-    menus[3].submenu = generateConfigSubmenus(appConfig.configs, appConfig.index)
-    contextMenu = Menu.buildFromTemplate(menus)
-    tray.setContextMenu(contextMenu)
-  }
-  if (['configs', 'index', 'enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
-    tray.setToolTip(getTooltip(appConfig))
+  if (['enable', 'sysProxyMode', 'configs', 'index'].some(key => changed.indexOf(key) > -1)) {
+    updateTray(appConfig)
   }
 })
