@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import defaultConfig from '../../shared/config'
-import { merge, clone, request, isSubscribeContentValid, getUpdatedKeys } from '../../shared/utils'
+import { merge, clone, request, isSubscribeContentValid, getUpdatedKeys, isConfigEqual } from '../../shared/utils'
 import Config from '../../shared/ssr'
 import { syncConfig } from '../ipc'
 import { STORE_KEY_FEATURE, STORE_KEY_SSR_METHODS, STORE_KEY_SSR_PROTOCOLS, STORE_KEY_SSR_OBFSES } from '../constants'
@@ -9,8 +9,6 @@ Vue.use(Vuex)
 
 // 当前编辑的配置项
 const editingConfig = new Config()
-// 备份当前选中的配置项
-const editingConfigBak = new Config()
 // ssr config 有效key
 const configKeys = Object.keys(editingConfig)
 // 页面
@@ -70,6 +68,8 @@ export default new Vuex.Store({
       active: false
     },
     editingConfig,
+    // 备份当前选中的配置项
+    editingConfigBak: new Config(),
     editingGroup: { show: false, title: '', updated: false },
     methods,
     protocols,
@@ -106,11 +106,15 @@ export default new Vuex.Store({
     // 设置选中的配置
     setCurrentConfig (state, ssrConfig) {
       merge(state.editingConfig, ssrConfig)
-      merge(editingConfigBak, ssrConfig)
+      merge(state.editingConfigBak, ssrConfig)
+    },
+    // 更新编辑项备份
+    updateEditingBak (state) {
+      merge(state.editingConfigBak, state.editingConfig)
     },
     // 重置状态
     resetState (state) {
-      merge(state.editingConfig, editingConfigBak)
+      merge(state.editingConfig, state.editingConfigBak)
       merge(state.view, { page: views.indexOf(state.view.page) >= 2 ? views[2] : state.view.page, tab: 'common', active: false })
       state.editingGroup.title = groupTitleBak
     },
@@ -156,7 +160,7 @@ export default new Vuex.Store({
       if (targetConfig.configs && getters.selectedConfig) {
         index = targetConfig.configs.findIndex(config => config.id === getters.selectedConfig.id)
       }
-      const correctConfig = index !== undefined ? { ...targetConfig, index } : targetConfig
+      const correctConfig = (index !== undefined && index > -1) ? { ...targetConfig, index } : targetConfig
       commit('updateConfig', correctConfig)
       syncConfig(correctConfig)
     },
@@ -194,6 +198,6 @@ export default new Vuex.Store({
   },
   getters: {
     selectedConfig: state => state.appConfig.configs[state.appConfig.index],
-    isEditingConfigUpdated: state => !editingConfigBak.isEqual(state.editingConfig)
+    isEditingConfigUpdated: state => !isConfigEqual(state.editingConfigBak, state.editingConfig)
   }
 })

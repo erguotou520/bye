@@ -5,7 +5,7 @@ import { readJson, writeJson } from 'fs-extra'
 import bootstrap, { appConfigPath } from './bootstrap'
 import { sendData } from './window'
 import { EVENT_RX_SYNC_MAIN } from '../shared/events'
-import { isArray, getUpdatedKeys, configMerge } from '../shared/utils'
+import { isArray, getUpdatedKeys, configMerge, clone } from '../shared/utils'
 import defaultConfig, { mergeConfig } from '../shared/config'
 
 let promise
@@ -51,8 +51,9 @@ export function updateAppConfig (targetConfig) {
   const changedKeys = getUpdatedKeys(currentConfig, targetConfig)
   // 只有有数据变更才更新配置
   if (changedKeys.length) {
+    const oldConfig = clone(currentConfig)
     configMerge(currentConfig, targetConfig)
-    _observe.next([currentConfig, changedKeys])
+    _observe.next([currentConfig, changedKeys, oldConfig])
   }
 }
 

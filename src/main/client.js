@@ -1,9 +1,9 @@
 import path from 'path'
 import { exec } from 'child_process'
 import treeKill from 'tree-kill'
-import { ssrLogPath } from './bootstrap'
 import { appConfig$ } from './data'
 import logger from './logger'
+import { isConfigEqual } from '../shared/utils'
 
 let child
 
@@ -44,7 +44,6 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
   params.push(`-b ${shareOverLan ? '0.0.0.0' : '127.0.0.1'}`)
   params.push(`-l ${localPort}`)
   config.timeout && params.push(`-t ${config.timeout}`)
-  params.push(`--log-file ${ssrLogPath}`)
   // FIXME
   const command = `python "${path.join(ssrPath, 'local.py')}" ${params.join(' ')}`
   if (process.env.NODE_ENV === 'development') {
@@ -82,7 +81,7 @@ function runWithConfig (appConfig) {
 
 // 监听配置变化
 appConfig$.subscribe(data => {
-  const [appConfig, changed] = data
+  const [appConfig, changed, oldConfig] = data
   // 初始化
   if (changed.length === 0) {
     runWithConfig(appConfig)
@@ -94,9 +93,14 @@ appConfig$.subscribe(data => {
         stop()
       }
     } else if (appConfig.enable) {
-      if (['ssrPath', 'index', 'localPort', 'configs', 'shareOverLan'].some(key => changed.indexOf(key) > -1)) {
-        // TODO: 优化 只有选中的配置发生改变时才重新运行
+      if (['ssrPath', 'index', 'localPort', 'shareOverLan'].some(key => changed.indexOf(key) > -1)) {
         runWithConfig(appConfig)
+      }
+      if (changed.indexOf('configs') > -1) {
+        // 只有选中的配置发生改变时才重新运行
+        if (!isConfigEqual(appConfig.configs[appConfig.index], oldConfig.configs[oldConfig.index])) {
+          runWithConfig(appConfig)
+        }
       }
     }
   }

@@ -68,7 +68,7 @@ export default {
     clickoutside
   },
   methods: {
-    ...mapMutations(['resetState']),
+    ...mapMutations(['resetState', 'updateEditingBak']),
     ...mapActions(['updateConfigs']),
     copyImage () {
       const self = this
@@ -131,6 +131,7 @@ export default {
           const index = copy.findIndex(config => config.id === this.editingConfig.id)
           copy.splice(index, 1)
           copy.splice(index, 0, clone(this.editingConfig))
+          this.updateEditingBak()
           this.updateConfigs(copy)
         } else {
           hideWindow()

@@ -165,6 +165,11 @@ export function clone (obj, deep = false) {
   }
 }
 
+// 配置是否相同
+export function isConfigEqual (config1, config2) {
+  return isObject(config1) && isObject(config2) && Object.keys(config1).every(key => config1[key] === config2[key])
+}
+
 // 生成随机ID
 export function generateID () {
   const seed = 'ABCDEF01234567890'

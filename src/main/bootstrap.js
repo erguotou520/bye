@@ -12,8 +12,6 @@ export const appConfigDir = app.getPath('userData')
 export const appConfigPath = path.join(appConfigDir, 'gui-config.json')
 // 日志路径
 export const logPath = path.join(appConfigDir, 'logs/shadowsocksr-client.log')
-// ssr运行日志路径
-export const ssrLogPath = path.join(appConfigDir, 'logs/shadowsocksr.log')
 // 默认的ssr下载目录
 export const defaultSSRDownloadDir = path.join(appConfigDir, 'shadowsocksr')
 // pac文件下载目录
@@ -65,7 +63,6 @@ async function init () {
   }
   await ensureDir(path.join(appConfigDir, 'logs'))
   await ensureFile(logPath)
-  await ensureFile(ssrLogPath)
 
   // 初始化确保文件存在
   if (isMac && !await pathExists(macToolPath)) {
@@ -76,7 +73,7 @@ async function init () {
   }
 
   if (process.env.NODE_ENV === 'development') {
-    console.log('Config file\'s path: %s\nLog file\'s path: %s\nSSR log file \'s path: %s', appConfigPath, logPath, ssrLogPath)
+    console.log('Config file\'s path: %s\nLog file\'s path: %s', appConfigPath, logPath)
   } else {
     logger.info('file ensured')
   }
