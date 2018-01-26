@@ -5,7 +5,7 @@ version: 0.1.{build}
 
 branches:
   only:
-    - redesign
+    - master
 
 skip_non_tags: true
 

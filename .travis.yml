@@ -46,6 +46,6 @@ script:
 - yarn run build
 branches:
   only:
-  - redesign
+  - master
 
 if: tag IS present
