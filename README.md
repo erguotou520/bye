@@ -13,7 +13,7 @@
   ![](docs/assets/scan.jpg)
 - 剪贴板复制、配置文件导入等方式添加配置
 - 支持复制二维码图片(右键菜单)，SSR链接
-- 支持链接打开应用(仅Mac和Windows)，[点击测试](ssr://MTI3LjAuMC4xOjEyMzQ6YXV0aF9hZXMxMjhfbWQ1OmFlcy0xMjgtY2ZiOnRsczEuMl90aWNrZXRfYXV0aDpZV0ZoWW1KaS8_b2Jmc3BhcmFtPVluSmxZV3QzWVRFeExtMXZaUSZyZW1hcmtzPTVyV0w2Sy1WNUxpdDVwYUg)
+- 支持链接打开应用(仅Mac和Windows)，[因平台限制，请前往该地址点击测试](https://erguotou.github.io/electron-ssr)
 - 支持切换系统代理模式:PAC、全局、不代理
 - [内置http_proxy服务](docs/HTTP_PROXY.md)，可在选项中开启或关闭
 - 支持配置项变更
