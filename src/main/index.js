@@ -8,7 +8,7 @@ import { stopPacServer } from './pac'
 import { stopHttpProxyServer } from './http-proxy'
 import { stop as stopCommand } from './client'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
-import './subscribe'
+import { stopTask } from './subscribe'
 import logger from './logger'
 import { loadConfigsFromString } from '../shared/ssr'
 import { isMac, isWin } from '../shared/env'
@@ -101,6 +101,7 @@ app.on('will-quit', () => {
   destroyTray()
   stopHttpProxyServer()
   stopPacServer()
+  stopTask()
 })
 
 app.on('activate', () => {

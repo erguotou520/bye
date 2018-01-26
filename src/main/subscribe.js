@@ -14,42 +14,46 @@ let _timeout
 export async function startTask (appConfig) {
   stopTask()
   if (appConfig.autoUpdateSubscribes) {
+    // 单位是 时
     const intervalTime = appConfig.subscribeUpdateInterval * 3600000
     try {
       const content = await readFile(subscribeUpdateFile, 'utf8')
       lastUpdateTime = new Date(content.toString())
       const nextUpdateTime = new Date(+lastUpdateTime + intervalTime)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('next subscribe update time: %s', nextUpdateTime)
+      }
       timeout(nextUpdateTime, intervalTime)
     } catch (e) {
-      lastUpdateTime = new Date()
-      interval(intervalTime)
+      update()
     }
-    saveLastUpdateTime()
   }
 }
 
 // 间隔多久开始下一次更新，用下一次间隔时间减去当前时间
 function timeout (nextUpdateTime, intervalTime) {
   _timeout = setTimeout(() => {
+    update()
     interval(intervalTime)
   }, nextUpdateTime - new Date())
 }
 
 // 往后的更新都按照interval来进行
 function interval (intervalTime) {
-  _interval = setInterval(updateSubscribes, intervalTime)
+  _interval = setInterval(update, intervalTime)
 }
 
-// 保存上次更新时间
-async function saveLastUpdateTime () {
-  if (lastUpdateTime) {
-    return await writeFile(subscribeUpdateFile, lastUpdateTime)
+// 保存最近一次的更新时间
+async function saveUpdateTime () {
+  const date = new Date()
+  lastUpdateTime = date
+  if (process.env.NODE_ENV === 'development') {
+    console.log('last update time: %s', lastUpdateTime)
   }
+  return await writeFile(subscribeUpdateFile, date)
 }
 
-/**
- * 结束更新任务
- */
+// 结束更新任务
 export function stopTask () {
   if (_timeout) {
     clearTimeout(_timeout)
@@ -59,9 +63,15 @@ export function stopTask () {
   }
 }
 
+// 发起更新
+async function update () {
+  await saveUpdateTime()
+  updateSubscribes()
+}
+
 // 更新订阅服务器
 export function updateSubscribes () {
-  sendData(EVENT_SUBSCRIBE_UPDATE_MAIN)
+  sendData(EVENT_SUBSCRIBE_UPDATE_MAIN, true)
 }
 
 // 监听配置变化

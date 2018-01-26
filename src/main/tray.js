@@ -16,16 +16,17 @@ let tray
 function generateConfigSubmenus (configs, selectedIndex) {
   const groups = groupConfigs(configs, selectedIndex)
   const submenus = Object.keys(groups).map(key => {
-    const configs = groups[key]
+    const groupedConfigs = groups[key]
     return {
-      label: `${configs.some(config => config.checked) ? '● ' : ''}${key}`,
-      submenu: configs.map(config => {
+      label: `${groupedConfigs.some(config => config.checked) ? '● ' : ''}${key}`,
+      submenu: groupedConfigs.map(config => {
         return {
+          id: config.id,
           label: `${config.remarks}(${config.server}:${config.server_port})`,
           type: 'checkbox',
           checked: config.checked,
           click (e) {
-            handler.switchConfig(e.menu.items.indexOf(e))
+            handler.switchConfig(configs.findIndex(config => config.id === e.id))
           }
         }
       })
