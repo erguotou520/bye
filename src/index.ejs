@@ -9,6 +9,15 @@
         require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
       </script>
     <% } %>
+    <script>
+      const {remote} = require('electron');
+      const {Menu} = remote;
+
+      window.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+          Menu.getApplicationMenu().popup(remote.getCurrentWindow());
+      }, false);
+    </script>
   </head>
   <body>
     <div id="app"></div>

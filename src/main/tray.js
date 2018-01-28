@@ -26,7 +26,13 @@ function generateConfigSubmenus (configs, selectedIndex) {
           type: 'checkbox',
           checked: config.checked,
           click (e) {
-            handler.switchConfig(configs.findIndex(config => config.id === e.id))
+            const index = configs.findIndex(config => config.id === e.id)
+            if (index === selectedIndex) {
+              // 点击的是当前节点
+              e.checked = true
+            } else {
+              handler.switchConfig(configs.findIndex(config => config.id === e.id))
+            }
           }
         }
       })
@@ -50,9 +56,9 @@ function generateMenus (appConfig) {
   return [
     { label: '开启应用', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
     { label: '系统代理模式        ', submenu: [
-      { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: () => handler.toggleProxy(0) },
-      { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: () => handler.toggleProxy(1) },
-      { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: () => handler.toggleProxy(2) }
+      { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => changeProxy(e, 0, appConfig) },
+      { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => changeProxy(e, 1, appConfig) },
+      { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => changeProxy(e, 2, appConfig) }
     ] },
     { label: 'PAC', submenu: [
       { label: '更新PAC', click: handler.updatePac }
@@ -77,6 +83,15 @@ function generateMenus (appConfig) {
     ] },
     { label: '退出', click: handler.exitApp }
   ]
+}
+
+// 切换代理
+function changeProxy (e, mode, appConfig) {
+  if (mode === appConfig.sysProxyMode) {
+    e.checked = true
+  } else {
+    handler.toggleProxy(mode)
+  }
 }
 
 // 根据配置显示tray tooltip

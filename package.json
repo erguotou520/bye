@@ -30,6 +30,7 @@
     "electron-updater": "^2.20.1",
     "erguotou-iview": "2.8.1-alpha-2",
     "fs-extra": "^5.0.0",
+    "http-shutdown": "^1.2.0",
     "lodash.debounce": "^4.0.8",
     "qr-image": "^3.2.0",
     "raven": "^2.3.0",

@@ -23,24 +23,26 @@ export async function startTask (appConfig) {
       if (process.env.NODE_ENV === 'development') {
         console.log('next subscribe update time: %s', nextUpdateTime)
       }
-      timeout(nextUpdateTime, intervalTime)
+      timeout(nextUpdateTime, intervalTime, appConfig)
     } catch (e) {
-      update()
+      update(appConfig)
     }
   }
 }
 
 // 间隔多久开始下一次更新，用下一次间隔时间减去当前时间
-function timeout (nextUpdateTime, intervalTime) {
+function timeout (nextUpdateTime, intervalTime, appConfig) {
   _timeout = setTimeout(() => {
-    update()
-    interval(intervalTime)
+    update(appConfig)
+    interval(intervalTime, appConfig)
   }, nextUpdateTime - new Date())
 }
 
 // 往后的更新都按照interval来进行
-function interval (intervalTime) {
-  _interval = setInterval(update, intervalTime)
+function interval (intervalTime, appConfig) {
+  _interval = setInterval(() => {
+    update(appConfig)
+  }, intervalTime)
 }
 
 // 保存最近一次的更新时间
@@ -64,9 +66,12 @@ export function stopTask () {
 }
 
 // 发起更新
-async function update () {
-  await saveUpdateTime()
-  updateSubscribes()
+async function update (appConfig) {
+  // 有订阅服务器才开始订阅
+  if (appConfig.serverSubscribes.length) {
+    await saveUpdateTime()
+    updateSubscribes()
+  }
 }
 
 // 更新订阅服务器

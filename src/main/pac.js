@@ -2,15 +2,17 @@
  * pac文件下载更新等
  */
 import http from 'http'
+import httpShutdown from 'http-shutdown'
 import { parse } from 'url'
 import { readFile, writeFile, pathExists } from 'fs-extra'
 import logger from './logger'
 import { request } from '../shared/utils'
 import bootstrapPromise, { pacPath } from './bootstrap'
 import dataPromise, { currentConfig, appConfig$ } from './data'
-
 let pacContent
 let pacServer
+
+httpShutdown.extend()
 
 /**
  * 下载pac文件
@@ -44,10 +46,12 @@ export async function serverPac (pacPort) {
   const host = currentConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
   const port = pacPort !== undefined ? pacPort : currentConfig.pacPort || 1240
   pacServer = http.createServer((req, res) => {
-    if (parse(req.url).pathname === '/pac') {
+    if (parse(req.url).pathname === '/proxy.pac') {
       downloadPac().then(() => {
-        res.writeHead(200, { 'Content-Type': 'application/x-ns-proxy-autoconfig', 'Server': 'SSR client' })
         readPac().then(text => {
+          res.writeHead(200, {
+            'Content-Type': 'application/x-ns-proxy-autoconfig; charset=utf-8'
+          })
           res.write(text)
           res.end()
         })
@@ -56,7 +60,7 @@ export async function serverPac (pacPort) {
       res.writeHead(200)
       res.end()
     }
-  }).listen(port, host)
+  }).withShutdown().listen(port, host)
     .on('listening', () => {
       if (process.env.NODE_ENV === 'development') {
         console.log('pac server listen at: %s:%s', host, port)
@@ -83,23 +87,23 @@ export async function serverPac (pacPort) {
 export async function stopPacServer () {
   if (pacServer) {
     return new Promise((resolve, reject) => {
-      pacServer.close()
-        .once('close', () => {
+      pacServer.shutdown(err => {
+        if (err) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log(err)
+          } else {
+            logger.warn(`close pac server error: ${err}`)
+          }
+          reject()
+        } else {
           if (process.env.NODE_ENV === 'development') {
             console.log('pac server closed.')
           } else {
             logger.debug('pac server closed.')
           }
           resolve()
-        })
-        .once('error', (...args) => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log(args)
-          } else {
-            logger.warn(`close pac server error: ${args}`)
-          }
-          reject()
-        })
+        }
+      })
     })
   }
   return Promise.resolve()

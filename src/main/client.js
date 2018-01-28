@@ -1,5 +1,5 @@
 import path from 'path'
-import { exec } from 'child_process'
+import { execFile } from 'child_process'
 import treeKill from 'tree-kill'
 import { appConfig$ } from './data'
 import logger from './logger'
@@ -13,7 +13,7 @@ let child
  */
 export function runCommand (command) {
   if (command) {
-    child = exec(command)
+    child = execFile(command)
     child.stdout.on('data', logger.log)
     child.stderr.on('data', logger.error)
     child.on('close', logger.log)
@@ -33,25 +33,43 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
   stop()
   // 参数
   const params = []
-  params.push(`-s ${config.server}`)
-  params.push(`-p ${config.server_port}`)
-  params.push(`-k ${config.password}`)
-  params.push(`-m ${config.method}`)
-  params.push(`-O ${config.protocol}`)
-  config.protocolparam && params.push(`-G ${config.protocolparam}`)
-  config.obfs && params.push(`-o ${config.obfs}`)
-  config.obfs_param && params.push(`-g ${config.obfs_param}`)
-  params.push(`-b ${shareOverLan ? '0.0.0.0' : '127.0.0.1'}`)
-  params.push(`-l ${localPort}`)
-  config.timeout && params.push(`-t ${config.timeout}`)
-  // FIXME
+  params.push('-s')
+  params.push(config.server)
+  params.push('-p')
+  params.push(config.server_port)
+  params.push('-k')
+  params.push(config.password)
+  params.push('-m')
+  params.push(config.method)
+  params.push('-O')
+  params.push(config.protocol)
+  if (config.protocolparam) {
+    params.push('-G')
+    params.push(config.protocolparam)
+  }
+  if (config.obfs) {
+    params.push('-o')
+    params.push(config.obfs)
+  }
+  if (config.obfs_param) {
+    params.push('-g')
+    params.push(config.obfs_param)
+  }
+  params.push('-b')
+  params.push(shareOverLan ? '0.0.0.0' : '127.0.0.1')
+  params.push('-l')
+  params.push(localPort)
+  if (config.timeout) {
+    params.push('-t')
+    params.push(config.timeout)
+  }
   const command = `python "${path.join(ssrPath, 'local.py')}" ${params.join(' ')}`
   if (process.env.NODE_ENV === 'development') {
     console.log('run command: %s', command)
   } else {
     logger.debug('run command: %s', command)
   }
-  child = runCommand(command)
+  child = runCommand('python', params)
 }
 
 /**

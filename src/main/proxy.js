@@ -71,7 +71,7 @@ export function startProxy (mode) {
   if (mode === 0) {
     setProxyToNone()
   } else if (mode === 1) {
-    setProxyToPac(`http://127.0.0.1:${currentConfig.pacPort}/pac`)
+    setProxyToPac(`http://127.0.0.1:${currentConfig.pacPort}/proxy.pac`)
   } else if (mode === 2) {
     setProxyToGlobal('127.0.0.1', currentConfig.localPort)
   }
@@ -82,7 +82,7 @@ appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   if (appConfig.sysProxyMode === 1 && (changed.length === 0 || changed.indexOf('pacPort') > -1)) {
     // 初始化或者pacPort变更时
-    setProxyToPac(`http://127.0.0.1:${appConfig.pacPort}/pac`)
+    setProxyToPac(`http://127.0.0.1:${appConfig.pacPort}/proxy.pac`)
   } else if (appConfig.sysProxyMode === 2 && (changed.length === 0 || changed.indexOf('localPort') > -1)) {
     // 初始化或者localPort变更时
     setProxyToGlobal('127.0.0.1', currentConfig.localPort)
