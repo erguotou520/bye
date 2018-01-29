@@ -14,7 +14,7 @@ const defaultConfig = {
   // 本地ssr目录
   ssrPath: '',
   // pac端口号
-  pacPort: 1240,
+  pacPort: 2333,
   // 系统代理启用模式 0 不启用 1 PAC 2 全局
   sysProxyMode: 1,
   // 订阅列表

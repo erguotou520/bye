@@ -28,7 +28,6 @@
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import { showNotification } from '../../ipc'
 import { request, isSubscribeContentValid } from '../../../shared/utils'
 
 const URL_REGEX = /^https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
@@ -134,7 +133,7 @@ export default {
   },
   methods: {
     ...mapMutations(['updateView']),
-    ...mapActions(['updateConfig', 'updateConfigs']),
+    ...mapActions(['updateConfig', 'updateConfigs', 'updateSubscribes']),
     selectRows (rows) {
       this.selectedRows = rows
     },
@@ -158,17 +157,10 @@ export default {
       this.updateConfig({ subscribeUpdateInterval: this.cycle.number * unitMap[v] })
     },
     update () {
-      Promise.all(this.selectedRows.map(row => {
-        return this.requestSubscribeUrl(row.URL).then(res => {
-          const [valid, configs] = isSubscribeContentValid(res)
-          if (valid) {
-            this.updateSubscribedConfigs(configs)
-          }
-        })
-      })).then(() => {
-        showNotification('订阅更新通知', '服务器订阅更新成功')
-      }).catch(() => {
-        showNotification('订阅更新通知', '服务器订阅更新失败')
+      this.loading = true
+      this.updateSubscribes(this.selectedRows).then(updatedCount => {
+        this.loading = false
+        this.$Message.success(`已更新${updatedCount}个节点`)
       })
     },
     remove () {

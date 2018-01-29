@@ -33,7 +33,7 @@ export function startHttpProxyServer (appConfig) {
             logger.warn(`http代理端口${appConfig.httpProxyPort}已被占用`)
           }
         }
-        server.close()
+        server.shutdown()
       })
   }
 }

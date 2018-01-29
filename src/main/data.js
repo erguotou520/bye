@@ -11,6 +11,9 @@ import defaultConfig, { mergeConfig } from '../shared/config'
 let promise
 // 是因为调用app.quit还是手动点击窗口的叉号引起的关闭事件, true表示app.quit
 let _isQuiting = false
+// 是否是来自renderer的同步数据
+let isFromRenderer = false
+// 当前配置
 export let currentConfig
 
 // 读取配置
@@ -38,6 +41,7 @@ const source = Observable.create(observe => {
   // 初始化数据
   promise = init().then(data => {
     currentConfig = data
+    isFromRenderer = false
     // 第一个参数为当前配置对象，第二个参数为变更的字段数组
     observe.next([data, []])
   })
@@ -47,12 +51,13 @@ const source = Observable.create(observe => {
  * 统一使用该接口从外部更新应用配置
  * @param {Object} targetConfig 要更新的配置
  */
-export function updateAppConfig (targetConfig) {
+export function updateAppConfig (targetConfig, fromRenderer = false) {
   const changedKeys = getUpdatedKeys(currentConfig, targetConfig)
   // 只有有数据变更才更新配置
   if (changedKeys.length) {
     const oldConfig = clone(currentConfig)
     configMerge(currentConfig, targetConfig)
+    isFromRenderer = fromRenderer
     _observe.next([currentConfig, changedKeys, oldConfig])
   }
 }
@@ -65,8 +70,10 @@ export function addConfigs (configs) {
   if (!isArray(configs)) {
     configs = [configs]
   }
-  configMerge(currentConfig, { configs: currentConfig.configs.slice().concat(configs) })
-  _observe.next([currentConfig, ['configs']])
+  const clone = currentConfig.configs.slice()
+  configMerge(currentConfig, { configs: clone.concat(configs) })
+  isFromRenderer = false
+  _observe.next([currentConfig, ['configs'], configMerge(currentConfig, clone)])
 }
 
 export const appConfig$ = source.multicast(subject).refCount()
@@ -86,7 +93,10 @@ appConfig$.subscribe(data => {
   if (changed.length) {
     // 如果更新则写入配置文件
     writeJson(appConfigPath, appConfig, { spaces: '\t' })
-    sendData(EVENT_RX_SYNC_MAIN, appConfig)
+    // 如果是从renderer同步过来的数据则不再同步回去，避免重复同步
+    if (!isFromRenderer) {
+      sendData(EVENT_RX_SYNC_MAIN, appConfig)
+    }
   }
 })
 

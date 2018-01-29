@@ -16,6 +16,7 @@ export function showNotification (title, body) {
  * ipc-render事件
  */
 ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) => {
+  // 显示main进程的通知
   const notify = showNotification(title, body)
   if (url) {
     notify.onclick = () => {
@@ -23,6 +24,7 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
     }
   }
 }).on(events.EVENT_APP_SCAN_DESKTOP, () => {
+  // 扫描二维码
   scanQrcode((e, result) => {
     if (e) {
       showNotification('扫码失败', '未找到相关二维码')
@@ -34,19 +36,23 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
     }
   })
 }).on(events.EVENT_APP_SHOW_PAGE, (e, targetView) => {
+  // 显示具体某页面
   console.log('received view update: ', targetView.page, targetView.tab)
   store.commit('updateView', { ...targetView, fromMain: true })
 }).on(events.EVENT_APP_ERROR_MAIN, (e, err) => {
+  // 弹框显示main进程报错内容
   alert(JSON.stringify(err))
 }).on(events.EVENT_SUBSCRIBE_UPDATE_MAIN, (e, isAutoUpdate) => {
-  store.dispatch('updateSubscribes').then(() => {
-    showNotification('订阅更新通知', '服务器订阅更新成功')
+  // 更新订阅服务器
+  store.dispatch('updateSubscribes').then(updatedCount => {
+    showNotification('订阅更新通知', `服务器订阅更新成功，${updatedCount > 0 ? '共更新了' + updatedCount + '个节点' : '没有新节点'}`)
   }).catch(() => {
     if (!isAutoUpdate) {
       showNotification('订阅更新通知', '服务器订阅更新失败')
     }
   })
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
+  // 同步数据
   console.log('received sync data: %o', appConfig)
   store.commit('updateConfig', appConfig)
 })

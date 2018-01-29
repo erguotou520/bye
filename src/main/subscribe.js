@@ -11,14 +11,25 @@ import { EVENT_SUBSCRIBE_UPDATE_MAIN } from '../shared/events'
 let lastUpdateTime
 let _interval
 let _timeout
-export async function startTask (appConfig) {
+
+/**
+ * 更新订阅服务器任务
+ * @param {Object} appConfig 应用配置
+ * @param {Boolean} forceUpdate 是否强制更新
+ */
+export async function startTask (appConfig, forceUpdate = false) {
   stopTask()
   if (appConfig.autoUpdateSubscribes) {
+    if (forceUpdate) {
+      await update(appConfig)
+    }
     // 单位是 时
     const intervalTime = appConfig.subscribeUpdateInterval * 3600000
     try {
-      const content = await readFile(subscribeUpdateFile, 'utf8')
-      lastUpdateTime = new Date(content.toString())
+      if (!forceUpdate) {
+        const content = await readFile(subscribeUpdateFile, 'utf8')
+        lastUpdateTime = new Date(content.toString())
+      }
       const nextUpdateTime = new Date(+lastUpdateTime + intervalTime)
       if (process.env.NODE_ENV === 'development') {
         console.log('next subscribe update time: %s', nextUpdateTime)
@@ -55,16 +66,6 @@ async function saveUpdateTime () {
   return await writeFile(subscribeUpdateFile, date)
 }
 
-// 结束更新任务
-export function stopTask () {
-  if (_timeout) {
-    clearTimeout(_timeout)
-  }
-  if (_interval) {
-    clearInterval(_interval)
-  }
-}
-
 // 发起更新
 async function update (appConfig) {
   // 有订阅服务器才开始订阅
@@ -79,12 +80,22 @@ export function updateSubscribes () {
   sendData(EVENT_SUBSCRIBE_UPDATE_MAIN, true)
 }
 
+// 结束更新任务
+export function stopTask () {
+  if (_timeout) {
+    clearTimeout(_timeout)
+  }
+  if (_interval) {
+    clearInterval(_interval)
+  }
+}
+
 // 监听配置变化
 appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   // 初始化
   if (changed.length === 0) {
-    startTask(appConfig)
+    startTask(appConfig, true)
   } else {
     if (['autoUpdateSubscribes', 'subscribeUpdateInterval'].some(key => changed.indexOf(key) > -1)) {
       startTask(appConfig)

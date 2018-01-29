@@ -48,13 +48,14 @@ export async function serverPac (pacPort) {
   pacServer = http.createServer((req, res) => {
     if (parse(req.url).pathname === '/proxy.pac') {
       downloadPac().then(() => {
-        readPac().then(text => {
-          res.writeHead(200, {
-            'Content-Type': 'application/x-ns-proxy-autoconfig; charset=utf-8'
-          })
-          res.write(text)
-          res.end()
+        return readPac()
+      }).then(text => {
+        res.writeHead(200, {
+          'Content-Type': 'application/x-ns-proxy-autoconfig',
+          'Connection': 'close'
         })
+        res.write(text)
+        res.end()
       })
     } else {
       res.writeHead(200)
@@ -77,7 +78,7 @@ export async function serverPac (pacPort) {
           logger.warn(`pac端口${port}已被占用`)
         }
       }
-      pacServer.close()
+      pacServer.shutdown()
     })
 }
 

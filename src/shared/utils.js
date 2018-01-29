@@ -167,7 +167,14 @@ export function clone (obj, deep = false) {
 
 // 配置是否相同
 export function isConfigEqual (config1, config2) {
-  return isObject(config1) && isObject(config2) && Object.keys(config1).every(key => config1[key] === config2[key])
+  return isObject(config1) && isObject(config2) && Object.keys(config1).every(key => {
+    // 只关心这些键是否一致
+    const validKeys = ['server', 'server_port', 'password', 'method', 'protocol', 'protocolparam', 'obfs', 'obfsparam', 'remarks', 'group', 'enable']
+    if (validKeys.indexOf(key) > -1) {
+      return config1[key] === config2[key]
+    }
+    return true
+  })
 }
 
 // 生成随机ID

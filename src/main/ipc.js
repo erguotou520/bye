@@ -40,7 +40,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   if (process.env.NODE_ENV === 'development') {
     console.log('received sync data: ', data)
   }
-  updateAppConfig(data)
+  updateAppConfig(data, true)
 }).on(events.EVENT_SSR_DOWNLOAD_RENDERER, e => {
   // 下载ssr
   if (process.env.NODE_ENV === 'development') {

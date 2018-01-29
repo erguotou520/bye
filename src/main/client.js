@@ -28,7 +28,6 @@ export function runCommand (command) {
  * @param {*[Number|String]} localPort 本地共享端口
  */
 export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
-  // currentConfig = config
   // 先结束之前的
   stop()
   // 参数
