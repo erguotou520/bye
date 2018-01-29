@@ -31,7 +31,7 @@ let obfses
 if (storedMethods) {
   methods = JSON.parse(storedMethods)
 } else {
-  methods = ['aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
+  methods = ['none', 'aes-128-cfb', 'aes-192-cfb', 'aes-256-cfb', 'aes-128-cfb8', 'aes-192-cfb8', 'aes-256-cfb8',
     'aes-128-ctr', 'aes-192-ctr', 'aes-256-ctr', 'camellia-128-cfb', 'camellia-192-cfb', 'camellia-256-cfb',
     'bf-cfb', 'rc4', 'rc4-md5', 'rc4-md5-6', 'salsa20', 'chacha20', 'chacha20-ietf'
   ]
@@ -41,8 +41,8 @@ if (storedMethods) {
 if (storedProtocols) {
   protocols = JSON.parse(storedProtocols)
 } else {
-  protocols = ['origin', 'verify_deflate', 'verify_sha1', 'auth_sha1_v2',
-    'auth_sha1_v4', 'auth_aes128_md5', 'auth_aes128_sha1'
+  protocols = ['origin', 'verify_deflate', 'auth_sha1_v4', 'auth_aes128_md5',
+    'auth_aes128_sha1', 'auth_chain_a', 'auth_chain_b'
   ]
   ls.setItem(STORE_KEY_SSR_PROTOCOLS, JSON.stringify(protocols))
 }
@@ -50,7 +50,7 @@ if (storedProtocols) {
 if (storedObfses) {
   obfses = JSON.parse(storedObfses)
 } else {
-  obfses = ['plain', 'http_simple', 'http_post', 'ramdom_head', 'tls1.2_ticket_auth']
+  obfses = ['plain', 'http_simple', 'http_post', 'ramdom_head', 'tls1.2_ticket_auth', 'tls1.2_ticket_fastauth']
   ls.setItem(STORE_KEY_SSR_OBFSES, JSON.stringify(obfses))
 }
 
