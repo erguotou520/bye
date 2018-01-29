@@ -3,6 +3,7 @@ import AutoLaunch from 'auto-launch'
 import './bootstrap'
 import { isQuiting, appConfig$, addConfigs } from './data'
 import renderTray, { destroyTray } from './tray'
+import renderMenu from './menu'
 import './ipc'
 import { stopPacServer } from './pac'
 import { stopHttpProxyServer } from './http-proxy'
@@ -64,6 +65,7 @@ app.on('ready', () => {
       if (!appConfig.configs.length || !appConfig.ssrPath) {
         showWindow()
       }
+      renderMenu()
       renderTray(appConfig)
     }
     if (!changed.length || changed.indexOf('autoLaunch') > -1) {
