@@ -11,30 +11,12 @@ let child
  * 运行shell命令并写入到日志中
  * @param {*String} command 待执行的shell命令
  */
-export function runCommand (command) {
+export function runCommand (command, params) {
   if (command) {
-    child = execFile(command)
-    child.stdout.on('data', data => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log(data.toString())
-      } else {
-        logger.log(data.toString())
-      }
-    })
-    child.stderr.on('data', data => {
-      if (process.env.NODE_ENV === 'development') {
-        console.error(data.toString())
-      } else {
-        logger.error(data.toString())
-      }
-    })
-    child.on('close', data => {
-      if (process.env.NODE_ENV === 'development') {
-        data.length && console.log(data.toString())
-      } else {
-        data.length && logger.log(data.toString())
-      }
-    })
+    child = execFile(command, params)
+    child.stdout.on('data', logger.log)
+    child.stderr.on('data', logger.error)
+    child.on('close', logger.log)
     return child
   }
 }
@@ -45,11 +27,11 @@ export function runCommand (command) {
  * @param {*String} ssrPath local.py的路径
  * @param {*[Number|String]} localPort 本地共享端口
  */
-export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
+export async function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
   // 先结束之前的
-  stop()
+  await stop()
   // 参数
-  const params = []
+  const params = [path.join(ssrPath, 'local.py')]
   params.push('-s')
   params.push(config.server)
   params.push('-p')
@@ -80,7 +62,7 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
     params.push('-t')
     params.push(config.timeout)
   }
-  const command = `python "${path.join(ssrPath, 'local.py')}" ${params.join(' ')}`
+  const command = `python ${params.join(' ')}`
   if (process.env.NODE_ENV === 'development') {
     console.log('run command: %s', command)
   } else {
@@ -92,16 +74,25 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
 /**
  * 结束command的后台运行
  */
-export function stop () {
+export async function stop () {
   if (child && child.pid) {
     if (process.env.NODE_ENV === 'development') {
       console.log('Kill python client')
     } else {
       logger.log('Kill python client')
     }
-    treeKill(child.pid)
-    child = null
+    return new Promise((resolve, reject) => {
+      treeKill(child.pid, err => {
+        if (err) {
+          reject(err)
+        } else {
+          child = null
+          resolve()
+        }
+      })
+    })
   }
+  return Promise.resolve()
 }
 
 /**

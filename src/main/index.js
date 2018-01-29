@@ -98,12 +98,13 @@ app.on('before-quit', () => { isQuiting(true) })
 
 app.on('will-quit', () => {
   console.log('will-quit')
-  stopCommand()
-  destroyWindow()
-  destroyTray()
-  stopHttpProxyServer()
-  stopPacServer()
-  stopTask()
+  stopCommand().then(() => {
+    destroyWindow()
+    destroyTray()
+    stopHttpProxyServer()
+    stopPacServer()
+    stopTask()
+  })
 })
 
 app.on('activate', () => {
