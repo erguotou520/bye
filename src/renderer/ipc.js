@@ -42,14 +42,14 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
 }).on(events.EVENT_APP_ERROR_MAIN, (e, err) => {
   // 弹框显示main进程报错内容
   alert(JSON.stringify(err))
-}).on(events.EVENT_SUBSCRIBE_UPDATE_MAIN, (e, isAutoUpdate) => {
+}).on(events.EVENT_SUBSCRIBE_UPDATE_MAIN, (e) => {
   // 更新订阅服务器
   store.dispatch('updateSubscribes').then(updatedCount => {
-    showNotification('订阅更新通知', `服务器订阅更新成功，${updatedCount > 0 ? '共更新了' + updatedCount + '个节点' : '没有新节点'}`)
-  }).catch(() => {
-    if (!isAutoUpdate) {
-      showNotification('订阅更新通知', '服务器订阅更新失败')
+    if (updatedCount > 0) {
+      showNotification('订阅更新通知', `服务器订阅更新成功，共更新了${updatedCount}个节点`)
     }
+  }).catch(() => {
+    showNotification('订阅更新通知', '服务器订阅更新失败')
   })
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
   // 同步数据

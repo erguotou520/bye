@@ -10,7 +10,6 @@
   * `app.init.web` 由`ipc-render`发出 页面初始化获取数据
   * `app.error.renderer` 由`ipc-render`发出 `render`进程报错
   * `app.hide.window` 由`ipc-render`发出 隐藏窗口
-  * `app.show.window` 由`ipc-render`发出 打开窗口
 - RxJs
   * `rx.sync.main` 由`ipc-main`发出 同步`rx`数据
   * `rx.sync.render` 由`ipc-render`发出 同步`rx`数据

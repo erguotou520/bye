@@ -77,7 +77,7 @@ async function update (appConfig) {
 
 // 更新订阅服务器
 export function updateSubscribes () {
-  sendData(EVENT_SUBSCRIBE_UPDATE_MAIN, true)
+  sendData(EVENT_SUBSCRIBE_UPDATE_MAIN)
 }
 
 // 结束更新任务

@@ -14,9 +14,27 @@ let child
 export function runCommand (command) {
   if (command) {
     child = execFile(command)
-    child.stdout.on('data', logger.log)
-    child.stderr.on('data', logger.error)
-    child.on('close', logger.log)
+    child.stdout.on('data', data => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log(data.toString())
+      } else {
+        logger.log(data.toString())
+      }
+    })
+    child.stderr.on('data', data => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error(data.toString())
+      } else {
+        logger.error(data.toString())
+      }
+    })
+    child.on('close', data => {
+      if (process.env.NODE_ENV === 'development') {
+        data.length && console.log(data.toString())
+      } else {
+        data.length && logger.log(data.toString())
+      }
+    })
     return child
   }
 }
