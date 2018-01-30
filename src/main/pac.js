@@ -41,7 +41,7 @@ function readPac () {
 /**
  * pac server
  */
-export async function serverPac (pacPort) {
+export async function serverPac (pacPort, localPort, httpProxyEnable, httpProxyPort) {
   await dataPromise
   const host = currentConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
   const port = pacPort !== undefined ? pacPort : currentConfig.pacPort || 1240
@@ -49,12 +49,12 @@ export async function serverPac (pacPort) {
     if (parse(req.url).pathname === '/proxy.pac') {
       downloadPac().then(() => {
         return readPac()
-      }).then(text => {
+      }).then(buffer => buffer.toString()).then(text => {
         res.writeHead(200, {
           'Content-Type': 'application/x-ns-proxy-autoconfig',
           'Connection': 'close'
         })
-        res.write(text)
+        res.write(text.replace(/__PROXY__/g, `SOCKS5 127.0.0.1:${localPort}; SOCKS 127.0.0.1:${localPort}; PROXY 127.0.0.1:${localPort}; ${httpProxyEnable ? 'PROXY 127.0.0.1:' + httpProxyPort + ';' : ''} DIRECT`))
         res.end()
       })
     } else {
@@ -115,11 +115,11 @@ appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   // 初始化
   if (changed.length === 0) {
-    serverPac()
+    serverPac(appConfig.pacPort, appConfig.localPort, appConfig.httpProxyEnable, appConfig.httpProxyPort)
   } else {
     if (changed.indexOf('pacPort') > -1) {
       stopPacServer().then(() => {
-        serverPac(appConfig.pacPort)
+        serverPac(appConfig.pacPort, appConfig.localPort, appConfig.httpProxyEnable, appConfig.httpProxyPort)
       })
     }
   }
