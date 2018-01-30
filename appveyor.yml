@@ -7,11 +7,12 @@ branches:
   only:
     - master
 
-skip_non_tags: true
+# skip_non_tags: true
 
 image: Visual Studio 2017
 platform:
   - x64
+  - x86
 
 cache:
   - node_modules

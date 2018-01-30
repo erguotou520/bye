@@ -74,7 +74,13 @@ function release (dir) {
       win: {
         icon: 'build/icons/icon.ico',
         target: [
-          'nsis'
+          {
+            target: 'nsis',
+            arch: [
+              'x64',
+              'ia32'
+            ]
+          }
         ]
       },
       nsis: {

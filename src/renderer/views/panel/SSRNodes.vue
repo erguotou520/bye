@@ -1,8 +1,8 @@
 <template>
   <div class="panel-nodes flex flex-column h-100">
     <i-tree class="node-tree flex-1 px-1 bg-white" :class="{'empty-tree': !appConfig.configs.length}"
-      empty-text="暂无节点，点击添加添加新节点" :enable-cancel-select="false"
-      :data="groupedNodes" @on-select-change="onSelect" ref="tree"></i-tree>
+      empty-text="暂无节点，点击添加添加新节点" :enable-cancel-select="false" :data="groupedNodes"
+        @on-select-change="onSelect" @on-dbclick-node="onNodeDBClick" ref="tree"></i-tree>
     <div class="flex mt-1 flex-jc-center">
       <i-button-group class="w-6r mr-1 flex-inline">
         <i-button class="flex-1" type="primary" @click="create">添加</i-button>
@@ -29,6 +29,7 @@
 <script>
 import { ipcRenderer } from 'electron'
 import { mapState, mapGetters, mapMutations, mapActions } from 'vuex'
+import { hideWindow } from '../../ipc'
 import Config from '../../../shared/ssr'
 import { groupConfigs } from '../../../shared/utils'
 import { EVENT_CONFIG_COPY_CLIPBOARD } from '../../../shared/events'
@@ -133,8 +134,8 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setCurrentConfig', 'updateEditingGroup', 'updateView']),
-    ...mapActions(['updateConfigs']),
+    ...mapMutations(['setCurrentConfig', 'updateEditingGroup', 'updateView', 'resetState']),
+    ...mapActions(['updateConfigs', 'updateConfig']),
     // 复制节点并带上title和选中参数
     cloneConfig (config, selected) {
       return { title: `${config.remarks || config.server} (${config.server}:${config.server_port})`, selected, ...config }
@@ -156,6 +157,13 @@ export default {
         this.setSelected(node.title, '')
         this.updateEditingGroup({ show: true, title: node.title === '未分组' ? '' : node.title })
       }
+    },
+    // 双击选中该节点
+    onNodeDBClick (selection) {
+      const node = selection[0]
+      this.updateConfig({ index: this.appConfig.configs.findIndex(config => config.id === node.id) })
+      this.resetState()
+      hideWindow()
     },
     // flat分组
     flatNodeGroups (groups) {

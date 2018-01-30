@@ -26,6 +26,21 @@
   version "0.0.6"
   resolved "http://r.cnpmjs.org/7zip/download/7zip-0.0.6.tgz#9cafb171af82329490353b4816f03347aa150a30"
 
+"@babel/helper-module-imports@^7.0.0-beta.34":
+  version "7.0.0-beta.38"
+  resolved "http://registry.npm.taobao.org/@babel/helper-module-imports/download/@babel/helper-module-imports-7.0.0-beta.38.tgz#1b3a6dd9105cc0c7fc0d67d44a08706eb4a506a1"
+  dependencies:
+    "@babel/types" "7.0.0-beta.38"
+    lodash "^4.2.0"
+
+"@babel/types@7.0.0-beta.38":
+  version "7.0.0-beta.38"
+  resolved "http://registry.npm.taobao.org/@babel/types/download/@babel/types-7.0.0-beta.38.tgz#2ce2443f7dc6ad535a67db4940cbd34e64035a6f"
+  dependencies:
+    esutils "^2.0.2"
+    lodash "^4.2.0"
+    to-fast-properties "^2.0.0"
+
 "@types/node@^7.0.18":
   version "7.0.52"
   resolved "https://registry.npmjs.org/@types/node/-/node-7.0.52.tgz#8990d3350375542b0c21a83cd0331e6a8fc86716"
@@ -572,6 +587,12 @@ babel-plugin-check-es2015-constants@^6.22.0:
   resolved "http://r.cnpmjs.org/babel-plugin-check-es2015-constants/download/babel-plugin-check-es2015-constants-6.22.0.tgz#35157b101426fd2ffd3da3f75c7d1e91835bbf8a"
   dependencies:
     babel-runtime "^6.22.0"
+
+babel-plugin-import@^1.6.3:
+  version "1.6.3"
+  resolved "http://registry.npm.taobao.org/babel-plugin-import/download/babel-plugin-import-1.6.3.tgz#f4deeac51ff9f997c9cf38e8d7d7b9142504eaf5"
+  dependencies:
+    "@babel/helper-module-imports" "^7.0.0-beta.34"
 
 babel-plugin-minify-builtins@^0.1.3:
   version "0.1.3"
@@ -2084,7 +2105,7 @@ copy-webpack-plugin@^4.0.1:
     pify "^3.0.0"
     serialize-javascript "^1.4.0"
 
-core-js@^2.4.0, core-js@^2.5.0, core-js@^2.5.3:
+core-js@^2.4.0, core-js@^2.5.0:
   version "2.5.3"
   resolved "http://r.cnpmjs.org/core-js/download/core-js-2.5.3.tgz#8acc38345824f16d8365b7c9b4259168e8ed603e"
 
@@ -2843,9 +2864,9 @@ electron@^1.7.10:
     electron-download "^3.0.1"
     extract-zip "^1.0.3"
 
-element-resize-detector@^1.1.12:
-  version "1.1.12"
-  resolved "https://registry.npmjs.org/element-resize-detector/-/element-resize-detector-1.1.12.tgz#8b3fd6eedda17f9c00b360a0ea2df9927ae80ba2"
+element-resize-detector@^1.1.13:
+  version "1.1.13"
+  resolved "https://registry.npmjs.org/element-resize-detector/-/element-resize-detector-1.1.13.tgz#f61907e98a91b1ad215f92790bc15113df68444d"
   dependencies:
     batch-processor "^1.0.0"
 
@@ -2892,14 +2913,13 @@ env-paths@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/env-paths/-/env-paths-1.0.0.tgz#4168133b42bb05c38a35b1ae4397c8298ab369e0"
 
-erguotou-iview@2.8.1-alpha-2:
-  version "2.8.1-alpha-2"
-  resolved "https://registry.npmjs.org/erguotou-iview/-/erguotou-iview-2.8.1-alpha-2.tgz#a4a58ed62c82e982f694d571803abad5857c28b6"
+erguotou-iview@2.9.0:
+  version "2.9.0"
+  resolved "https://registry.npmjs.org/erguotou-iview/-/erguotou-iview-2.9.0.tgz#2ea012bbb6eba47a21e0df9f9d4c57fc06795f0a"
   dependencies:
     async-validator "^1.8.2"
-    core-js "^2.5.3"
     deepmerge "^1.5.2"
-    element-resize-detector "^1.1.12"
+    element-resize-detector "^1.1.13"
     lodash.throttle "^4.1.1"
     popper.js "^0.6.4"
     tinycolor2 "^1.4.1"
@@ -4955,7 +4975,7 @@ lodash.uniq@^4.5.0:
   version "4.5.0"
   resolved "http://r.cnpmjs.org/lodash.uniq/download/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
 
-lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.3.0:
+lodash@^4.14.0, lodash@^4.17.2, lodash@^4.17.3, lodash@^4.17.4, lodash@^4.2.0, lodash@^4.3.0:
   version "4.17.4"
   resolved "http://r.cnpmjs.org/lodash/download/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
 
@@ -7448,6 +7468,10 @@ to-arraybuffer@^1.0.0:
 to-fast-properties@^1.0.3:
   version "1.0.3"
   resolved "http://r.cnpmjs.org/to-fast-properties/download/to-fast-properties-1.0.3.tgz#b83571fa4d8c25b82e231b06e3a3055de4ca1a47"
+
+to-fast-properties@^2.0.0:
+  version "2.0.0"
+  resolved "http://registry.npm.taobao.org/to-fast-properties/download/to-fast-properties-2.0.0.tgz#dc5e698cbd079265bc73e0377681a4e4e83f616e"
 
 to-object-path@^0.3.0:
   version "0.3.0"
