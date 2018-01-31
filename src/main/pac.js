@@ -86,7 +86,7 @@ export async function serverPac (pacPort, localPort, httpProxyEnable, httpProxyP
  * 关闭pac服务
  */
 export async function stopPacServer () {
-  if (pacServer) {
+  if (pacServer && pacServer.listening) {
     return new Promise((resolve, reject) => {
       pacServer.shutdown(err => {
         if (err) {

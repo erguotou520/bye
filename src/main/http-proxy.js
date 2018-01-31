@@ -42,7 +42,7 @@ export function startHttpProxyServer (appConfig) {
  * 关闭HTTP代理服务
  */
 export async function stopHttpProxyServer () {
-  if (server) {
+  if (server && server.listening) {
     return new Promise((resolve, reject) => {
       server.shutdown(err => {
         if (err) {
