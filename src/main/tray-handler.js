@@ -134,8 +134,8 @@ export function showManagePanel () {
 
 // 复制http代理命令行代码
 export function copyHttpProxyCode () {
-  clipboard.writeText(`export http_proxy="http:127.0.0.1:${currentConfig.httpProxyPort}"
-export https_proxy="http:127.0.0.1:${currentConfig.httpProxyPort}"
+  clipboard.writeText(`export http_proxy="http://127.0.0.1:${currentConfig.httpProxyPort}"
+export https_proxy="http://127.0.0.1:${currentConfig.httpProxyPort}"
 `)
 }
 

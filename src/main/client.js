@@ -50,9 +50,9 @@ export async function run (config, ssrPath, shareOverLan = false, localPort = 10
     params.push('-o')
     params.push(config.obfs)
   }
-  if (config.obfs_param) {
+  if (config.obfsparam) {
     params.push('-g')
-    params.push(config.obfs_param)
+    params.push(config.obfsparam)
   }
   params.push('-b')
   params.push(shareOverLan ? '0.0.0.0' : '127.0.0.1')
