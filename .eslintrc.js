@@ -9,7 +9,7 @@ module.exports = {
     browser: true,
     node: true
   },
-  extends: ["plugin:vue-libs/recommended"],
+  extends: ["plugin:vue/base"],
   globals: {
     __static: true
   },

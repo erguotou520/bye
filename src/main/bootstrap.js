@@ -4,7 +4,7 @@ import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
 import logger from './logger'
 import sudo from 'sudo-prompt'
 import defaultConfig from '../shared/config'
-import { isWin, isMac, isLinux } from '../shared/env'
+import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
 
 // 应用配置存储目录
 export const appConfigDir = app.getPath('userData')
@@ -64,8 +64,8 @@ async function init () {
   await ensureDir(path.join(appConfigDir, 'logs'))
   await ensureFile(logPath)
 
-  // 初始化确保文件存在
-  if (isMac && !await pathExists(macToolPath)) {
+  // 初始化确保文件存在, 10.11版本以下不支持该功能
+  if (isMac && !isOldMacVersion && !await pathExists(macToolPath)) {
     const helperPath = process.env.NODE_ENV === 'development'
       ? path.join(__dirname, '../lib/proxy_conf_helper')
       : path.join(exePath, '../../../Contents/proxy_conf_helper')

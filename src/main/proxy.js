@@ -5,7 +5,7 @@
 import { execSync } from 'child_process'
 import { winToolPath, macToolPath } from './bootstrap'
 import { currentConfig, appConfig$ } from './data'
-import { isWin, isMac, isLinux } from '../shared/env'
+import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
 
 // mac 获取network_service的shell脚本
 // const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
@@ -15,7 +15,9 @@ import { isWin, isMac, isLinux } from '../shared/env'
  * @param {String} command 待运行的命令
  */
 function runCommand (command) {
-  execSync(command)
+  if (command) {
+    execSync(command)
+  }
 }
 
 /**
@@ -25,7 +27,7 @@ export function setProxyToNone () {
   let command
   if (isWin) {
     command = `${winToolPath} pac ""`
-  } else if (isMac) {
+  } else if (isMac && !isOldMacVersion) {
     command = `"${macToolPath}" -m off`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'none'`
@@ -40,7 +42,7 @@ export function setProxyToGlobal (host, port) {
   let command
   if (isWin) {
     command = `${winToolPath} global ${host}:${port}`
-  } else if (isMac) {
+  } else if (isMac && !isOldMacVersion) {
     command = `"${macToolPath}" -m global -p ${port}`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'manual' && gsettings set org.gnome.system.proxy.socks host '${host}' && gsettings set org.gnome.system.proxy.socks port ${port}`
@@ -55,7 +57,7 @@ export function setProxyToPac (pacUrl) {
   let command
   if (isWin) {
     command = `${winToolPath} pac ${pacUrl}`
-  } else if (isMac) {
+  } else if (isMac && !isOldMacVersion) {
     command = `"${macToolPath}" -m auto -u ${pacUrl}`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'auto' && gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`

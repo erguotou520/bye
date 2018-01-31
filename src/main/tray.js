@@ -3,7 +3,7 @@ import { Menu, Tray, nativeImage } from 'electron'
 import { appConfig$ } from './data'
 import * as handler from './tray-handler'
 import { groupConfigs } from '../shared/utils'
-import { isMac, isWin } from '../shared/env'
+import { isMac, isWin, isOldMacVersion } from '../shared/env'
 
 const osTrayIcon = isMac ? 'tray_mac.png' : (isWin ? 'tray_win.png' : 'tray_win@2x.png')
 let tray
@@ -53,13 +53,8 @@ function generateConfigSubmenus (configs, selectedIndex) {
  * @param {Object} appConfig 应用配置
  */
 function generateMenus (appConfig) {
-  return [
+  const base = [
     { label: '开启应用', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
-    { label: '系统代理模式        ', submenu: [
-      { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => changeProxy(e, 0, appConfig) },
-      { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => changeProxy(e, 1, appConfig) },
-      { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => changeProxy(e, 2, appConfig) }
-    ] },
     { label: 'PAC', submenu: [
       { label: '更新PAC', click: handler.updatePac }
     ] },
@@ -83,6 +78,16 @@ function generateMenus (appConfig) {
     ] },
     { label: '退出', click: handler.exitApp }
   ]
+  if (!isOldMacVersion) {
+    base.splice(1, 0,
+      { label: '系统代理模式        ', submenu: [
+        { label: '不启用代理', type: 'checkbox', checked: appConfig.sysProxyMode === 0, click: e => changeProxy(e, 0, appConfig) },
+        { label: 'PAC代理', type: 'checkbox', checked: appConfig.sysProxyMode === 1, click: e => changeProxy(e, 1, appConfig) },
+        { label: '全局代理', type: 'checkbox', checked: appConfig.sysProxyMode === 2, click: e => changeProxy(e, 2, appConfig) }
+      ] }
+    )
+  }
+  return base
 }
 
 // 切换代理
