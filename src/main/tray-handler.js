@@ -77,7 +77,7 @@ export function exportConfigToFile () {
 
 // 从剪贴板批量导入
 export function importConfigFromClipboard () {
-  const parsed = loadConfigsFromString(clipboard.readText())
+  const parsed = loadConfigsFromString(clipboard.readText().trim())
   if (parsed.length) {
     updateAppConfig({ configs: [...currentConfig.configs, ...parsed] })
   }

@@ -3,6 +3,7 @@
  * linux目前仅支持gnome桌面的系统
  */
 import { execSync } from 'child_process'
+import { pathExistsSync } from 'fs-extra'
 import { winToolPath, macToolPath } from './bootstrap'
 import { currentConfig, appConfig$ } from './data'
 import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
@@ -25,9 +26,9 @@ function runCommand (command) {
  */
 export function setProxyToNone () {
   let command
-  if (isWin) {
+  if (isWin && pathExistsSync(winToolPath)) {
     command = `${winToolPath} pac ""`
-  } else if (isMac && !isOldMacVersion) {
+  } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m off`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'none'`
@@ -40,9 +41,9 @@ export function setProxyToNone () {
  */
 export function setProxyToGlobal (host, port) {
   let command
-  if (isWin) {
+  if (isWin && pathExistsSync(winToolPath)) {
     command = `${winToolPath} global ${host}:${port}`
-  } else if (isMac && !isOldMacVersion) {
+  } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m global -p ${port}`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'manual' && gsettings set org.gnome.system.proxy.socks host '${host}' && gsettings set org.gnome.system.proxy.socks port ${port}`
@@ -55,9 +56,9 @@ export function setProxyToGlobal (host, port) {
  */
 export function setProxyToPac (pacUrl) {
   let command
-  if (isWin) {
+  if (isWin && pathExistsSync(winToolPath)) {
     command = `${winToolPath} pac ${pacUrl}`
-  } else if (isMac && !isOldMacVersion) {
+  } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m auto -u ${pacUrl}`
   } else if (isLinux) {
     command = `gsettings set org.gnome.system.proxy mode 'auto' && gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`

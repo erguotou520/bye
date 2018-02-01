@@ -4,7 +4,7 @@ const defaultConfig = {
   // 选中的配置
   index: 0,
   // 是否启用
-  enable: false,
+  enable: true,
   // 开机自启
   autoLaunch: false,
   // 是否局域网共享

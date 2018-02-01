@@ -8,6 +8,7 @@ import './ipc'
 import { stopPacServer } from './pac'
 import { stopHttpProxyServer } from './http-proxy'
 import { stop as stopCommand } from './client'
+import { setProxyToNone } from './proxy'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import { stopTask } from './subscribe'
 import logger from './logger'
@@ -104,6 +105,7 @@ app.on('will-quit', () => {
     stopHttpProxyServer()
     stopPacServer()
     stopTask()
+    setProxyToNone()
   })
 })
 
