@@ -5,6 +5,7 @@ import * as events from '../shared/events'
 import { appConfigPath, defaultSSRDownloadDir } from './bootstrap'
 import { updateAppConfig } from './data'
 import { hideWindow, sendData } from './window'
+import { updateTrayImage } from './tray'
 import { importConfigFromClipboard } from './tray-handler'
 import defaultConfig, { mergeConfig } from '../shared/config'
 import logger from './logger'
@@ -63,6 +64,8 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   }
   // 从剪切板导入
   importConfigFromClipboard()
+}).on(events.EVENT_TRAY_GENERATE_RENDERER, (e, base64Str) => {
+  updateTrayImage(base64Str)
 })
 
 /**

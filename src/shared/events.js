@@ -36,3 +36,9 @@ export const EVENT_RX_SYNC_MAIN = 'rx.sync.main'
 
 // 由`ipc-renderer`发出 同步`rx`数据
 export const EVENT_RX_SYNC_RENDERER = 'rx.sync.renderer'
+
+// 由`ipc-main`发出 生成任务栏图标
+export const EVENT_TRAY_GENERATE_MAIN = 'tray.generate.main'
+
+// 由`ipc-renderer`发出 返回生成的任务栏图标
+export const EVENT_TRAY_GENERATE_RENDERER = 'tray.generate.renderer'

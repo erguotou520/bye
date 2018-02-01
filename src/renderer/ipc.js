@@ -2,6 +2,7 @@ import path from 'path'
 import { ipcRenderer, shell } from 'electron'
 import store from './store'
 import scanQrcode from './qrcode/scan-screenshot'
+import generateTrayImage from './tray'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
 
@@ -55,6 +56,11 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
   // 同步数据
   console.log('received sync data: %o', appConfig)
   store.commit('updateConfig', appConfig)
+}).on(events.EVENT_TRAY_GENERATE_MAIN, (e, mode) => {
+  // 生成tray image
+  generateTrayImage().then(data => {
+    ipcRenderer.send(events.EVENT_TRAY_GENERATE_RENDERER, data)
+  })
 })
 
 /**
