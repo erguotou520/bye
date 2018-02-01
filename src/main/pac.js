@@ -9,6 +9,8 @@ import logger from './logger'
 import { request } from '../shared/utils'
 import bootstrapPromise, { pacPath } from './bootstrap'
 import dataPromise, { currentConfig, appConfig$ } from './data'
+import { isHostPortValid } from './port'
+import { alertMessage } from './ipc'
 let pacContent
 let pacServer
 
@@ -45,41 +47,45 @@ export async function serverPac (pacPort, localPort, httpProxyEnable, httpProxyP
   await dataPromise
   const host = currentConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
   const port = pacPort !== undefined ? pacPort : currentConfig.pacPort || 1240
-  pacServer = http.createServer((req, res) => {
-    if (parse(req.url).pathname === '/proxy.pac') {
-      downloadPac().then(() => {
-        return readPac()
-      }).then(buffer => buffer.toString()).then(text => {
-        res.writeHead(200, {
-          'Content-Type': 'application/x-ns-proxy-autoconfig',
-          'Connection': 'close'
+  isHostPortValid(host, port).then(() => {
+    pacServer = http.createServer((req, res) => {
+      if (parse(req.url).pathname === '/proxy.pac') {
+        downloadPac().then(() => {
+          return readPac()
+        }).then(buffer => buffer.toString()).then(text => {
+          res.writeHead(200, {
+            'Content-Type': 'application/x-ns-proxy-autoconfig',
+            'Connection': 'close'
+          })
+          res.write(text.replace(/__PROXY__/g, `SOCKS5 127.0.0.1:${localPort}; SOCKS 127.0.0.1:${localPort}; PROXY 127.0.0.1:${localPort}; ${httpProxyEnable ? 'PROXY 127.0.0.1:' + httpProxyPort + ';' : ''} DIRECT`))
+          res.end()
         })
-        res.write(text.replace(/__PROXY__/g, `SOCKS5 127.0.0.1:${localPort}; SOCKS 127.0.0.1:${localPort}; PROXY 127.0.0.1:${localPort}; ${httpProxyEnable ? 'PROXY 127.0.0.1:' + httpProxyPort + ';' : ''} DIRECT`))
-        res.end()
-      })
-    } else {
-      res.writeHead(200)
-      res.end()
-    }
-  }).withShutdown().listen(port, host)
-    .on('listening', () => {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('pac server listen at: %s:%s', host, port)
       } else {
-        logger.debug(`pac server listen at: ${host}:${port}`)
+        res.writeHead(200)
+        res.end()
       }
-    })
-    .once('error', err => {
-      if (err.code === 'EADDRINUSE') {
-        // 端口已经被使用
+    }).withShutdown().listen(port, host)
+      .on('listening', () => {
         if (process.env.NODE_ENV === 'development') {
-          console.log(`pac端口${port}已被占用`)
+          console.log('pac server listen at: %s:%s', host, port)
         } else {
-          logger.warn(`pac端口${port}已被占用`)
+          logger.debug(`pac server listen at: ${host}:${port}`)
         }
-      }
-      pacServer.shutdown()
-    })
+      })
+      .once('error', err => {
+        if (err.code === 'EADDRINUSE') {
+          // 端口已经被使用
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`pac端口${port}已被占用`)
+          } else {
+            logger.warn(`pac端口${port}已被占用`)
+          }
+        }
+        pacServer.shutdown()
+      })
+  }).catch(() => {
+    alertMessage(`PAC端口 ${port} 被占用`)
+  })
 }
 
 /**

@@ -80,7 +80,7 @@ export function destroyWindow () {
 }
 
 /**
- * 想主窗口发送消息
+ * 向主窗口发送消息
  */
 export async function sendData (channel, ...args) {
   if (mainWindow) {

@@ -1,6 +1,8 @@
 import proxyServer from 'simple-web-proxy'
 import httpShutdown from 'http-shutdown'
 import { appConfig$ } from './data'
+import { isHostPortValid } from './port'
+import { alertMessage } from './ipc'
 import logger from './logger'
 
 let server
@@ -13,28 +15,33 @@ httpShutdown.extend()
  */
 export function startHttpProxyServer (appConfig) {
   if (appConfig.httpProxyEnable) {
-    server = proxyServer({
-      listenHost: appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1',
-      listenPort: appConfig.httpProxyPort
-    }).withShutdown()
-      .on('listening', () => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('http proxy server listen at: %s:%s', appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1', appConfig.httpProxyPort)
-        } else {
-          logger.debug(`http proxy server listen at: ${appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'}:${appConfig.httpProxyPort}`)
-        }
-      })
-      .once('error', err => {
-        if (err.code === 'EADDRINUSE') {
-          // 端口已经被使用
+    const host = appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
+    isHostPortValid(host, appConfig.httpProxyPort).then(() => {
+      server = proxyServer({
+        listenHost: host,
+        listenPort: appConfig.httpProxyPort
+      }).withShutdown()
+        .on('listening', () => {
           if (process.env.NODE_ENV === 'development') {
-            console.log(`http代理端口${appConfig.httpProxyPort}已被占用`)
+            console.log('http proxy server listen at: %s:%s', host, appConfig.httpProxyPort)
           } else {
-            logger.warn(`http代理端口${appConfig.httpProxyPort}已被占用`)
+            logger.debug(`http proxy server listen at: ${host}:${appConfig.httpProxyPort}`)
           }
-        }
-        server.shutdown()
-      })
+        })
+        .once('error', err => {
+          if (err.code === 'EADDRINUSE') {
+            // 端口已经被使用
+            if (process.env.NODE_ENV === 'development') {
+              console.log(`http代理端口${appConfig.httpProxyPort}已被占用`)
+            } else {
+              logger.warn(`http代理端口${appConfig.httpProxyPort}已被占用`)
+            }
+          }
+          server.shutdown()
+        })
+    }).catch(() => {
+      alertMessage(`HTTP代理端口 ${appConfig.httpProxyPort} 被占用`)
+    })
   }
 }
 

@@ -4,7 +4,7 @@ import downloadGitRepo from 'download-git-repo'
 import * as events from '../shared/events'
 import { appConfigPath, defaultSSRDownloadDir } from './bootstrap'
 import { updateAppConfig } from './data'
-import { hideWindow } from './window'
+import { hideWindow, sendData } from './window'
 import { importConfigFromClipboard } from './tray-handler'
 import defaultConfig, { mergeConfig } from '../shared/config'
 import logger from './logger'
@@ -64,3 +64,11 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   // 从剪切板导入
   importConfigFromClipboard()
 })
+
+/**
+ * 在页面中弹出警告文字
+ * @param {String} message 要显示的文字
+ */
+export function alertMessage (message) {
+  sendData(events.EVENT_APP_ERROR_MAIN, message)
+}

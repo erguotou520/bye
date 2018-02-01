@@ -2,6 +2,8 @@ import path from 'path'
 import { execFile } from 'child_process'
 import treeKill from 'tree-kill'
 import { appConfig$ } from './data'
+import { isHostPortValid } from './port'
+import { alertMessage } from './ipc'
 import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
 
@@ -27,48 +29,54 @@ export function runCommand (command, params) {
  * @param {*String} ssrPath local.py的路径
  * @param {*[Number|String]} localPort 本地共享端口
  */
-export async function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
+export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
+  const listenHost = shareOverLan ? '0.0.0.0' : '127.0.0.1'
   // 先结束之前的
-  await stop()
-  // 参数
-  const params = [path.join(ssrPath, 'local.py')]
-  params.push('-s')
-  params.push(config.server)
-  params.push('-p')
-  params.push(config.server_port)
-  params.push('-k')
-  params.push(config.password)
-  params.push('-m')
-  params.push(config.method)
-  params.push('-O')
-  params.push(config.protocol)
-  if (config.protocolparam) {
-    params.push('-G')
-    params.push(config.protocolparam)
-  }
-  if (config.obfs) {
-    params.push('-o')
-    params.push(config.obfs)
-  }
-  if (config.obfsparam) {
-    params.push('-g')
-    params.push(config.obfsparam)
-  }
-  params.push('-b')
-  params.push(shareOverLan ? '0.0.0.0' : '127.0.0.1')
-  params.push('-l')
-  params.push(localPort)
-  if (config.timeout) {
-    params.push('-t')
-    params.push(config.timeout)
-  }
-  const command = `python ${params.join(' ')}`
-  if (process.env.NODE_ENV === 'development') {
-    console.log('run command: %s', command)
-  } else {
-    logger.debug('run command: %s', command)
-  }
-  child = runCommand('python', params)
+  return stop().then(() => {
+    return isHostPortValid(listenHost, localPort)
+  }).then(() => {
+    // 参数
+    const params = [path.join(ssrPath, 'local.py')]
+    params.push('-s')
+    params.push(config.server)
+    params.push('-p')
+    params.push(config.server_port)
+    params.push('-k')
+    params.push(config.password)
+    params.push('-m')
+    params.push(config.method)
+    params.push('-O')
+    params.push(config.protocol)
+    if (config.protocolparam) {
+      params.push('-G')
+      params.push(config.protocolparam)
+    }
+    if (config.obfs) {
+      params.push('-o')
+      params.push(config.obfs)
+    }
+    if (config.obfsparam) {
+      params.push('-g')
+      params.push(config.obfsparam)
+    }
+    params.push('-b')
+    params.push(listenHost)
+    params.push('-l')
+    params.push(localPort)
+    if (config.timeout) {
+      params.push('-t')
+      params.push(config.timeout)
+    }
+    const command = `python ${params.join(' ')}`
+    if (process.env.NODE_ENV === 'development') {
+      console.log('run command: %s', command)
+    } else {
+      logger.debug('run command: %s', command)
+    }
+    child = runCommand('python', params)
+  }).catch(() => {
+    alertMessage(`ssr端口 ${localPort} 被占用`)
+  })
 }
 
 /**
