@@ -1,11 +1,11 @@
 import { remote } from 'electron'
 import { join } from 'path'
-import { supportDesktopNotification } from '../shared/env'
 import { notificationIcon } from '../shared/icon'
 import { isWin } from '../shared/env'
 
 const HtmlNotification = window.Notification
 const { Notification } = remote.require('electron')
+const isDesktopNotificationSupported = Notification.isSupported()
 
 /**
  * 显示HTML5通知
@@ -25,7 +25,7 @@ export function showHtmlNotification (body, title = '通知') {
  * @param {String} title 标题
  */
 export function showNotification (body, title = '通知') {
-  if (supportDesktopNotification) {
+  if (isDesktopNotificationSupported) {
     new Notification({
       title, body, silent: false, icon: notificationIcon
     }).show()

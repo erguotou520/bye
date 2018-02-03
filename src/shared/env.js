@@ -1,6 +1,5 @@
 
 import os from 'os'
-import { Notification } from 'electron'
 import { execSync } from 'child_process'
 
 export const platform = os.platform()
@@ -8,9 +7,6 @@ export const platform = os.platform()
 export const isWin = platform === 'win32'
 export const isMac = platform === 'darwin'
 export const isLinux = platform === 'linux'
-
-// 是否支持桌面通知
-export const supportDesktopNotification = Notification.isSupported()
 
 // mac版本号
 export let macVersion
