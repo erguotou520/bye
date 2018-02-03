@@ -98,15 +98,16 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => { isQuiting(true) })
 
 app.on('will-quit', () => {
-  console.log('will-quit')
-  stopCommand().then(() => {
-    destroyWindow()
-    destroyTray()
-    stopHttpProxyServer()
-    stopPacServer()
-    stopTask()
-    setProxyToNone()
-  })
+  if (process.env.NODE_ENV === 'development') {
+    console.log('will-quit')
+  }
+  stopCommand()
+  destroyWindow()
+  destroyTray()
+  stopHttpProxyServer()
+  stopPacServer()
+  stopTask()
+  setProxyToNone()
 })
 
 app.on('activate', () => {

@@ -8,9 +8,9 @@ import { readFile, writeFile, pathExists } from 'fs-extra'
 import logger from './logger'
 import { request } from '../shared/utils'
 import bootstrapPromise, { pacPath } from './bootstrap'
-import dataPromise, { currentConfig, appConfig$ } from './data'
+import { currentConfig, appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import { alertMessage } from './ipc'
+import { showNotificationInOne } from './notification'
 let pacContent
 let pacServer
 
@@ -43,49 +43,47 @@ function readPac () {
 /**
  * pac server
  */
-export async function serverPac (pacPort, localPort, httpProxyEnable, httpProxyPort) {
-  await dataPromise
-  const host = currentConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
-  const port = pacPort !== undefined ? pacPort : currentConfig.pacPort || 1240
-  isHostPortValid(host, port).then(() => {
-    pacServer = http.createServer((req, res) => {
-      if (parse(req.url).pathname === '/proxy.pac') {
-        downloadPac().then(() => {
-          return readPac()
-        }).then(buffer => buffer.toString()).then(text => {
-          res.writeHead(200, {
-            'Content-Type': 'application/x-ns-proxy-autoconfig',
-            'Connection': 'close'
+export async function serverPac (appConfig) {
+  if (appConfig.configs && appConfig.configs[appConfig.index]) {
+    const host = currentConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
+    const port = appConfig.pacPort !== undefined ? appConfig.pacPort : currentConfig.pacPort || 1240
+    isHostPortValid(host, port).then(() => {
+      pacServer = http.createServer((req, res) => {
+        if (parse(req.url).pathname === '/proxy.pac') {
+          downloadPac().then(() => {
+            return readPac()
+          }).then(buffer => buffer.toString()).then(text => {
+            res.writeHead(200, {
+              'Content-Type': 'application/x-ns-proxy-autoconfig',
+              'Connection': 'close'
+            })
+            res.write(text.replace(/__PROXY__/g, `SOCKS5 127.0.0.1:${appConfig.localPort}; SOCKS 127.0.0.1:${appConfig.localPort}; PROXY 127.0.0.1:${appConfig.localPort}; ${appConfig.httpProxyEnable ? 'PROXY 127.0.0.1:' + appConfig.httpProxyPort + ';' : ''} DIRECT`))
+            res.end()
           })
-          res.write(text.replace(/__PROXY__/g, `SOCKS5 127.0.0.1:${localPort}; SOCKS 127.0.0.1:${localPort}; PROXY 127.0.0.1:${localPort}; ${httpProxyEnable ? 'PROXY 127.0.0.1:' + httpProxyPort + ';' : ''} DIRECT`))
-          res.end()
-        })
-      } else {
-        res.writeHead(200)
-        res.end()
-      }
-    }).withShutdown().listen(port, host)
-      .on('listening', () => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log('pac server listen at: %s:%s', host, port)
         } else {
-          logger.debug(`pac server listen at: ${host}:${port}`)
+          res.writeHead(200)
+          res.end()
         }
-      })
-      .once('error', err => {
-        if (err.code === 'EADDRINUSE') {
-          // 端口已经被使用
+      }).withShutdown().listen(port, host)
+        .on('listening', () => {
           if (process.env.NODE_ENV === 'development') {
-            console.log(`pac端口${port}已被占用`)
+            console.log('pac server listen at: %s:%s', host, port)
           } else {
-            logger.warn(`pac端口${port}已被占用`)
+            logger.debug(`pac server listen at: ${host}:${port}`)
           }
-        }
-        pacServer.shutdown()
-      })
-  }).catch(() => {
-    alertMessage(`PAC端口 ${port} 被占用`)
-  })
+        })
+        .once('error', err => {
+          if (process.env.NODE_ENV === 'development') {
+            console.log('pac server error: ', err)
+          } else {
+            logger.debug(`pac server error: ${err}`)
+          }
+          pacServer.shutdown()
+        })
+    }).catch(() => {
+      showNotificationInOne(`PAC端口 ${port} 被占用`, '警告')
+    })
+  }
 }
 
 /**
@@ -121,11 +119,11 @@ appConfig$.subscribe(data => {
   const [appConfig, changed] = data
   // 初始化
   if (changed.length === 0) {
-    serverPac(appConfig.pacPort, appConfig.localPort, appConfig.httpProxyEnable, appConfig.httpProxyPort)
+    serverPac(appConfig)
   } else {
     if (changed.indexOf('pacPort') > -1) {
       stopPacServer().then(() => {
-        serverPac(appConfig.pacPort, appConfig.localPort, appConfig.httpProxyEnable, appConfig.httpProxyPort)
+        serverPac(appConfig)
       })
     }
   }

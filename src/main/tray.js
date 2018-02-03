@@ -1,13 +1,10 @@
-import path from 'path'
 import { Menu, Tray, nativeImage } from 'electron'
 import { appConfig$ } from './data'
 import * as handler from './tray-handler'
-import { sendData } from './window'
 import { groupConfigs } from '../shared/utils'
 import { isMac, isWin, isOldMacVersion } from '../shared/env'
-import { EVENT_TRAY_GENERATE_MAIN } from '../shared/events'
+import { disabledTray, enabledTray, enabledHighlightTray, pacTray, pacHighlightTray, globalTray, globalHighlightTray } from '../shared/icon'
 
-const osTrayIcon = isMac ? 'tray_mac.png' : (isWin ? 'tray_win.png' : 'tray_win@2x.png')
 let tray
 
 /**
@@ -137,13 +134,33 @@ function updateTray (appConfig) {
   tray.setToolTip(getTooltip(appConfig))
 }
 
+// 根据应用状态显示不同的图标
+function setTrayIcon (appConfig) {
+  if (appConfig.enable) {
+    if (appConfig.sysProxyMode === 1) {
+      tray.setImage(pacTray)
+      tray.setPressedImage(pacHighlightTray)
+    } else if (appConfig.sysProxyMode === 2) {
+      tray.setImage(globalTray)
+      tray.setPressedImage(globalHighlightTray)
+    } else {
+      tray.setImage(enabledTray)
+      tray.setPressedImage(enabledHighlightTray)
+    }
+  } else {
+    tray.setImage(disabledTray)
+    tray.setPressedImage(disabledTray)
+  }
+}
+
 /**
  * 渲染托盘图标和托盘菜单
  */
 export default function renderTray (appConfig) {
   // 生成tray
-  tray = new Tray(nativeImage.createFromPath(path.join(__static, osTrayIcon)))
+  tray = new Tray(nativeImage.createEmpty())
   updateTray(appConfig)
+  setTrayIcon(appConfig)
   tray.on((isMac || isWin) ? 'double-click' : 'click', handler.showMainWindow)
 }
 
@@ -156,23 +173,15 @@ export function destroyTray () {
   }
 }
 
-/**
- * 更新tray image
- * @param {String} base64Str base64格式的图标
- */
-export function updateTrayImage (base64Str) {
-  if (tray) {
-    tray.setImage(nativeImage.createFromDataURL(base64Str))
-  }
-}
-
 // 监听数据变更
 appConfig$.subscribe(data => {
   const [appConfig, changed] = data
-  if (changed.length === 0) {
-    // 初始化
-    sendData(EVENT_TRAY_GENERATE_MAIN, '0')
-  } else if (['enable', 'sysProxyMode', 'configs', 'index'].some(key => changed.indexOf(key) > -1)) {
-    updateTray(appConfig)
+  if (changed.length > 0) {
+    if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
+      updateTray(appConfig)
+    } else if (['enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
+      updateTray(appConfig)
+      setTrayIcon(appConfig)
+    }
   }
 })

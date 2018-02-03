@@ -3,7 +3,7 @@ import { execFile } from 'child_process'
 import treeKill from 'tree-kill'
 import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import { alertMessage } from './ipc'
+import { showNotificationInOne } from './notification'
 import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
 
@@ -75,7 +75,7 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
     }
     child = runCommand('python', params)
   }).catch(() => {
-    alertMessage(`ssr端口 ${localPort} 被占用`)
+    showNotificationInOne(`ssr端口${localPort}被占用`, '警告')
   })
 }
 

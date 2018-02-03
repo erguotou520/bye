@@ -2,7 +2,7 @@ import proxyServer from 'simple-web-proxy'
 import httpShutdown from 'http-shutdown'
 import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import { alertMessage } from './ipc'
+import { showNotificationInOne } from './notification'
 import logger from './logger'
 
 let server
@@ -14,7 +14,7 @@ httpShutdown.extend()
  * @param {Object} appConfig 应用配置
  */
 export function startHttpProxyServer (appConfig) {
-  if (appConfig.httpProxyEnable) {
+  if (appConfig.httpProxyEnable && appConfig.configs && appConfig.configs[appConfig.index]) {
     const host = appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
     isHostPortValid(host, appConfig.httpProxyPort).then(() => {
       server = proxyServer({
@@ -29,18 +29,15 @@ export function startHttpProxyServer (appConfig) {
           }
         })
         .once('error', err => {
-          if (err.code === 'EADDRINUSE') {
-            // 端口已经被使用
-            if (process.env.NODE_ENV === 'development') {
-              console.log(`http代理端口${appConfig.httpProxyPort}已被占用`)
-            } else {
-              logger.warn(`http代理端口${appConfig.httpProxyPort}已被占用`)
-            }
+          if (process.env.NODE_ENV === 'development') {
+            console.log('http proxy server error: ', err)
+          } else {
+            logger.debug(`http proxy server error: ${err}`)
           }
           server.shutdown()
         })
     }).catch(() => {
-      alertMessage(`HTTP代理端口 ${appConfig.httpProxyPort} 被占用`)
+      showNotificationInOne(`http代理端口${appConfig.httpProxyPort}被占用`, '警告')
     })
   }
 }

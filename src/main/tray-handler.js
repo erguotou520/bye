@@ -8,6 +8,7 @@ export { updateSubscribes } from './subscribe'
 import { updateAppConfig, currentConfig } from './data'
 import { downloadPac } from './pac'
 import { startProxy } from './proxy'
+import { showNotification } from './notification'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
 // import { request } from '../shared/utils'
@@ -32,9 +33,9 @@ export function switchConfig (index) {
 // 更新pac
 export function updatePac () {
   downloadPac(true).then(() => {
-    sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, { title: 'PAC更新', body: 'PAC文件更新成功' })
+    showNotification('PAC文件更新成功')
   }).catch(() => {
-    sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, { title: 'PAC更新', body: 'PAC文件更新失败' })
+    showNotification('PAC文件更新失败')
   })
 }
 
@@ -81,10 +82,7 @@ export function importConfigFromClipboard () {
   if (parsed.length) {
     updateAppConfig({ configs: [...currentConfig.configs, ...parsed] })
   }
-  sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, {
-    title: '导入通知',
-    body: parsed.length ? `已导入${parsed.length}条数据` : '从剪贴板中导入失败'
-  })
+  showNotification(parsed.length ? `已导入${parsed.length}条数据` : '从剪贴板中导入失败')
 }
 
 // 打开配置文件

@@ -8,8 +8,7 @@ import { winToolPath, macToolPath } from './bootstrap'
 import { currentConfig, appConfig$ } from './data'
 import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
 
-// mac 获取network_service的shell脚本
-// const macServiceShellPath = path.resolve(__dirname, '../lib/mac_service.sh')
+let isProxyChanged = false
 
 /**
  * 运行命令
@@ -17,23 +16,26 @@ import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
  */
 function runCommand (command) {
   if (command) {
+    isProxyChanged = true
     execSync(command)
   }
 }
 
 /**
- * 设置代理为空
+ * 设置代理为空, force表示强制设置，否则根据isProxyChanged字段判断是否需要设置为空
  */
-export function setProxyToNone () {
-  let command
-  if (isWin && pathExistsSync(winToolPath)) {
-    command = `${winToolPath} pac ""`
-  } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
-    command = `"${macToolPath}" -m off`
-  } else if (isLinux) {
-    command = `gsettings set org.gnome.system.proxy mode 'none'`
+export function setProxyToNone (force = true) {
+  if (force || isProxyChanged) {
+    let command
+    if (isWin && pathExistsSync(winToolPath)) {
+      command = `${winToolPath} pac ""`
+    } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
+      command = `"${macToolPath}" -m off`
+    } else if (isLinux) {
+      command = `gsettings set org.gnome.system.proxy mode 'none'`
+    }
+    runCommand(command)
   }
-  runCommand(command)
 }
 
 /**

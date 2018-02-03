@@ -1,34 +1,21 @@
-import path from 'path'
-import { ipcRenderer, shell } from 'electron'
+import { ipcRenderer } from 'electron'
 import store from './store'
+import { showNotification, showHtmlNotification } from './notification'
 import scanQrcode from './qrcode/scan-screenshot'
-import generateTrayImage from './tray'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
-
-export function showNotification (title, body) {
-  new Notification(title, {
-    icon: path.join(__static, 'tray_win@3x.png'),
-    body: body
-  })
-}
 
 /**
  * ipc-render事件
  */
-ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) => {
+ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body }) => {
   // 显示main进程的通知
-  const notify = showNotification(title, body)
-  if (url) {
-    notify.onclick = () => {
-      shell.openExternal(url)
-    }
-  }
+  showHtmlNotification(body, title)
 }).on(events.EVENT_APP_SCAN_DESKTOP, () => {
   // 扫描二维码
   scanQrcode((e, result) => {
     if (e) {
-      showNotification('扫码失败', '未找到相关二维码')
+      showNotification('未找到相关二维码', '扫码失败')
     } else {
       const configs = loadConfigsFromString(result)
       if (configs.length) {
@@ -47,20 +34,15 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body, url }) =
   // 更新订阅服务器
   store.dispatch('updateSubscribes').then(updatedCount => {
     if (updatedCount > 0) {
-      showNotification('订阅更新通知', `服务器订阅更新成功，共更新了${updatedCount}个节点`)
+      showNotification(`服务器订阅更新成功，共更新了${updatedCount}个节点`)
     }
   }).catch(() => {
-    showNotification('订阅更新通知', '服务器订阅更新失败')
+    showNotification('服务器订阅更新失败')
   })
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
   // 同步数据
   console.log('received sync data: %o', appConfig)
   store.commit('updateConfig', appConfig)
-}).on(events.EVENT_TRAY_GENERATE_MAIN, (e, mode) => {
-  // 生成tray image
-  generateTrayImage().then(data => {
-    ipcRenderer.send(events.EVENT_TRAY_GENERATE_RENDERER, data)
-  })
 })
 
 /**
