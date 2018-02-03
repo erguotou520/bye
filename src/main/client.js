@@ -29,14 +29,15 @@ export function runCommand (command, params) {
  * @param {*String} ssrPath local.py的路径
  * @param {*[Number|String]} localPort 本地共享端口
  */
-export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
-  const listenHost = shareOverLan ? '0.0.0.0' : '127.0.0.1'
+export function run (appConfig) {
+  const listenHost = appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
   // 先结束之前的
   return stop().then(() => {
-    return isHostPortValid(listenHost, localPort)
+    return isHostPortValid(listenHost, appConfig.localPort || 1080)
   }).then(() => {
+    const config = appConfig.configs[appConfig.index]
     // 参数
-    const params = [path.join(ssrPath, 'local.py')]
+    const params = [path.join(appConfig.ssrPath, 'local.py')]
     params.push('-s')
     params.push(config.server)
     params.push('-p')
@@ -62,7 +63,7 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
     params.push('-b')
     params.push(listenHost)
     params.push('-l')
-    params.push(localPort)
+    params.push(appConfig.localPort || 1080)
     if (config.timeout) {
       params.push('-t')
       params.push(config.timeout)
@@ -75,7 +76,7 @@ export function run (config, ssrPath, shareOverLan = false, localPort = 1080) {
     }
     child = runCommand('python', params)
   }).catch(() => {
-    showNotificationInOne(`ssr端口${localPort}被占用`, '警告')
+    showNotificationInOne(`ssr端口${appConfig.localPort}被占用`, '警告')
   })
 }
 
@@ -107,9 +108,9 @@ export async function stop () {
  * 根据配置运行python命令
  * @param {Object} appConfig 应用配置
  */
-function runWithConfig (appConfig) {
+export function runWithConfig (appConfig) {
   if (appConfig.ssrPath && appConfig.enable && appConfig.configs && appConfig.configs[appConfig.index]) {
-    run(appConfig.configs[appConfig.index], appConfig.ssrPath, appConfig.shareOverLan, appConfig.localPort)
+    run(appConfig)
   }
 }
 
