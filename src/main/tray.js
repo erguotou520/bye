@@ -139,17 +139,17 @@ function setTrayIcon (appConfig) {
   if (appConfig.enable) {
     if (appConfig.sysProxyMode === 1) {
       tray.setImage(pacTray)
-      tray.setPressedImage(pacHighlightTray)
+      isMac && tray.setPressedImage(pacHighlightTray)
     } else if (appConfig.sysProxyMode === 2) {
       tray.setImage(globalTray)
-      tray.setPressedImage(globalHighlightTray)
+      isMac && tray.setPressedImage(globalHighlightTray)
     } else {
       tray.setImage(enabledTray)
-      tray.setPressedImage(enabledHighlightTray)
+      isMac && tray.setPressedImage(enabledHighlightTray)
     }
   } else {
     tray.setImage(disabledTray)
-    tray.setPressedImage(disabledTray)
+    isMac && tray.setPressedImage(disabledTray)
   }
 }
 

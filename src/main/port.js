@@ -7,14 +7,23 @@ import { createServer } from 'net'
  */
 export function isHostPortValid (host, port) {
   return new Promise((resolve, reject) => {
-    const tester = createServer().listen(port, host).once('error', reject)
+    const tester = createServer().listen(port, host)
+      .once('error', err => {
+        if (process.env.NODE_ENV === 'development') {
+          console.log(err)
+        }
+        reject()
+      })
       .once('listening', () => {
         let closed = false
         tester.close(() => {
           closed = true
+          if (timeout) {
+            clearTimeout(timeout)
+          }
           resolve()
         })
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
           if (!closed) {
             reject()
           }

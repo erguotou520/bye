@@ -1,6 +1,5 @@
 import { Notification } from 'electron'
 import { sendData } from './window'
-import { notificationIcon } from '../shared/icon'
 import { EVENT_APP_NOTIFY_NOTIFICATION } from '../shared/events'
 
 const isDesktopNotificationSupported = Notification.isSupported()
@@ -11,7 +10,7 @@ let timeout
 export function showNotification (body, title = '通知', onClick) {
   if (isDesktopNotificationSupported) {
     const notification = new Notification({
-      title, body, silent: false, icon: notificationIcon
+      title, body, silent: false
     })
     if (onClick) {
       notification.once('click', onClick)

@@ -1,13 +1,10 @@
 import { join } from 'path'
 import { nativeImage } from 'electron'
-import { isWin } from './env'
 
-function getImage (name, template = true, highlight = false) {
-  return nativeImage.createFromPath(join(__static, isWin ? `${name}.ico`
-    : `${name}${template ? (highlight ? 'Highlight' : 'Template') : ''}.png`))
+function getImage (name, highlight = false) {
+  return nativeImage.createFromPath(join(__static, `${name}${highlight ? 'Highlight' : ''}.png`))
 }
 
-export let notificationIcon
 export let disabledTray
 export let enabledTray
 export let pacTray
@@ -17,7 +14,6 @@ export let pacHighlightTray
 export let globalHighlightTray
 
 export function init () {
-  notificationIcon = getImage('notification', false)
   disabledTray = getImage('disabled', false)
   enabledTray = getImage('enabled')
   pacTray = getImage('pac')

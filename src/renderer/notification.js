@@ -1,7 +1,5 @@
 import { remote } from 'electron'
-import { join } from 'path'
 import { notificationIcon } from '../shared/icon'
-import { isWin } from '../shared/env'
 
 const HtmlNotification = window.Notification
 const { Notification } = remote.require('electron')
@@ -14,7 +12,6 @@ const isDesktopNotificationSupported = Notification.isSupported()
  */
 export function showHtmlNotification (body, title = '通知') {
   new HtmlNotification(title, {
-    icon: join(__static, isWin ? 'notification.ico' : 'notification.png'),
     body: body
   })
 }

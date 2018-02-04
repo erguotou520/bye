@@ -91,12 +91,15 @@ export async function stop () {
       logger.log('Kill python client')
     }
     return new Promise((resolve, reject) => {
-      treeKill(child.pid, err => {
+      treeKill(child.pid, 'SIGKILL', err => {
         if (err) {
           reject(err)
         } else {
-          child = null
-          resolve()
+          // TODO: 待优化，目前是通过延迟一定时间来保证端口确实不被占用
+          setTimeout(() => {
+            child = null
+            resolve()
+          }, 100)
         }
       })
     })
