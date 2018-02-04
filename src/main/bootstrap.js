@@ -5,6 +5,15 @@ import logger from './logger'
 import sudo from 'sudo-prompt'
 import defaultConfig from '../shared/config'
 import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
+import { init as initIcon } from '../shared/icon'
+
+/**
+ * Set `__static` path to static files in production
+ * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
+ */
+if (process.env.NODE_ENV !== 'development') {
+  global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+}
 
 // 应用配置存储目录
 export const appConfigDir = app.getPath('userData')
@@ -77,8 +86,13 @@ async function init () {
   } else {
     logger.info('file ensured')
   }
+  initIcon()
   return new Promise((resolve, reject) => {
-    app.on('ready', resolve())
+    if (app.isReady()) {
+      resolve()
+    } else {
+      app.once('ready', resolve)
+    }
   })
 }
 

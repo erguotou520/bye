@@ -7,18 +7,22 @@ function getImage (name, template = true, highlight = false) {
     : `${name}${template ? (highlight ? 'Highlight' : 'Template') : ''}.png`))
 }
 
-export const notificationIcon = getImage('notification', false)
+export let notificationIcon
+export let disabledTray
+export let enabledTray
+export let pacTray
+export let globalTray
+export let enabledHighlightTray
+export let pacHighlightTray
+export let globalHighlightTray
 
-export const disabledTray = getImage('disabled', false)
-
-export const enabledTray = getImage('enabled')
-
-export const pacTray = getImage('pac')
-
-export const globalTray = getImage('global')
-
-export const enabledHighlightTray = getImage('enabled', true, true)
-
-export const pacHighlightTray = getImage('pac', true, true)
-
-export const globalHighlightTray = getImage('global', true, true)
+export function init () {
+  notificationIcon = getImage('notification', false)
+  disabledTray = getImage('disabled', false)
+  enabledTray = getImage('enabled')
+  pacTray = getImage('pac')
+  globalTray = getImage('global')
+  enabledHighlightTray = getImage('enabled', true, true)
+  pacHighlightTray = getImage('pac', true, true)
+  globalHighlightTray = getImage('global', true, true)
+}
