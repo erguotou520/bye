@@ -19,7 +19,7 @@ let _timeout
  */
 export async function startTask (appConfig, forceUpdate = false) {
   stopTask()
-  if (appConfig.autoUpdateSubscribes) {
+  if (appConfig.autoUpdateSubscribes && appConfig.serverSubscribes.length) {
     if (forceUpdate) {
       await update(appConfig)
     }
@@ -68,11 +68,8 @@ async function saveUpdateTime () {
 
 // 发起更新
 async function update (appConfig) {
-  // 有订阅服务器才开始订阅
-  if (appConfig.serverSubscribes.length) {
-    await saveUpdateTime()
-    updateSubscribes()
-  }
+  await saveUpdateTime()
+  updateSubscribes()
 }
 
 // 更新订阅服务器
@@ -92,12 +89,14 @@ export function stopTask () {
 
 // 监听配置变化
 appConfig$.subscribe(data => {
-  const [appConfig, changed] = data
+  const [appConfig, changed, oldConfig] = data
   // 初始化
   if (changed.length === 0) {
     startTask(appConfig, true)
   } else {
     if (['autoUpdateSubscribes', 'subscribeUpdateInterval'].some(key => changed.indexOf(key) > -1)) {
+      startTask(appConfig)
+    } else if (changed.indexOf('serverSubscribes') > -1 && (!appConfig.serverSubscribes.length) || !oldConfig.serverSubscribes.length) {
       startTask(appConfig)
     }
   }

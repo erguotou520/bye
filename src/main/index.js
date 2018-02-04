@@ -108,10 +108,11 @@ app.on('window-all-closed', () => {
 // 由main进程发起的退出
 app.on('before-quit', () => { isQuiting(true) })
 
-app.on('will-quit', () => {
+app.on('will-quit', e => {
   if (process.env.NODE_ENV === 'development') {
     console.log('will-quit')
   }
+  e.preventDefault()
   stopCommand().then(() => {
     destroyWindow()
     destroyTray()
@@ -119,6 +120,7 @@ app.on('will-quit', () => {
     stopPacServer()
     stopTask()
     setProxyToNone()
+    app.exit(0)
   })
 })
 
