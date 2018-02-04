@@ -65,6 +65,10 @@ npm run lint
 
 ```
 
+## Changelog更新日志
+
+请直接查看[release发布说明](https://github.com/erguotou520/electron-ssr/releases)
+
 ## ShadowsocksR 参考文档
 
 - [Python client setup (Mult language)](https://github.com/breakwa11/shadowsocks-rss/wiki/Python-client-setup-(Mult-language))
