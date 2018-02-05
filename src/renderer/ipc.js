@@ -35,6 +35,8 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body }) => {
   store.dispatch('updateSubscribes').then(updatedCount => {
     if (updatedCount > 0) {
       showNotification(`服务器订阅更新成功，共更新了${updatedCount}个节点`)
+    } else {
+      showNotification(`服务器订阅更新完成，没有新节点`)
     }
   }).catch(() => {
     showNotification('服务器订阅更新失败')

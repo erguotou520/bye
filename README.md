@@ -41,6 +41,12 @@
 
 [FAQ](./docs/FAQ.md)
 
+## 图标资源
+
+[https://www.figma.com/file/ghtehcxfzu0N2lQPoVEQXeU7/electron-ssr](https://www.figma.com/file/ghtehcxfzu0N2lQPoVEQXeU7/electron-ssr)
+
+欢迎提出改修意见
+
 ## 打赏
 
 [如果觉得本项目对你有所帮助，欢迎打赏](https://github.com/erguotou520/donate)
