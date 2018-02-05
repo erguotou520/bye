@@ -8,6 +8,12 @@ export const isWin = platform === 'win32'
 export const isMac = platform === 'darwin'
 export const isLinux = platform === 'linux'
 
+// python 是否已安装
+export const isPythonInstalled = true
+// try {
+//   isPythonInstalled = /^Python \d.\d+.\d+$/.test(execSync('python --version').toString().trim())
+// } catch (e) {}
+
 // mac版本号
 export let macVersion
 // mac版本是否低于10.11

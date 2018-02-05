@@ -1,7 +1,7 @@
 import { app, powerMonitor } from 'electron'
 import AutoLaunch from 'auto-launch'
 import bootstrap from './bootstrap'
-import { isQuiting, appConfig$, addConfigs, currentConfig } from './data'
+import { isQuiting, appConfig$, currentConfig } from './data'
 import renderTray, { destroyTray } from './tray'
 import renderMenu from './menu'
 import './ipc'
@@ -12,8 +12,8 @@ import { setProxyToNone } from './proxy'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import { startTask, stopTask } from './subscribe'
 import logger from './logger'
-import { loadConfigsFromString } from '../shared/ssr'
-import { isMac, isWin } from '../shared/env'
+// import { loadConfigsFromString } from '../shared/ssr'
+// import { isMac, isWin } from '../shared/env'
 
 const isSecondInstance = app.makeSingleInstance((argv, workingDirectory) => {
   // Someone tried to run a second instance, we should focus our window.
@@ -25,12 +25,12 @@ const isSecondInstance = app.makeSingleInstance((argv, workingDirectory) => {
     _window.focus()
   }
   // 如果是通过链接打开的应用，则添加记录
-  if (argv[1]) {
-    const configs = loadConfigsFromString(argv[1])
-    if (configs.length) {
-      addConfigs(configs)
-    }
-  }
+  // if (argv[1]) {
+  //   const configs = loadConfigsFromString(argv[1])
+  //   if (configs.length) {
+  //     addConfigs(configs)
+  //   }
+  // }
 })
 
 if (isSecondInstance) {
@@ -39,10 +39,10 @@ if (isSecondInstance) {
 
 bootstrap.then(() => {
   createWindow()
-  if (isWin || isMac) {
-    app.setAsDefaultProtocolClient('ssr')
-    app.setAsDefaultProtocolClient('ss')
-  }
+  // if (isWin || isMac) {
+  //   app.setAsDefaultProtocolClient('ssr')
+  //   app.setAsDefaultProtocolClient('ss')
+  // }
 
   // 开机自启动配置
   const AutoLauncher = new AutoLaunch({

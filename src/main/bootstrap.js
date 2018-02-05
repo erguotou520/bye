@@ -1,11 +1,18 @@
 import path from 'path'
-import { app } from 'electron'
+import { app, dialog } from 'electron'
 import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
 import logger from './logger'
 import sudo from 'sudo-prompt'
 import defaultConfig from '../shared/config'
-import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
+import { isWin, isMac, isLinux, isOldMacVersion, isPythonInstalled } from '../shared/env'
 import { init as initIcon } from '../shared/icon'
+
+// 检查python是否安装
+console.log('isPythonInstalled', isPythonInstalled)
+if (!isPythonInstalled) {
+  dialog.showErrorBox('错误', 'python未安装')
+  app.exit(1)
+}
 
 /**
  * Set `__static` path to static files in production
