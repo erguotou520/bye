@@ -1,8 +1,9 @@
 import { join } from 'path'
 import { nativeImage } from 'electron'
+import { isMac } from './env'
 
 function getImage (name, highlight = false) {
-  return nativeImage.createFromPath(join(__static, `${name}${highlight ? 'Highlight' : ''}.png`))
+  return nativeImage.createFromPath(join(__static, `${name}${isMac ? (highlight ? 'Highlight' : 'Template') : ''}.png`))
 }
 
 export let disabledTray
@@ -14,11 +15,11 @@ export let pacHighlightTray
 export let globalHighlightTray
 
 export function init () {
-  disabledTray = getImage('disabled', false)
+  disabledTray = getImage('disabled')
   enabledTray = getImage('enabled')
   pacTray = getImage('pac')
   globalTray = getImage('global')
-  enabledHighlightTray = getImage('enabled', true, true)
-  pacHighlightTray = getImage('pac', true, true)
-  globalHighlightTray = getImage('global', true, true)
+  enabledHighlightTray = getImage('enabled', true)
+  pacHighlightTray = getImage('pac', true)
+  globalHighlightTray = getImage('global', true)
 }
