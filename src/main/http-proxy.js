@@ -1,8 +1,8 @@
 import proxyServer from 'simple-web-proxy'
 import httpShutdown from 'http-shutdown'
+import { dialog } from 'electron'
 import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import { showNotificationInOne } from './notification'
 import logger from './logger'
 
 let server
@@ -37,7 +37,11 @@ export function startHttpProxyServer (appConfig) {
           server.shutdown()
         })
     }).catch(() => {
-      showNotificationInOne(`http代理端口${appConfig.httpProxyPort}被占用`, '警告')
+      dialog.showMessageBox({
+        type: 'warning',
+        title: '警告',
+        message: `http代理端口 ${appConfig.httpProxyPort} 被占用`
+      })
     })
   }
 }

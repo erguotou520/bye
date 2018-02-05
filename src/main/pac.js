@@ -4,13 +4,13 @@
 import http from 'http'
 import httpShutdown from 'http-shutdown'
 import { parse } from 'url'
+import { dialog } from 'electron'
 import { readFile, writeFile, pathExists } from 'fs-extra'
 import logger from './logger'
 import { request } from '../shared/utils'
 import bootstrapPromise, { pacPath } from './bootstrap'
 import { currentConfig, appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import { showNotificationInOne } from './notification'
 let pacContent
 let pacServer
 
@@ -81,7 +81,11 @@ export async function serverPac (appConfig) {
           pacServer.shutdown()
         })
     }).catch(() => {
-      showNotificationInOne(`PAC端口 ${port} 被占用`, '警告')
+      dialog.showMessageBox({
+        type: 'warning',
+        title: '警告',
+        message: `PAC端口 ${port} 被占用`
+      })
     })
   }
 }

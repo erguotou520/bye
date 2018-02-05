@@ -1,9 +1,9 @@
 import path from 'path'
 import { execFile } from 'child_process'
-import treeKill from 'tree-kill'
+// import treeKill from 'tree-kill'
+import { dialog } from 'electron'
 import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import { showNotificationInOne } from './notification'
 import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
 
@@ -18,7 +18,7 @@ export function runCommand (command, params) {
     child = execFile(command, params)
     child.stdout.on('data', logger.log)
     child.stderr.on('data', logger.error)
-    child.on('close', logger.log)
+    // child.on('close', logger.log)
     return child
   }
 }
@@ -76,7 +76,11 @@ export function run (appConfig) {
     }
     child = runCommand('python', params)
   }).catch(() => {
-    showNotificationInOne(`ssr端口${appConfig.localPort}被占用`, '警告')
+    dialog.showMessageBox({
+      type: 'warning',
+      title: '警告',
+      message: `ssr端口 ${appConfig.localPort} 被占用`
+    })
   })
 }
 
@@ -91,17 +95,22 @@ export async function stop () {
       logger.log('Kill python client')
     }
     return new Promise((resolve, reject) => {
-      treeKill(child.pid, 'SIGKILL', err => {
-        if (err) {
-          reject(err)
-        } else {
-          // TODO: 待优化，目前是通过延迟一定时间来保证端口确实不被占用
-          setTimeout(() => {
-            child = null
-            resolve()
-          }, 100)
-        }
+      child.once('close', () => {
+        child = null
+        resolve()
       })
+      child.kill()
+      // treeKill(child.pid, 'SIGKILL', err => {
+      //   if (err) {
+      //     reject(err)
+      //   } else {
+      //     // TODO: 待优化，目前是通过延迟一定时间来保证端口确实不被占用
+      //     setTimeout(() => {
+      //       child = null
+      //       resolve()
+      //     }, 100)
+      //   }
+      // })
     })
   }
   return Promise.resolve()
