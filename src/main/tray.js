@@ -1,6 +1,7 @@
 import { Menu, Tray, nativeImage } from 'electron'
 import { appConfig$ } from './data'
 import * as handler from './tray-handler'
+import { checkUpdate } from './updater'
 import { groupConfigs } from '../shared/utils'
 import { isMac, isWin, isOldMacVersion } from '../shared/env'
 import { disabledTray, enabledTray, enabledHighlightTray, pacTray, pacHighlightTray, globalTray, globalHighlightTray } from '../shared/icon'
@@ -68,7 +69,7 @@ function generateMenus (appConfig) {
     ] },
     { label: '复制http代理设置', click: handler.copyHttpProxyCode },
     { label: '帮助', submenu: [
-      { label: '检查更新', click: () => handler.checkUpdate(true) },
+      { label: '检查更新', click: () => checkUpdate(true) },
       { label: '查看日志', click: handler.openLog },
       { label: '项目主页', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr') } },
       { label: 'Bug反馈', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr/issues') } },

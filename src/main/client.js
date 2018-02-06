@@ -6,6 +6,7 @@ import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
 import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
+// import { pythonPromise } from './python'
 
 let child
 
@@ -14,12 +15,27 @@ let child
  * @param {*String} command 待执行的shell命令
  */
 export function runCommand (command, params) {
-  if (command) {
+  if (command && params.length) {
+    const commandStr = `${command} ${params.join(' ')}`
+    if (process.env.NODE_ENV === 'development') {
+      console.log('run command: %s', commandStr)
+    } else {
+      logger.debug('run command: %s', commandStr)
+    }
     child = execFile(command, params)
     child.stdout.on('data', logger.log)
     child.stderr.on('data', logger.error)
-    // child.on('close', logger.log)
-    return child
+    // pythonPromise.then(() => {
+    //   const command = `${command} ${params.join(' ')}`
+    //   if (process.env.NODE_ENV === 'development') {
+    //     console.log('run command: %s', command)
+    //   } else {
+    //     logger.debug('run command: %s', command)
+    //   }
+    //   child = execFile(command, params)
+    //   child.stdout.on('data', logger.log)
+    //   child.stderr.on('data', logger.error)
+    // })
   }
 }
 
@@ -68,13 +84,7 @@ export function run (appConfig) {
       params.push('-t')
       params.push(config.timeout)
     }
-    const command = `python ${params.join(' ')}`
-    if (process.env.NODE_ENV === 'development') {
-      console.log('run command: %s', command)
-    } else {
-      logger.debug('run command: %s', command)
-    }
-    child = runCommand('python', params)
+    runCommand('python', params)
   }).catch(() => {
     dialog.showMessageBox({
       type: 'warning',

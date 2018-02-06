@@ -97,11 +97,7 @@ function startMain () {
       }
 
       logStats('Main', stats)
-      if (electronProcess) {
-        console.log(electronProcess.kill, electronProcess.pid)
-      }
       if (electronProcess && electronProcess.kill) {
-        console.log('kill preview electron process')
         manualRestart = true
         treeKill(electronProcess.pid)
         electronProcess = null

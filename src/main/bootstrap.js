@@ -11,6 +11,8 @@ import { init as initIcon } from '../shared/icon'
 if (!isPythonInstalled) {
   dialog.showErrorBox('错误', 'python未安装')
   app.exit(1)
+  // python未安装时自动下载并安装
+  // require('./python').init()
 }
 
 /**

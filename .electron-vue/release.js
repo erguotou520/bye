@@ -77,7 +77,12 @@ function release (dir) {
           {
             target: 'nsis',
             arch: [
-              'x64',
+              'x64'
+            ]
+          },
+          {
+            target: 'nsis',
+            arch: [
               'ia32'
             ]
           }
