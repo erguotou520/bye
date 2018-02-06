@@ -2,7 +2,7 @@ import { app, powerMonitor } from 'electron'
 import AutoLaunch from 'auto-launch'
 import bootstrap from './bootstrap'
 import { isQuiting, appConfig$, currentConfig } from './data'
-import renderTray, { destroyTray } from './tray'
+import { destroyTray } from './tray'
 import { checkUpdate } from './tray-handler'
 import renderMenu from './menu'
 import './ipc'
@@ -65,7 +65,7 @@ bootstrap.then(() => {
         showWindow()
       }
       renderMenu()
-      renderTray(appConfig)
+      // renderTray(appConfig)
     }
     if (!changed.length || changed.indexOf('autoLaunch') > -1) {
       // 初始化或者选项变更时

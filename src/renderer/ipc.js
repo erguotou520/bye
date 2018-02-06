@@ -20,6 +20,7 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body }) => {
       const configs = loadConfigsFromString(result)
       if (configs.length) {
         store.dispatch('addConfigs', configs)
+        showNotification(`已成功添加${configs.length}条记录`)
       }
     }
   })

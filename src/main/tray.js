@@ -177,7 +177,9 @@ export function destroyTray () {
 // 监听数据变更
 appConfig$.subscribe(data => {
   const [appConfig, changed] = data
-  if (changed.length > 0) {
+  if (!changed.length) {
+    renderTray(appConfig)
+  } else {
     if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
       updateTray(appConfig)
     } else if (['enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
