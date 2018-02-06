@@ -68,7 +68,7 @@ function generateMenus (appConfig) {
     ] },
     { label: '复制http代理设置', click: handler.copyHttpProxyCode },
     { label: '帮助', submenu: [
-      { label: '检查更新', click: handler.checkUpdate },
+      { label: '检查更新', click: () => handler.checkUpdate(true) },
       { label: '查看日志', click: handler.openLog },
       { label: '项目主页', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr') } },
       { label: 'Bug反馈', click: () => { handler.openURL('https://github.com/erguotou520/electron-ssr/issues') } },

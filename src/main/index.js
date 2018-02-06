@@ -3,6 +3,7 @@ import AutoLaunch from 'auto-launch'
 import bootstrap from './bootstrap'
 import { isQuiting, appConfig$, currentConfig } from './data'
 import renderTray, { destroyTray } from './tray'
+import { checkUpdate } from './tray-handler'
 import renderMenu from './menu'
 import './ipc'
 import { stopPacServer } from './pac'
@@ -43,6 +44,9 @@ bootstrap.then(() => {
   //   app.setAsDefaultProtocolClient('ssr')
   //   app.setAsDefaultProtocolClient('ss')
   // }
+  if (process.env.NODE_ENV !== 'development') {
+    checkUpdate()
+  }
 
   // 开机自启动配置
   const AutoLauncher = new AutoLaunch({

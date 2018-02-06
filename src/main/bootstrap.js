@@ -8,7 +8,6 @@ import { isWin, isMac, isLinux, isOldMacVersion, isPythonInstalled } from '../sh
 import { init as initIcon } from '../shared/icon'
 
 // 检查python是否安装
-console.log('isPythonInstalled', isPythonInstalled)
 if (!isPythonInstalled) {
   dialog.showErrorBox('错误', 'python未安装')
   app.exit(1)
