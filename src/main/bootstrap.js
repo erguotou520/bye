@@ -72,6 +72,7 @@ async function sudoMacCommand (command) {
  * 确保文件存在，目录正常
  */
 async function init () {
+  initIcon()
   await ensureDir(appConfigDir)
   // 判断配置文件是否存在，不存在用默认数据写入
   const configFileExists = await pathExists(appConfigPath)
@@ -94,7 +95,6 @@ async function init () {
   } else {
     logger.info('file ensured')
   }
-  initIcon()
   return new Promise((resolve, reject) => {
     if (app.isReady()) {
       resolve()
