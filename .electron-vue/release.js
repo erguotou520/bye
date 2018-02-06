@@ -26,8 +26,6 @@ function release (dir) {
   }
   return builder.build({
     targets: targets,
-    x64: true,
-    ia32: true,
     dir: dir,
     config: {
       // electronVersion
@@ -77,13 +75,7 @@ function release (dir) {
           {
             target: 'nsis',
             arch: [
-              'x64'
-            ]
-          },
-          {
-            target: 'nsis',
-            arch: [
-              'ia32'
+              'x64', 'ia32'
             ]
           }
         ]
