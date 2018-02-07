@@ -73,80 +73,82 @@ function release (dir) {
     }
   }
   const options = Object.assign({}, baseConfig)
-  const promise = [
-    builder.build(Object.assign({}, baseOptions, {
-      config: Object.assign({}, baseConfig, {
-        dmg: {
-          contents: [
-            {
-              x: 410,
-              y: 150,
-              type: 'link',
-              path: '/Applications'
-            },
-            {
-              x: 130,
-              y: 150,
-              type: 'file'
-            }
-          ]
-        },
-        mac: {
-          icon: 'build/icons/icon.icns',
-          category: 'public.app-category.developer-tools',
-          target: [
-            'zip',
-            'dmg'
-          ],
-          extendInfo: {
-            LSUIElement: 'YES'
+  const x64Promise = builder.build(Object.assign({}, baseOptions, {
+    config: Object.assign({}, baseConfig, {
+      dmg: {
+        contents: [
+          {
+            x: 410,
+            y: 150,
+            type: 'link',
+            path: '/Applications'
+          },
+          {
+            x: 130,
+            y: 150,
+            type: 'file'
           }
-        },
-        win: {
-          icon: 'build/icons/icon.ico',
-          target: [
-            {
-              target: 'nsis',
-              arch: [
-                'x64'
-              ]
-            }
-          ]
-        },
-        nsis: {
-          license: 'LICENSE'
-        },
-        linux: {
-          icon: 'build/icons',
-          category: 'Development',
-          target: [
-            'deb',
-            'rpm',
-            'tar.gz',
-            'pacman'
-          ]
+        ]
+      },
+      mac: {
+        icon: 'build/icons/icon.icns',
+        category: 'public.app-category.developer-tools',
+        target: [
+          'zip',
+          'dmg'
+        ],
+        extendInfo: {
+          LSUIElement: 'YES'
         }
-      })
-    }))
-  ]
-  if (platform === 'win32') {
-    promise.push(builder.build(Object.assign({}, baseOptions, {
-      config: Object.assign({}, baseConfig, {
-        win: {
-          icon: 'build/icons/icon.ico',
-          target: [
-            {
-              target: 'nsis',
-              arch: [
-                'ia32'
-              ]
-            }
-          ]
-        }
-      })
-    })))
-  }
-  return Promise.all(promise).then(() => {
+      },
+      win: {
+        icon: 'build/icons/icon.ico',
+        target: [
+          {
+            target: 'nsis',
+            arch: [
+              'x64'
+            ]
+          }
+        ]
+      },
+      nsis: {
+        license: 'LICENSE'
+      },
+      linux: {
+        icon: 'build/icons',
+        category: 'Development',
+        target: [
+          'deb',
+          'rpm',
+          'tar.gz',
+          'pacman'
+        ]
+      }
+    })
+  }))
+  return x64Promise.then(() => {
+    if (platform === 'win32') {
+      return builder.build(Object.assign({}, baseOptions, {
+        config: Object.assign({}, baseConfig, {
+          win: {
+            icon: 'build/icons/icon.ico',
+            artifactName: '${productName} Setup ${version}-ia32.${ext}',
+            target: [
+              {
+                target: 'nsis',
+                arch: [
+                  'ia32'
+                ]
+              }
+            ]
+          }
+        })
+      }))
+    } else {
+      return Promise.resolve()
+    }
+  }).then(() => {
     console.log(`${BLUE}Done${END}`)
   }).catch(error => {
     console.error(`${YELLOW}Build error: ${error}${END}`)
@@ -154,5 +156,3 @@ function release (dir) {
 }
 
 module.exports = release
-
-release(true)

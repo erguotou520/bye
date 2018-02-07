@@ -7,6 +7,15 @@ import defaultConfig from '../shared/config'
 import { isWin, isMac, isLinux, isOldMacVersion, isPythonInstalled } from '../shared/env'
 import { init as initIcon } from '../shared/icon'
 
+// app ready事件
+export const readyPromise = new Promise(resolve => {
+  if (app.isReady()) {
+    resolve()
+  } else {
+    app.once('ready', resolve)
+  }
+})
+
 // 检查python是否安装
 if (!isPythonInstalled) {
   dialog.showErrorBox('错误', 'python未安装')
@@ -95,13 +104,7 @@ async function init () {
   } else {
     logger.info('file ensured')
   }
-  return new Promise((resolve, reject) => {
-    if (app.isReady()) {
-      resolve()
-    } else {
-      app.once('ready', resolve)
-    }
-  })
+  return readyPromise
 }
 
 export default init()

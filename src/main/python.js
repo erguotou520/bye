@@ -1,8 +1,9 @@
-import { app, net } from 'electron'
+import { net } from 'electron'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { createWriteStream, unlink } from 'fs'
 import { execFile } from 'child_process'
+import { readyPromise } from './bootstrap'
 import { showNotification } from './notification'
 import { isWin, isPythonInstalled } from '../shared/env'
 
@@ -13,21 +14,19 @@ export let pythonPromise
 // windows自动安装python
 export async function init () {
   if (isWin && !isPythonInstalled) {
-    const promise = new Promise(resolve => {
-      if (app.isReady()) {
+    pythonPromise = new Promise((resolve, reject) => {
+      readyPromise.then(() => {
+        return download()
+      }).then(msiPath => {
+        return install(msiPath)
+      }).then(() => {
+        showNotification('已自动下载并安装所需python环境')
         resolve()
-      } else {
-        app.once('ready', resolve)
-      }
+      }).catch(e => {
+        showNotification('python安装出错，请自行下载安装python' + e)
+        reject()
+      })
     })
-    await promise
-    const msiPath = await download()
-    pythonPromise = install(msiPath).then(() => {
-      showNotification('已自动下载并安装所需python环境')
-    }).catch(e => {
-      showNotification('python安装出错，请自行下载安装python' + e)
-    })
-    return pythonPromise
   } else {
     pythonPromise = Promise.resolve()
   }
@@ -63,9 +62,13 @@ export async function download () {
 
 // 安装python
 export async function install (msiPath) {
-  const child = execFile('msiexec', ['/i', msiPath, '/passive', '/norestart', 'ADDLOCAL=ALL', '/qn'])
+  const child = execFile('msiexec', ['/i', msiPath, '/passive', '/norestart', 'ADDLOCAL=ALL', '/qb!'])
   return new Promise((resolve, reject) => {
     child.on('error', reject)
-    child.on('close', resolve)
+    child.on('close', () => {
+      const setPath = execFile('setx', ['/M', 'PATH', `"C:\Python27\;C:\Python27\Scripts\;%PATH%"`])
+      setPath.on('error', reject)
+      setPath.on('close', resolve)
+    })
   })
 }

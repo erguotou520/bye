@@ -26,11 +26,11 @@ export function runCommand (command, params) {
     child.stdout.on('data', logger.log)
     child.stderr.on('data', logger.error)
     // pythonPromise.then(() => {
-    //   const command = `${command} ${params.join(' ')}`
+    //   const commandStr = `${command} ${params.join(' ')}`
     //   if (process.env.NODE_ENV === 'development') {
-    //     console.log('run command: %s', command)
+    //     console.log('run command: %s', commandStr)
     //   } else {
-    //     logger.debug('run command: %s', command)
+    //     logger.debug('run command: %s', commandStr)
     //   }
     //   child = execFile(command, params)
     //   child.stdout.on('data', logger.log)
