@@ -51,12 +51,12 @@ const source = Observable.create(observe => {
  * 统一使用该接口从外部更新应用配置
  * @param {Object} targetConfig 要更新的配置
  */
-export function updateAppConfig (targetConfig, fromRenderer = false) {
+export function updateAppConfig (targetConfig, fromRenderer = false, forceAppendArray = false) {
   const changedKeys = getUpdatedKeys(currentConfig, targetConfig)
   // 只有有数据变更才更新配置
   if (changedKeys.length) {
     const oldConfig = clone(currentConfig)
-    configMerge(currentConfig, targetConfig)
+    configMerge(currentConfig, targetConfig, forceAppendArray)
     isFromRenderer = fromRenderer
     _observe.next([currentConfig, changedKeys, oldConfig])
   }

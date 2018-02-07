@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import defaultConfig from '../../shared/config'
-import { merge, clone, request, isSubscribeContentValid, getUpdatedKeys, isConfigEqual } from '../../shared/utils'
+import { merge, clone, request, isSubscribeContentValid, getUpdatedKeys, isConfigEqual, somePromise } from '../../shared/utils'
 import Config from '../../shared/ssr'
 import { syncConfig } from '../ipc'
 import { STORE_KEY_FEATURE, STORE_KEY_SSR_METHODS, STORE_KEY_SSR_PROTOCOLS, STORE_KEY_SSR_OBFSES } from '../constants'
@@ -189,7 +189,7 @@ export default new Vuex.Store({
       // 累计更新节点数
       let updatedCount = 0
       return Promise.all(updateSubscribes.map(subscribe => {
-        return Promise.race([request(subscribe.URL, true), fetch(subscribe.URL).then(res => res.text())]).then(res => {
+        return somePromise([request(subscribe.URL, true), fetch(subscribe.URL).then(res => res.text())]).then(res => {
           const [valid, configs] = isSubscribeContentValid(res)
           if (valid) {
             const group = configs[0].group

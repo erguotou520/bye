@@ -36,8 +36,7 @@
     }
   },
   "plugins": ["transform-runtime", ["import", {
-    "libraryName": "iview",
-    "libraryDirectory": "src/components",
-    "style": true
+    "libraryName": "erguotou-iview",
+    "libraryDirectory": "src/components"
   }]]
 }

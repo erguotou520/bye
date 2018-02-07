@@ -18,7 +18,7 @@ function release (dir) {
     '!dist/electron/fonts/ionicons--fonts.eot',
     '!dist/electron/fonts/ionicons--fonts.ttf',
     '!dist/electron/static/plane.svg',
-    // '!node_modules/{babel-runtime,batch-processor,cookie,core-js,deepmerge,element-resize-detector,rxjs,popper.js,vue*}${/*}',
+    '!node_modules/{babel-runtime,batch-processor,cookie,core-js,deepmerge,element-resize-detector,erguotou-iview,rxjs,popper.js,qr-image,vue*}${/*}',
     '!**/*.{md,markdown,MD,txt}',
     '!**/{test.js,license,LICENSE,.jscsrc}',
     '!**/sample?(s)${/*}'

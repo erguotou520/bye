@@ -28,7 +28,7 @@
 </template>
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import { request, isSubscribeContentValid } from '../../../shared/utils'
+import { request, isSubscribeContentValid, somePromise } from '../../../shared/utils'
 
 const URL_REGEX = /^https?:\/\/[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]/
 // 单位对应的小时倍数
@@ -171,7 +171,7 @@ export default {
     },
     // 同时使用electron的net和fetch api请求
     requestSubscribeUrl (url) {
-      return Promise.race([request(url, true), fetch(url).then(res => res.text())])
+      return somePromise([request(url, true), fetch(url).then(res => res.text())])
     },
     // 根据订阅返回的节点数据更新ssr配置项
     updateSubscribedConfigs (configs) {

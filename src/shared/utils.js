@@ -86,8 +86,9 @@ export function merge (to, ...origins) {
  * 合并应用配置对象
  * @param {Object} to 待合并的应用配置
  * @param {Object} from 用于合并的应用配置
+ * @param {Boolean} appendArray 是否将新数组追加到源数组中而不是覆盖到方式
  */
-export function configMerge (to, from) {
+export function configMerge (to, from, appendArray = false) {
   for (const key in from) {
     const value = from[key]
     switch (protoString(value)) {
@@ -96,7 +97,11 @@ export function configMerge (to, from) {
         break
       // 配置数组采用直接覆盖的形式
       case ARRAY_PROTOTYPE:
-        to[key] = from[key]
+        if (appendArray) {
+          Array.prototype.push.apply(to[key], from[key])
+        } else {
+          to[key] = from[key]
+        }
         break
       default:
         to[key] = value
@@ -228,6 +233,20 @@ export function isSSRPathAvaliable (folderPath) {
   const localPyPath = path.join(folderPath, 'local.py')
   console.log(localPyPath, fs.existsSync(localPyPath))
   return fs.existsSync(localPyPath)
+}
+
+export function somePromise (promiseArr) {
+  return new Promise((resolve, reject) => {
+    let count = 0
+    for (const p of promiseArr) {
+      p.then(resolve).catch(() => {
+        count++
+        if (count === promiseArr.length) {
+          reject()
+        }
+      })
+    }
+  })
 }
 
 /**

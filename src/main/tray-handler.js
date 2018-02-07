@@ -57,7 +57,7 @@ export function importConfigFromFile () {
   }, pathes => {
     if (pathes.length === 1) {
       readJson(pathes[0]).then(fileConfig => {
-        updateAppConfig(fileConfig)
+        updateAppConfig(fileConfig, false, true)
       }).catch(() => {})
     }
   })
