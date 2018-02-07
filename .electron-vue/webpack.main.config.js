@@ -7,6 +7,7 @@ const { dependencies } = require('../package.json')
 const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 let mainConfig = {
   entry: {
@@ -78,6 +79,9 @@ if (process.env.NODE_ENV === 'production') {
       'process.env.NODE_ENV': '"production"'
     })
   )
+  if (process.env.npm_config_report) {
+    mainConfig.plugins.push(new BundleAnalyzerPlugin())
+  }
 }
 
 module.exports = mainConfig
