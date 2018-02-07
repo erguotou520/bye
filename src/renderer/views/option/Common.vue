@@ -33,8 +33,7 @@
 <script>
 import { mapActions } from 'vuex'
 import { remote } from 'electron'
-import debounce from 'lodash.debounce'
-import { isSSRPathAvaliable } from '../../../shared/utils'
+import { isSSRPathAvaliable, debounce } from '../../../shared/utils'
 
 const { dialog } = remote.require('electron')
 export default {

@@ -2,12 +2,13 @@ import { net } from 'electron'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { createWriteStream, unlink } from 'fs'
-import { execFile } from 'child_process'
+import sudo from 'sudo-prompt'
 import { readyPromise } from './bootstrap'
 import { showNotification } from './notification'
 import { isWin, isPythonInstalled } from '../shared/env'
 
-const PYTHON_DOWNLOAD_URL = `https://www.python.org/ftp/python/2.7.14/python-2.7.14${process.arch === 'x64' ? '.amd64' : ''}.msi`
+const PYTHON_FILE = `python-2.7.14${process.arch === 'x64' ? '.amd64' : ''}.msi`
+const PYTHON_DOWNLOAD_URL = `https://www.python.org/ftp/python/2.7.14/${PYTHON_FILE}`
 
 export let pythonPromise
 
@@ -34,7 +35,7 @@ export async function init () {
 
 // 下载python
 export async function download () {
-  const tempFile = join(tmpdir(), (Math.random() * 100000).toFixed() + '_python.msi')
+  const tempFile = join(tmpdir(), PYTHON_FILE)
   const writeStream = createWriteStream(tempFile)
   if (process.env.NODE_ENV === 'development') {
     console.log('start to download python to ', tempFile)
@@ -62,13 +63,13 @@ export async function download () {
 
 // 安装python
 export async function install (msiPath) {
-  const child = execFile('msiexec', ['/i', msiPath, '/passive', '/norestart', 'ADDLOCAL=ALL', '/qb!'])
   return new Promise((resolve, reject) => {
-    child.on('error', reject)
-    child.on('close', () => {
-      const setPath = execFile('setx', ['/M', 'PATH', `"C:\Python27\;C:\Python27\Scripts\;%PATH%"`])
-      setPath.on('error', reject)
-      setPath.on('close', resolve)
+    sudo.exec(`msiexec /i ${msiPath} /passive /norestart ADDLOCAL=ALL /qn`, { name: 'ShadowsocksR Client' }, (error, stdout, stderr) => {
+      if (error || stderr) {
+        reject(error || stderr)
+      } else {
+        resolve()
+      }
     })
   })
 }

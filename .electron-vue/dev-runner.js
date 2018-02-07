@@ -6,7 +6,6 @@ const path = require('path')
 const { say } = require('cfonts')
 const { spawn } = require('child_process')
 const webpack = require('webpack')
-const treeKill = require('tree-kill')
 const WebpackDevServer = require('webpack-dev-server')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 
@@ -99,7 +98,7 @@ function startMain () {
       logStats('Main', stats)
       if (electronProcess && electronProcess.kill) {
         manualRestart = true
-        treeKill(electronProcess.pid)
+        process.kill(electronProcess.pid)
         electronProcess = null
         startElectron()
 

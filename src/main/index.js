@@ -133,10 +133,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-if (process.env.NODE_ENV !== 'development') {
-  var Raven = require('raven')
-  Raven.config('https://35792a16213c4c6b89710f3e3dfa7806@sentry.io/258151', {
-    captureUnhandledRejections: true
-  }).install()
-}

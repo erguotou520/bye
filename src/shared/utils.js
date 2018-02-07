@@ -1,8 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import { net } from 'electron'
-import Base64 from 'urlsafe-base64'
-import { loadConfigsFromString } from './ssr'
+import { loadConfigsFromString, decode } from './ssr'
 
 const STRING_PROTOTYPE = '[object String]'
 const NUMBER_PROTOTYPE = '[object Number]'
@@ -47,6 +46,16 @@ export function isObject (obj) {
 
 export function isFunction (fn) {
   return protoString(fn) === FUNCTION_PROTOTYPE
+}
+
+export function debounce (fn, delay) {
+  let timer
+  return function (...args) {
+    timer && clearTimeout(timer)
+    timer = setTimeout(() => {
+      fn.apply(this, ...args)
+    }, delay)
+  }
 }
 
 /**
@@ -264,7 +273,7 @@ export function isSubscribeContentValid (content) {
   if (!content) {
     return [false]
   }
-  const decoded = Base64.decode(content).toString('utf-8')
+  const decoded = decode(content)
   const configs = loadConfigsFromString(decoded)
   if (!configs.length) {
     return [false]

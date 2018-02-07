@@ -18,15 +18,10 @@ function release (dir) {
     '!dist/electron/fonts/ionicons--fonts.eot',
     '!dist/electron/fonts/ionicons--fonts.ttf',
     '!dist/electron/static/plane.svg',
-    '!node_modules/**/*.@{md|MD|markdown}',
-    '!node_modules/*/sample{s}',
-    '!node_modules/*/LICENSE?{.txt}',
-    '!node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts}',
-    '!node_modules/.bin',
-    '!**/*.{o,hprof,orig,pyc,pyo,rbc}',
-    '**/._*',
-    '!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}',
-    '!node_modules/vue*/**/*'
+    '!node_modules/{async-validator,babel-runtime,batch-processor,cookie,core-js,deepmerge,element-resize-detector,rxjs,erguotou-iview,popper.js,vue*}${/*}',
+    '!**/*.{md,markdown,MD,txt}',
+    '!**/{test.js,license,LICENSE,.jscsrc}',
+    '!**/sample?(s)${/*}'
   ]
   const macImages = [
     '!dist/electron/static/enabled@(Template|Highlight)?(@2x).png',

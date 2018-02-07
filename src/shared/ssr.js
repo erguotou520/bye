@@ -1,12 +1,19 @@
-import Base64 from 'urlsafe-base64'
 import { generateID, isNumber, isObject } from './utils'
 
-function encode (str) {
-  return Base64.encode(Buffer.from(str, 'utf-8'))
+export function encode (str) {
+  return Buffer.from(str, 'utf-8').toString('base64')
+    .replace(/\+/g, '-') // Convert '+' to '-'
+    .replace(/\//g, '_') // Convert '/' to '_'
+    .replace(/=+$/, '') // Remove ending '=')
 }
 
-function decode (str) {
-  return Base64.decode(str).toString('utf-8')
+export function decode (str) {
+  // Add removed at end '='
+  const string = `${str}${Array(5 - str.length % 4).join('=')}`
+  return string
+    .replace(/\-/g, '+') // Convert '-' to '+'
+    .replace(/\_/g, '/') // Convert '_' to '/'
+    .toString('utf-8')
 }
 
 function merge (ssr, target) {
