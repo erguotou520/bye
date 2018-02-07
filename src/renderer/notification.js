@@ -1,5 +1,6 @@
 import { remote } from 'electron'
 import { notificationIcon } from '../shared/icon'
+import { isWin } from '../shared/env'
 
 const HtmlNotification = window.Notification
 const { Notification } = remote.require('electron')
@@ -11,6 +12,7 @@ const isDesktopNotificationSupported = Notification.isSupported()
  * @param {String} title 标题
  */
 export function showHtmlNotification (body, title = '通知') {
+  console.log('using html5 notification')
   new HtmlNotification(title, {
     body: body
   })
@@ -24,7 +26,7 @@ export function showHtmlNotification (body, title = '通知') {
 export function showNotification (body, title = '通知') {
   if (isDesktopNotificationSupported) {
     new Notification({
-      title, body, silent: false, icon: notificationIcon
+      title, body, silent: false, icon: isWin ? notificationIcon : undefined
     }).show()
   } else {
     showHtmlNotification(body, title)
