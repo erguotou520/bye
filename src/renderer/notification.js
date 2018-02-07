@@ -1,10 +1,5 @@
-import { remote } from 'electron'
-import { notificationIcon } from '../shared/icon'
-import { isWin } from '../shared/env'
-
-const HtmlNotification = window.Notification
-const { Notification } = remote.require('electron')
-const isDesktopNotificationSupported = Notification.isSupported()
+import { ipcRenderer } from 'electron'
+import { EVENT_APP_NOTIFY_RENDERER } from '../shared/events'
 
 /**
  * 显示HTML5通知
@@ -13,7 +8,7 @@ const isDesktopNotificationSupported = Notification.isSupported()
  */
 export function showHtmlNotification (body, title = '通知') {
   console.log('using html5 notification')
-  new HtmlNotification(title, {
+  new Notification(title, {
     body: body
   })
 }
@@ -24,11 +19,5 @@ export function showHtmlNotification (body, title = '通知') {
  * @param {String} title 标题
  */
 export function showNotification (body, title = '通知') {
-  if (isDesktopNotificationSupported) {
-    new Notification({
-      title, body, silent: false, icon: isWin ? notificationIcon : undefined
-    }).show()
-  } else {
-    showHtmlNotification(body, title)
-  }
+  ipcRenderer.send(EVENT_APP_NOTIFY_RENDERER, body, title)
 }

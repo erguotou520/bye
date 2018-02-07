@@ -7,6 +7,7 @@ import { updateAppConfig } from './data'
 import { hideWindow } from './window'
 import { importConfigFromClipboard } from './tray-handler'
 import defaultConfig, { mergeConfig } from '../shared/config'
+import { showNotification } from './notification'
 import logger from './logger'
 
 /**
@@ -62,4 +63,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   }
   // 从剪切板导入
   importConfigFromClipboard()
+}).on(events.EVENT_APP_NOTIFY_RENDERER, (e, body, title) => {
+  // 显示来自renderer进程的通知
+  showNotification(body, title)
 })

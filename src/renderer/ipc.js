@@ -8,7 +8,7 @@ import { loadConfigsFromString } from '../shared/ssr'
 /**
  * ipc-render事件
  */
-ipcRenderer.on(events.EVENT_APP_NOTIFY_NOTIFICATION, (e, { title, body }) => {
+ipcRenderer.on(events.EVENT_APP_NOTIFY_MAIN, (e, { title, body }) => {
   // 显示main进程的通知
   showHtmlNotification(body, title)
 }).on(events.EVENT_APP_SCAN_DESKTOP, () => {

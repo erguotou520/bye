@@ -3,7 +3,8 @@
 
 ## 事件列表
 - 系统应用
-  * `app.notify.notification` 由`ipc-main`发出 显示应用通知
+  * `app.notify.main` 由`ipc-main`发出 使用降级的HTML5通知
+  * `app.notify.renderer` 由`ipc-renderer`发出 显示renderer进程的通知
   * `app.error.main` 由`ipc-main`发出 `main`进程报错
   * `app.scan.desktop` 由`ipc-main`发出 扫描桌面二维码
   * `app.show.page` 由`ipc-main`发出 展示某个页面，某个tab

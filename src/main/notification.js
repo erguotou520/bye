@@ -1,6 +1,6 @@
 import { Notification } from 'electron'
 import { sendData } from './window'
-import { EVENT_APP_NOTIFY_NOTIFICATION } from '../shared/events'
+import { EVENT_APP_NOTIFY_MAIN } from '../shared/events'
 import { isWin } from '../shared/env'
 import { notificationIcon } from '../shared/icon'
 
@@ -19,6 +19,6 @@ export function showNotification (body, title = '通知', onClick) {
     if (process.env.NODE_ENV === 'development') {
       console.log('不支持原生通知，将使用HTML5通知')
     }
-    sendData(EVENT_APP_NOTIFY_NOTIFICATION, { title, body })
+    sendData(EVENT_APP_NOTIFY_MAIN, { title, body })
   }
 }

@@ -1,5 +1,8 @@
-// 由`ipc-main`发出 版本升级
-export const EVENT_APP_NOTIFY_NOTIFICATION = 'app.notify.notification'
+// 由`ipc-main`发出 使用HTML5降级通知
+export const EVENT_APP_NOTIFY_MAIN = 'app.notify.main'
+
+// 由`ipc-renderer`发出 显示通知
+export const EVENT_APP_NOTIFY_RENDERER = 'app.notify.renderer'
 
 // 由`ipc-main`发出 `main`进程报错
 export const EVENT_APP_ERROR_MAIN = 'app.error.main'
