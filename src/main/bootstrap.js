@@ -1,7 +1,7 @@
 import path from 'path'
 import { app, dialog } from 'electron'
 import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
-import logger from './logger'
+import logger, { clearLog } from './logger'
 import sudo from 'sudo-prompt'
 import defaultConfig from '../shared/config'
 import { isWin, isMac, isLinux, isOldMacVersion, isPythonInstalled } from '../shared/env'
@@ -82,6 +82,7 @@ async function sudoMacCommand (command) {
  */
 async function init () {
   initIcon()
+  await clearLog()
   await ensureDir(appConfigDir)
   // 判断配置文件是否存在，不存在用默认数据写入
   const configFileExists = await pathExists(appConfigPath)

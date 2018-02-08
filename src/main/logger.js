@@ -46,9 +46,10 @@ export function clearLog () {
             flags: 'w'
           }).write(saved.join('\n'), 'utf-8', resolve)
         })
+      } else {
+        resolve()
       }
     })
   } catch (e) { promise = Promise.reject(e) }
+  return promise
 }
-
-clearLog()
