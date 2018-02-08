@@ -64,7 +64,7 @@ export async function download () {
 // 安装python
 export async function install (msiPath) {
   return new Promise((resolve, reject) => {
-    sudo.exec(`msiexec /i ${msiPath} /passive /forcerestart ADDLOCAL=ALL /qn`, { name: 'ShadowsocksR Client' }, (error, stdout, stderr) => {
+    sudo.exec(`msiexec /i ${msiPath} /passive /promptrestart ADDLOCAL=ALL /qn`, { name: 'ShadowsocksR Client' }, (error, stdout, stderr) => {
       if (error || stderr) {
         reject(error || stderr)
       } else {
