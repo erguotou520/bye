@@ -1,7 +1,8 @@
 import fs from 'fs'
 import path from 'path'
 import { net } from 'electron'
-import { loadConfigsFromString, decode } from './ssr'
+import Base64 from 'urlsafe-base64'
+import { loadConfigsFromString } from './ssr'
 
 const STRING_PROTOTYPE = '[object String]'
 const NUMBER_PROTOTYPE = '[object Number]'
@@ -292,7 +293,7 @@ export function isSubscribeContentValid (content) {
   if (!content) {
     return [false]
   }
-  const decoded = decode(content)
+  const decoded = Base64.decode(content).toString('utf-8')
   const configs = loadConfigsFromString(decoded)
   if (!configs.length) {
     return [false]
