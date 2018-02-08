@@ -44,6 +44,7 @@ bootstrap.then(() => {
   //   app.setAsDefaultProtocolClient('ssr')
   //   app.setAsDefaultProtocolClient('ss')
   // }
+
   if (process.env.NODE_ENV !== 'development') {
     checkUpdate()
   }

@@ -2,7 +2,7 @@ import { net } from 'electron'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { createWriteStream, unlink } from 'fs'
-import sudo from 'sudo-prompt'
+import { exec } from 'child_process'
 import { readyPromise } from './bootstrap'
 import { showNotification } from './notification'
 import { isWin, isPythonInstalled } from '../shared/env'
@@ -64,12 +64,12 @@ export async function download () {
 // 安装python
 export async function install (msiPath) {
   return new Promise((resolve, reject) => {
-    sudo.exec(`msiexec /i ${msiPath} /passive /promptrestart ADDLOCAL=ALL /qn`, { name: 'ShadowsocksR Client' }, (error, stdout, stderr) => {
-      if (error || stderr) {
-        reject(error || stderr)
-      } else {
-        resolve()
-      }
-    })
+    try {
+      const child = exec(`msiexec /i ${msiPath} /passive /promptrestart ADDLOCAL=ALL /qn`)
+      child.stdout.on('data', resolve)
+      child.stderr.on('data', reject)
+    } catch (error) {
+      reject(error)
+    }
   })
 }
