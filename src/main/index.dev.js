@@ -25,8 +25,3 @@ require('electron').app.on('ready', () => {
 
 // Require `main` process to boot app
 require('./index')
-
-// 未捕获的rejections
-process.on('unhandledRejection', (reason, p) => {
-  console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
-})

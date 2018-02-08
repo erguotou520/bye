@@ -18,7 +18,7 @@ const logger = tracer.console({
         fs.createWriteStream(logPath, {
           flags: 'a+'
         }).write(data.output, 'utf8')
-      })
+      }).catch(() => {})
     }
   }
 })
