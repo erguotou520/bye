@@ -1,5 +1,6 @@
 import { app, shell, clipboard, dialog } from 'electron'
-import { readJson, writeJSON } from 'fs-extra'
+import { readJson, writeJson } from 'fs-extra'
+import { join } from 'path'
 import bootstrapPromise, { logPath, appConfigPath } from './bootstrap'
 import { showWindow, sendData } from './window'
 export { openDevtool } from './window'
@@ -55,7 +56,7 @@ export function importConfigFromFile () {
     properties: ['openFile'],
     filters: [{ name: 'Json', extensions: ['json'] }]
   }, pathes => {
-    if (pathes.length === 1) {
+    if (pathes && pathes.length === 1) {
       readJson(pathes[0]).then(fileConfig => {
         updateAppConfig(fileConfig, false, true)
       }).catch(() => {})
@@ -69,8 +70,8 @@ export function exportConfigToFile () {
     title: '选择导出的目录',
     properties: ['openDirectory', 'createDirectory']
   }, pathes => {
-    if (pathes.length === 1) {
-      writeJSON(currentConfig)
+    if (pathes && pathes.length === 1) {
+      writeJson(join(pathes[0], 'gui-config.json'), currentConfig, { spaces: '\t' })
     }
   })
 }

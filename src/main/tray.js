@@ -180,10 +180,10 @@ appConfig$.subscribe(data => {
   if (!changed.length) {
     renderTray(appConfig)
   } else {
-    if (['configs', 'index'].some(key => changed.indexOf(key) > -1)) {
+    if (['configs', 'index', 'enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
       updateTray(appConfig)
-    } else if (['enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
-      updateTray(appConfig)
+    }
+    if (['enable', 'sysProxyMode'].some(key => changed.indexOf(key) > -1)) {
       setTrayIcon(appConfig)
     }
   }
