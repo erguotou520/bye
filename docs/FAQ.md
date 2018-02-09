@@ -39,3 +39,8 @@
   <summary>加密方法、协议、混淆中没有我想设置的选项怎么办？</summary>
   <p>请右击任务栏图标-配置-选项设置...，然后切换到SSR设置选项卡中自行添加。</p>
 </details>
+
+<details>
+  <summary>我的linux系统提示有新版本升级，但是我点击通知并没有跳转到下载页面？</summary>
+  <p>1，建议使用AppImage包。 2，参考<a href="https://github.com/electron/electron/issues/9919">https://github.com/electron/electron/issues/9919</a>&nbsp;以及&nbsp;<a href="https://github.com/electron/electron/issues/8474">https://github.com/electron/electron/issues/8474</a></p>
+</details>
