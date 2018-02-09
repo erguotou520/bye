@@ -11,7 +11,7 @@ export const isLinux = platform === 'linux'
 // python 是否已安装
 export let isPythonInstalled
 try {
-  isPythonInstalled = /^hello$/.test(execSync(`python -c "print 'hello'"`).toString().trim())
+  isPythonInstalled = /^hello$/.test(execSync(`python -c "print('hello')"`).toString().trim())
 } catch (e) {}
 
 // mac版本号
