@@ -21,7 +21,7 @@
 
 ## Telegram交流
 
-[![](https://img.shields.io/badge/Telegram-electron--ssr-blue.svg)](https://t.me/electron_ssr)
+[![](https://img.shields.io/badge/Telegram-electron--ssr-blue.svg)](https://t.me/joinchat/E7ViZhJAZpKtnIJy9WepDA)
 
 ## 环境要求
 
