@@ -1,5 +1,10 @@
+import { shell } from 'electron'
 import { autoUpdater } from 'electron-updater'
+import { exePath } from './bootstrap'
 import { showNotification } from './notification'
+import { isLinux } from '../shared/env'
+import { request } from '../shared/utils'
+import pkg from '../../package.json'
 
 let forceUpdate = false
 
@@ -19,18 +24,48 @@ autoUpdater
     showNotification('应用已完成更新，下次启动将加载最新版本')
   })
 
+export function versionCheck (oldVersion, newVersion) {
+  const oldArr = oldVersion.split('-')
+  const newArr = newVersion.split('-')
+  // 0.11.1 -> 1101
+  // 0.9.2 -> 902
+  // 1.1.2 -> 10102
+  const oldVersionCount = (+oldArr[0]) * 10000 + (+oldArr[1]) * 100 + (+oldArr[2])
+  const newVersionCount = (+newArr[0]) * 10000 + (+newArr[1]) * 100 + (+newArr[2])
+  // old vs new
+  // 0.1.0 vs 0.1.1
+  if (newVersionCount > oldVersionCount) {
+    return true
+  } else if (newVersionCount < oldVersionCount) {
+    // 0.1.1 vs 0.1.0
+    return false
+  } else if (!oldArr[1] && newArr[1]) {
+    // 0.2.0 vs 0.2.0-beta-1
+    return false
+  } else if (!newArr[1] && oldArr[1]) {
+    // 0.2.0-beta-1 vs 0.2.0
+    return true
+  } else {
+    // 0.2.0-beta-1 vs 0.2.0-beta-2
+    return newArr[1] > oldArr[1]
+  }
+}
+
 // 检查更新
 export function checkUpdate (force = false) {
-  forceUpdate = force
-  autoUpdater.checkForUpdates()
-  // request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/app/package.json').then(data => {
-  //   const remotePkg = JSON.parse(data)
-  //   const currentVersion = pkg.version
-  //   const isOutdated = remotePkg.version > currentVersion
-  //   sendData(events.EVENT_APP_NOTIFY_NOTIFICATION, {
-  //     title: '更新通知',
-  //     body: isOutdated ? `最新版本为 v${remotePkg.version}，点击前往下载。` : '当前已是最新版',
-  //     url: isOutdated ? 'https://github.com/erguotou520/electron-ssr/releases' : ''
-  //   })
-  // })
+  if (isLinux && !/\.appImage&/.test(exePath)) {
+    request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/package.json').then(data => {
+      const remotePkg = JSON.parse(data)
+      const currentVersion = pkg.version
+      const isOutdated = versionCheck(currentVersion, remotePkg.version)
+      showNotification(isOutdated ? `最新版本为 v${remotePkg.version}，点击前往下载。` : '当前已是最新版', '通知', () => {
+        if (isOutdated) {
+          shell.openExternal('https://github.com/erguotou520/electron-ssr/releases')
+        }
+      })
+    })
+  } else {
+    forceUpdate = force
+    autoUpdater.checkForUpdates()
+  }
 }

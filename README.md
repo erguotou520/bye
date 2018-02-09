@@ -13,7 +13,7 @@
   ![](docs/assets/scan.jpg)
 - 剪贴板复制、配置文件导入等方式添加配置
 - 支持复制二维码图片(右键菜单)，SSR链接
-<!-- - 支持链接打开应用(仅Mac和Windows)，[因平台限制，请前往该地址点击测试](https://erguotou.github.io/electron-ssr) -->
+- 支持链接打开应用(仅Mac和Windows)，[因平台限制，请前往该地址点击测试](https://erguotou.github.io/electron-ssr)
 - 支持切换系统代理模式:PAC、全局、不代理
 - [内置http_proxy服务](docs/HTTP_PROXY.md)，可在选项中开启或关闭
 - 支持配置项变更

@@ -118,33 +118,34 @@ function release (dir) {
           'deb',
           'rpm',
           'tar.gz',
-          'pacman'
+          'pacman',
+          'appImage'
         ]
       }
     })
   }))
   return x64Promise.then(() => {
-    if (platform === 'win32') {
-      return builder.build(Object.assign({}, baseOptions, {
-        config: Object.assign({}, baseConfig, {
-          win: {
-            icon: 'build/icons/icon.ico',
-            artifactName: '${productName} Setup ${version}-ia32.${ext}',
-            target: [
-              {
-                target: 'nsis',
-                arch: [
-                  'ia32'
-                ]
-              }
-            ]
-          }
-        })
-      }))
-    } else {
-      return Promise.resolve()
-    }
-  }).then(() => {
+    // if (platform === 'win32') {
+    //   return builder.build(Object.assign({}, baseOptions, {
+    //     config: Object.assign({}, baseConfig, {
+    //       win: {
+    //         icon: 'build/icons/icon.ico',
+    //         artifactName: '${productName} Setup ${version}-ia32.${ext}',
+    //         target: [
+    //           {
+    //             target: 'nsis',
+    //             arch: [
+    //               'ia32'
+    //             ]
+    //           }
+    //         ]
+    //       }
+    //     })
+    //   }))
+    // } else {
+    //   return Promise.resolve()
+    // }
+  // }).then(() => {
     console.log(`${BLUE}Done${END}`)
   }).catch(error => {
     console.error(`${YELLOW}Build error: ${error}${END}`)

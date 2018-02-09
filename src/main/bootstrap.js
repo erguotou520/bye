@@ -18,8 +18,7 @@ export const readyPromise = new Promise(resolve => {
 
 // 检查python是否安装
 if (!isPythonInstalled) {
-  dialog.showErrorBox('错误', 'python未安装')
-  app.exit(1)
+  dialog.showErrorBox('错误', 'python未安装，请先安装python否则软件将无法使用')
   // python未安装时自动下载并安装
   // require('./python').init()
 }
@@ -45,7 +44,7 @@ export const pacPath = path.join(appConfigDir, 'pac.txt')
 // 记录上次订阅更新时间的文件
 export const subscribeUpdateFile = path.join(appConfigDir, '.subscribe.update.last')
 // 当前可执行程序的路径
-const exePath = app.getPath('exe')
+export const exePath = app.getPath('exe')
 // windows sysproxy.exe文件的路径
 let _winToolPath
 if (isWin) {

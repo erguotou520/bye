@@ -11,8 +11,6 @@ import { startProxy } from './proxy'
 import { showNotification } from './notification'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
-// import { request } from '../shared/utils'
-// import pkg from '../../package.json'
 
 // 切换启用状态
 export function toggleEnable () {

@@ -1,4 +1,4 @@
-import { app, ipcMain } from 'electron'
+import { ipcMain } from 'electron'
 import { readJsonSync } from 'fs-extra'
 import downloadGitRepo from 'download-git-repo'
 import * as events from '../shared/events'
@@ -9,6 +9,7 @@ import { importConfigFromClipboard } from './tray-handler'
 import defaultConfig, { mergeConfig } from '../shared/config'
 import { showNotification } from './notification'
 import logger from './logger'
+import pkg from '../../package.json'
 
 /**
  * ipc-main事件
@@ -31,7 +32,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   e.returnValue = {
     config: stored,
     meta: {
-      version: app.getVersion(),
+      version: pkg.version,
       defaultSSRDownloadDir
     }
   }
