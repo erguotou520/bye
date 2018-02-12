@@ -8,6 +8,8 @@ branches:
     - master
 
 # skip_non_tags: true
+only_commits:
+  message: /^trigger ci$/
 
 image: Visual Studio 2017
 platform:

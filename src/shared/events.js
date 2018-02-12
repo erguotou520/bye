@@ -31,7 +31,7 @@ export const EVENT_SSR_DOWNLOAD_MAIN = 'ssr.download.main'
 // 由`ipc-main`发出 更新订阅服务器
 export const EVENT_SUBSCRIBE_UPDATE_MAIN = 'subscribe.update.main'
 
-// 由`ipc-render`发出 从剪切板添加配置
+// 由`ipc-renderer`发出 从剪切板添加配置
 export const EVENT_CONFIG_COPY_CLIPBOARD = 'config.copy.board'
 
 // 由`ipc-main`发出 同步`rx`数据

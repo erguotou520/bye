@@ -1,5 +1,7 @@
 # Commented sections below can be used to run tests on the CI server
 # https://simulatedgreg.gitbooks.io/electron-vue/content/en/testing.html#on-the-subject-of-ci-testing
+on:
+  condition: "$TRAVIS_COMMIT_MESSAGE =~ ^trigger ci$"
 osx_image: xcode8.3
 sudo: required
 dist: trusty
