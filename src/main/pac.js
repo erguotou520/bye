@@ -43,8 +43,8 @@ function readPac () {
 /**
  * pac server
  */
-export async function serverPac (appConfig) {
-  if (appConfig.configs && appConfig.configs[appConfig.index]) {
+export async function serverPac (appConfig, isProxyStarted) {
+  if (isProxyStarted) {
     const host = currentConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
     const port = appConfig.pacPort !== undefined ? appConfig.pacPort : currentConfig.pacPort || 1240
     isHostPortValid(host, port).then(() => {
@@ -120,14 +120,14 @@ export async function stopPacServer () {
 
 // 监听配置变化
 appConfig$.subscribe(data => {
-  const [appConfig, changed] = data
+  const [appConfig, changed, , isProxyStarted, isOldProxyStarted] = data
   // 初始化
   if (changed.length === 0) {
-    serverPac(appConfig)
+    serverPac(appConfig, isProxyStarted)
   } else {
-    if (changed.indexOf('pacPort') > -1) {
+    if (changed.indexOf('pacPort') > -1 || isProxyStarted !== isOldProxyStarted) {
       stopPacServer().then(() => {
-        serverPac(appConfig)
+        serverPac(appConfig, isProxyStarted)
       })
     }
   }

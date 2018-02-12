@@ -42,10 +42,15 @@ const source = Observable.create(observe => {
   promise = init().then(data => {
     currentConfig = data
     isFromRenderer = false
-    // 第一个参数为当前配置对象，第二个参数为变更的字段数组
-    observe.next([data, []])
+    // 第一个参数为当前配置对象，第二个参数为变更的字段数组，第三个参数为旧配置，第四个参数为当前配置对应是否开启了代理，第五个参数为旧配置对应是否开启了代理
+    observe.next([data, [], null, isProxyStarted(data), false])
   })
 })
+
+// 当前是否已选择某节点，即socks代理是否选中比启用
+export function isProxyStarted (appConfig) {
+  return !!(appConfig.enable && appConfig.httpProxyEnable && appConfig.configs && appConfig.configs[appConfig.index])
+}
 
 /**
  * 统一使用该接口从外部更新应用配置
@@ -58,7 +63,7 @@ export function updateAppConfig (targetConfig, fromRenderer = false, forceAppend
     const oldConfig = clone(currentConfig)
     configMerge(currentConfig, targetConfig, forceAppendArray)
     isFromRenderer = fromRenderer
-    _observe.next([currentConfig, changedKeys, oldConfig])
+    _observe.next([currentConfig, changedKeys, oldConfig, isProxyStarted(currentConfig), isProxyStarted(oldConfig)])
   }
 }
 
@@ -67,13 +72,7 @@ export function updateAppConfig (targetConfig, fromRenderer = false, forceAppend
  * @param {Array} configs 要添加的配置数组
  */
 export function addConfigs (configs) {
-  if (!isArray(configs)) {
-    configs = [configs]
-  }
-  const clone = currentConfig.configs.slice()
-  configMerge(currentConfig, { configs: clone.concat(configs) })
-  isFromRenderer = false
-  _observe.next([currentConfig, ['configs'], configMerge(currentConfig, clone)])
+  updateAppConfig({ configs: currentConfig.configs.concat(isArray(configs) ? configs : [configs]) }, false, true)
 }
 
 export const appConfig$ = source.multicast(subject).refCount()

@@ -8,13 +8,14 @@ import { hideWindow } from './window'
 import { importConfigFromClipboard } from './tray-handler'
 import defaultConfig, { mergeConfig } from '../shared/config'
 import { showNotification } from './notification'
+import { sendData } from './window'
 import logger from './logger'
 import pkg from '../../package.json'
 
 /**
  * ipc-main事件
  */
-ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
+ipcMain.on(events.EVENT_APP_ERROR_RENDERER, e => {
   // 渲染进程报错
   logger.error(e)
 }).on(events.EVENT_APP_HIDE_WINDOW, () => {
@@ -68,3 +69,11 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDER, e => {
   // 显示来自renderer进程的通知
   showNotification(body, title)
 })
+
+/**
+ * 将main进程的错误在renderer进程显示出来
+ * @param {String|Object} err 错误内容
+ */
+export function showMainError (err) {
+  sendData(events.EVENT_APP_ERROR_MAIN, err)
+}

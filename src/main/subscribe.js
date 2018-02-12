@@ -89,14 +89,12 @@ export function stopTask () {
 
 // 监听配置变化
 appConfig$.subscribe(data => {
-  const [appConfig, changed, oldConfig] = data
+  const [appConfig, changed] = data
   // 初始化
   if (changed.length === 0) {
     startTask(appConfig, true)
   } else {
     if (['autoUpdateSubscribes', 'subscribeUpdateInterval'].some(key => changed.indexOf(key) > -1)) {
-      startTask(appConfig)
-    } else if (changed.indexOf('serverSubscribes') > -1 && (!appConfig.serverSubscribes.length) || !oldConfig.serverSubscribes.length) {
       startTask(appConfig)
     }
   }

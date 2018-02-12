@@ -84,12 +84,21 @@ export function startProxy (mode) {
 
 // 监听配置变化
 appConfig$.subscribe(data => {
-  const [appConfig, changed] = data
-  if (appConfig.sysProxyMode === 1 && (changed.length === 0 || changed.indexOf('pacPort') > -1)) {
-    // 初始化或者pacPort变更时
-    setProxyToPac(`http://127.0.0.1:${appConfig.pacPort}/proxy.pac`)
-  } else if (appConfig.sysProxyMode === 2 && (changed.length === 0 || changed.indexOf('localPort') > -1)) {
-    // 初始化或者localPort变更时
-    setProxyToGlobal('127.0.0.1', currentConfig.localPort)
+  const [appConfig, changed, , isProxyStarted] = data
+  // 必须得有节点选中
+  if (isProxyStarted) {
+    if (!changed.length) {
+      startProxy(appConfig.sysProxyMode)
+    } else if (isProxyStarted) {
+      if (appConfig.sysProxyMode === 1 && changed.indexOf('pacPort') > -1) {
+        // pacPort变更时
+        startProxy(1)
+      } else if (appConfig.sysProxyMode === 2 && changed.indexOf('localPort')) {
+        // localPort变更时
+        startProxy(2)
+      }
+    }
+  } else if (changed.length) {
+    setProxyToNone()
   }
 })

@@ -56,7 +56,7 @@ function release (dir) {
   const baseConfig = {
     // electronVersion
     // afterPack
-    productName: 'ShadowsocksR客户端',
+    productName: 'electron-ssr',
     appId: 'me.erguotou.ssr',
     compression: 'maximum',
     directories: {

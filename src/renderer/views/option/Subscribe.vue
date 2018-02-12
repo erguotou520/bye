@@ -7,7 +7,7 @@
       <div class="ml-auto flex-inline flex-ai-center">
         <i-input v-show="showNewUrl" class="mr-2 url-input" :class="{'input-error': urlError}"
           v-model="url" placeholder="请输入合法的URL并回车" icon="plus" ref="input"
-          @keyup.enter.native="save" @keyup.esc.native="cancel"/>
+          @keyup.enter.native="save" @keyup.esc.native="cancel" @on-blur="cancel"/>
         <i-checkbox :value="appConfig.autoUpdateSubscribes" @on-change="onUpdateChange">自动更新</i-checkbox>
         <div v-if="appConfig.autoUpdateSubscribes" class="flex-inline flex-ai-center cycle-wrapper">
           <span>每&nbsp;</span>
@@ -52,9 +52,18 @@ export default {
           let element
           if (isEditing) {
             element = h('i-input', {
+              ref: 'url',
               props: {
                 value: this.editingRowUrl,
                 placeholder: '请输入新的订阅服务器的URL'
+              },
+              attrs: {
+                id: 'editing-input'
+              },
+              on: {
+                'on-blur' () {
+                  self.cancelEditing()
+                }
               },
               nativeOn: {
                 keyup (e) {
@@ -138,13 +147,14 @@ export default {
       this.selectedRows = rows
     },
     onRowDBClick (row, index) {
-      if (this.editingRowIndex > -1) {
-        // 有正在编辑项
-        this.$nextTick(() => this.$refs.url.focus)
-      } else {
+      if (this.editingRowIndex < 0) {
         this.editingRowIndex = index
         this.editingRowUrl = row.URL
       }
+      this.$nextTick(() => {
+        // hack，使用ref不行...
+        document.getElementById('editing-input').querySelector('input').focus()
+      })
     },
     onUpdateChange (v) {
       this.updateConfig({ autoUpdateSubscribes: v })

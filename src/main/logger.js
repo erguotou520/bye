@@ -17,7 +17,7 @@ const logger = tracer.console({
       }).then(() => {
         fs.createWriteStream(logPath, {
           flags: 'a+'
-        }).write(data.output, 'utf8')
+        }).write(data.output.endsWith('\n') ? data.output : data.output + '\n', 'utf8')
       }).catch(() => {})
     }
   }

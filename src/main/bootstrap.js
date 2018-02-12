@@ -31,6 +31,15 @@ if (process.env.NODE_ENV !== 'development') {
   global.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
 }
 
+// 未捕获的rejections
+process.on('unhandledRejection', (reason, p) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
+  } else {
+    logger.log(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`)
+  }
+})
+
 // 应用配置存储目录
 export const appConfigDir = app.getPath('userData')
 // 应用配置存储路径
@@ -81,7 +90,6 @@ async function sudoMacCommand (command) {
  */
 async function init () {
   initIcon()
-  await clearLog()
   await ensureDir(appConfigDir)
   // 判断配置文件是否存在，不存在用默认数据写入
   const configFileExists = await pathExists(appConfigPath)
@@ -90,6 +98,7 @@ async function init () {
   }
   await ensureDir(path.join(appConfigDir, 'logs'))
   await ensureFile(logPath)
+  await clearLog()
 
   // 初始化确保文件存在, 10.11版本以下不支持该功能
   if (isMac && !isOldMacVersion && !await pathExists(macToolPath)) {

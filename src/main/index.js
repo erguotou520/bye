@@ -134,12 +134,3 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
-// 未捕获的rejections
-process.on('unhandledRejection', (reason, p) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
-  } else {
-    logger.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
-  }
-})

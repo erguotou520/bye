@@ -6,6 +6,7 @@ import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
 import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
+import { showMainError } from './ipc'
 // import { pythonPromise } from './python'
 
 let child
@@ -24,7 +25,13 @@ export function runCommand (command, params) {
     }
     child = execFile(command, params)
     child.stdout.on('data', logger.log)
-    child.stderr.on('data', logger.error)
+    child.stderr.on('data', err => {
+      logger.error(err)
+      // 只显示error级别的日志
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ERROR/.test(err)) {
+        showMainError(err)
+      }
+    })
     // pythonPromise.then(() => {
     //   const commandStr = `${command} ${params.join(' ')}`
     //   if (process.env.NODE_ENV === 'development') {
@@ -154,8 +161,14 @@ appConfig$.subscribe(data => {
         runWithConfig(appConfig)
       }
       if (changed.indexOf('configs') > -1) {
-        // 只有选中的配置发生改变时才重新运行
-        if (!isConfigEqual(appConfig.configs[appConfig.index], oldConfig.configs[oldConfig.index])) {
+        // configs被清空
+        if (!appConfig.configs.length) {
+          stop()
+        } else if (!oldConfig.configs.length) {
+          // configs由空到有
+          runWithConfig(appConfig)
+        } else if (!isConfigEqual(appConfig.configs[appConfig.index], oldConfig.configs[oldConfig.index])) {
+          // 只有选中的配置发生改变时才重新运行
           runWithConfig(appConfig)
         }
       }
