@@ -73,7 +73,8 @@ export default new Vuex.Store({
     editingGroup: { show: false, title: '', updated: false },
     methods,
     protocols,
-    obfses
+    obfses,
+    clientErrors: []
   },
   mutations: {
     // 更新应用配置
@@ -138,6 +139,12 @@ export default new Vuex.Store({
     updateObfses (state, obfses) {
       state.obfses = obfses
       ls.setItem(STORE_KEY_SSR_OBFSES, JSON.stringify(obfses))
+    },
+    pushClientErrors (state, err) {
+      state.clientErrors.push(err)
+    },
+    clearClientErrors (state) {
+      state.clientErrors = []
     }
   },
   actions: {

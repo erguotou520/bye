@@ -118,7 +118,7 @@ app.on('will-quit', e => {
     console.log('will-quit')
   }
   e.preventDefault()
-  stopCommand().then(() => {
+  stopCommand(true).then(() => {
     destroyWindow()
     destroyTray()
     stopHttpProxyServer()

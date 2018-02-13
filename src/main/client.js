@@ -7,6 +7,8 @@ import { isHostPortValid } from './port'
 import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
 import { showMainError } from './ipc'
+import { showNotification } from './notification'
+import { showWindow } from './window'
 // import { pythonPromise } from './python'
 
 let child
@@ -28,7 +30,10 @@ export function runCommand (command, params) {
     child.stderr.on('data', err => {
       logger.error(err)
       // 只显示error级别的日志
-      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ERROR/.test(err)) {
+      if (/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ERROR|Traceback|Exception]/.test(err)) {
+        showNotification('ssr运行出错，点击查看原因', '错误', () => {
+          showWindow()
+        })
         showMainError(err)
       }
     })
@@ -104,7 +109,7 @@ export function run (appConfig) {
 /**
  * 结束command的后台运行
  */
-export async function stop () {
+export async function stop (force = false) {
   if (child && child.pid) {
     if (process.env.NODE_ENV === 'development') {
       console.log('Kill python client')
@@ -114,8 +119,17 @@ export async function stop () {
     return new Promise((resolve, reject) => {
       child.once('close', () => {
         child = null
+        if (timeout) {
+          clearTimeout(timeout)
+        }
         resolve()
       })
+      const timeout = setTimeout(() => {
+        // 5m内如果还没有关掉仍然resolve
+        logger.error(`进程 ${child.pid} 可能无法关闭`)
+        !force && showNotification(`进程 ${child.pid} 可能无法关闭，尝试手动关闭`)
+        resolve()
+      }, 5000)
       child.kill()
       // treeKill(child.pid, 'SIGKILL', err => {
       //   if (err) {
