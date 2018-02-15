@@ -4,11 +4,9 @@ import { execFile } from 'child_process'
 import { dialog } from 'electron'
 import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import logger from './logger'
+import logger, { clientLog } from './logger'
 import { isConfigEqual } from '../shared/utils'
-import { showMainError } from './ipc'
 import { showNotification } from './notification'
-import { showWindow } from './window'
 // import { pythonPromise } from './python'
 
 let child
@@ -26,17 +24,8 @@ export function runCommand (command, params) {
       logger.debug('run command: %s', commandStr)
     }
     child = execFile(command, params)
-    child.stdout.on('data', logger.log)
-    child.stderr.on('data', err => {
-      logger.error(err)
-      // 只显示error级别的日志
-      if (/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ERROR|Traceback|Exception]/.test(err)) {
-        showNotification('ssr运行出错，点击查看原因', '错误', () => {
-          showWindow()
-        })
-        showMainError(err)
-      }
-    })
+    child.stdout.on('data', clientLog.log)
+    child.stderr.on('data', clientLog.error)
     // pythonPromise.then(() => {
     //   const commandStr = `${command} ${params.join(' ')}`
     //   if (process.env.NODE_ENV === 'development') {

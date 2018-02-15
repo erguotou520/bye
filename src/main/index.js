@@ -9,7 +9,7 @@ import './ipc'
 import { stopPacServer } from './pac'
 import { stopHttpProxyServer } from './http-proxy'
 import { stop as stopCommand, runWithConfig } from './client'
-import { setProxyToNone } from './proxy'
+import { setProxyToNone, startProxy } from './proxy'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import { startTask, stopTask } from './subscribe'
 import logger from './logger'
@@ -89,14 +89,16 @@ bootstrap.then(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log('power suspend')
     }
-    stopCommand()
+    stopCommand(true)
     stopTask()
+    setProxyToNone()
   }).on('resume', () => {
     // 恢复
     if (process.env.NODE_ENV === 'development') {
       console.log('power resumed')
     }
     runWithConfig(currentConfig)
+    startProxy()
     startTask(currentConfig)
   })
 })

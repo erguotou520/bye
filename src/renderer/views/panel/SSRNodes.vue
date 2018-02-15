@@ -194,8 +194,9 @@ export default {
     // 删除分组
     removeGroup () {
       const clone = this.appConfig.configs.slice()
-      this.updateConfigs(clone.filter(config => config.group !== this.selectedGroup))
+      this.updateConfigs(clone.filter(config => config.group !== this.selectedGroupName))
       this.setSelected('', this.selectedConfig ? this.selectedConfig.id : '')
+      this.updateEditingGroup({ show: false })
     },
     // 删除
     remove () {

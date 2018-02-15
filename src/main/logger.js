@@ -25,6 +25,11 @@ export default tracer.console({
   transport
 })
 
+export const clientLog = tracer.console({
+  format: '{{message}}',
+  transport
+})
+
 /**
  * 清除日志文件，防止溢出
  */
