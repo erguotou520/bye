@@ -45,7 +45,7 @@ ipcRenderer.on(events.EVENT_APP_NOTIFY_MAIN, (e, { title, body }) => {
 }).on(events.EVENT_RX_SYNC_MAIN, (e, appConfig) => {
   // 同步数据
   console.log('received sync data: %o', appConfig)
-  store.commit('updateConfig', appConfig)
+  store.commit('updateConfig', [appConfig])
 })
 
 /**
@@ -60,7 +60,7 @@ export function syncConfig (appConfig) {
 /**
  * 主动获取初始化数据
  */
-function getInitConfig () {
+export function getInitConfig () {
   console.log('get init config data')
   const res = ipcRenderer.sendSync(events.EVENT_APP_WEB_INIT)
   store.dispatch('initConfig', res)
@@ -72,6 +72,3 @@ function getInitConfig () {
 export function hideWindow () {
   ipcRenderer.send(events.EVENT_APP_HIDE_WINDOW)
 }
-
-// 启动应用时获取初始化数据
-getInitConfig()

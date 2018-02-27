@@ -94,7 +94,11 @@ export function configMerge (to, from, appendArray = false) {
     const value = from[key]
     switch (protoString(value)) {
       case OBJECT_PROTOTYPE:
-        merge(to[key], value)
+        if (to[key] === undefined) {
+          to[key] = value
+        } else {
+          configMerge(to[key], value, appendArray)
+        }
         break
       // 配置数组采用直接覆盖的形式
       case ARRAY_PROTOTYPE:
@@ -118,6 +122,10 @@ export function configMerge (to, from, appendArray = false) {
  */
 export function getUpdatedKeys (appConfig, targetConfig) {
   return Object.keys(targetConfig).filter(key => {
+    // 如果原对象类型和新的类型不一致直接返回true
+    if (protoString(appConfig[key]) !== protoString(value)) {
+      return true
+    }
     const value = targetConfig[key]
     switch (protoString(value)) {
       case OBJECT_PROTOTYPE:

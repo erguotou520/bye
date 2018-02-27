@@ -1,5 +1,5 @@
 <template>
-  <a href @click.prevent="open">{{href}}</a>
+  <a href @click.prevent="open"><slot>{{href}}</slot></a>
 </template>
 <script>
 import { shell } from 'electron'

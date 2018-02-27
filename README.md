@@ -34,6 +34,8 @@
 ## 应用截图
 
 ![](docs/assets/main.jpg)
+![](docs/assets/settings.jpg)
+![](docs/assets/ssr-settings.jpg)
 ![](docs/assets/subscribe.jpg)
 ![](docs/assets/tray.jpg)
 

@@ -77,13 +77,16 @@ export default new Vuex.Store({
   },
   mutations: {
     // 更新应用配置
-    updateConfig (state, targetConfig) {
+    updateConfig (state, [targetConfig, sync = false]) {
       const changed = getUpdatedKeys(state.appConfig, targetConfig)
       if (changed.length) {
         const extractConfig = {}
         changed.forEach(key => { extractConfig[key] = targetConfig[key] })
         merge(state.appConfig, extractConfig)
         console.log('config updated: ', extractConfig)
+        if (sync) {
+          syncConfig(extractConfig)
+        }
       }
     },
     // 更新应用元数据
@@ -142,7 +145,7 @@ export default new Vuex.Store({
   },
   actions: {
     initConfig ({ commit }, { config, meta }) {
-      commit('updateConfig', config)
+      commit('updateConfig', [config])
       commit('updateMeta', meta)
       if (meta.version) {
         document.title = `${document.title} v${meta.version}`
@@ -161,7 +164,7 @@ export default new Vuex.Store({
         index = targetConfig.configs.findIndex(config => config.id === getters.selectedConfig.id)
       }
       const correctConfig = (index !== undefined && index > -1) ? { ...targetConfig, index } : targetConfig
-      commit('updateConfig', correctConfig)
+      commit('updateConfig', [correctConfig, true])
       syncConfig(correctConfig)
     },
     updateConfigs ({ dispatch }, _configs) {
