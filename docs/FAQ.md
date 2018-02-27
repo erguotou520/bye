@@ -32,7 +32,7 @@
 
 <details>
   <summary>错误日志Exception: libsodium not found</summary>
-  <p>该错误是因为当前系统缺少libsodium库导致，Mac下使用<code>brew install libsodium</code>安装，Ubuntu可参考<a>https://gist.github.com/jonathanpmartins/2510f38abee1e65c6d92</a>安装，其它系统请自行搜索。</p>
+  <p>该错误是因为当前系统缺少libsodium库导致，Mac下使用<code>brew install libsodium</code>安装，Ubuntu可参考<a>https://gist.github.com/jonathanpmartins/2510f38abee1e65c6d92</a>安装，Windows前往<a href="https://download.libsodium.org/libsodium/releases/">https://download.libsodium.org/libsodium/releases/</a>下载<code>libsodium-{version}-msvc.zip</code>文件并解压，复制解压目录中的<code>libsodium.dll</code>至<code>C:\windows\system32</code>目录（注意dll文件是64的还是32的）,其它系统请自行搜索。</p>
 </details>
 
 <details>
