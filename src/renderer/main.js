@@ -3,7 +3,9 @@ import './components'
 import './ipc'
 import store from './store'
 import App from './App'
-import { getInitConfig } from './ipc'
+import Mousetrap from 'mousetrap'
+import { getInitConfig, toggleMenu } from './ipc'
+import { isLinux } from '../shared/env'
 
 Vue.config.productionTip = false
 
@@ -15,3 +17,9 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+if (isLinux) {
+  Mousetrap.bind(['command+shift+b', 'ctrl+shift+b'], () => {
+    toggleMenu()
+  })
+}

@@ -91,7 +91,7 @@ function generateMenus (appConfig) {
 }
 
 // 切换代理
-function changeProxy (e, mode, appConfig) {
+export function changeProxy (e, mode, appConfig) {
   if (mode === appConfig.sysProxyMode) {
     e.checked = true
   } else {

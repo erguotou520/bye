@@ -21,7 +21,7 @@ export function runCommand (command, params) {
     if (process.env.NODE_ENV === 'development') {
       console.log('run command: %s', commandStr)
     } else {
-      logger.debug('run command: %s', commandStr)
+      logger.debug('run command: %s', commandStr.replace(/-k [\d\w]* /, ''))
     }
     child = execFile(command, params)
     child.stdout.on('data', clientLog.log)

@@ -22,6 +22,9 @@ export const EVENT_APP_SHOW_PAGE = 'app.show.page'
 // 由`ipc-renderer`发出 用于获取系统初始化数据
 export const EVENT_APP_WEB_INIT = 'app.init.web'
 
+// 由`ipc-main`发出 切换menu显示
+export const EVENT_APP_TOGGLE_MENU = 'app.toggle.menu'
+
 // 由`ipc-renderer`发出 自动下载ssr项目并设置目录
 export const EVENT_SSR_DOWNLOAD_RENDERER = 'ssr.download.renderer'
 

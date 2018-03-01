@@ -4,7 +4,7 @@ import bootstrap from './bootstrap'
 import { isQuiting, appConfig$, currentConfig, addConfigs } from './data'
 import { destroyTray } from './tray'
 import { checkUpdate } from './updater'
-import renderMenu from './menu'
+import './menu'
 import './ipc'
 import { stopPacServer } from './pac'
 import { stopHttpProxyServer } from './http-proxy'
@@ -13,6 +13,7 @@ import { setProxyToNone, startProxy } from './proxy'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import { startTask, stopTask } from './subscribe'
 import logger from './logger'
+import './shortcut'
 import { loadConfigsFromString } from '../shared/ssr'
 import { isMac, isWin } from '../shared/env'
 
@@ -65,8 +66,6 @@ bootstrap.then(() => {
       if (!appConfig.configs.length || !appConfig.ssrPath) {
         showWindow()
       }
-      renderMenu()
-      // renderTray(appConfig)
     }
     if (!changed.length || changed.indexOf('autoLaunch') > -1) {
       // 初始化或者选项变更时

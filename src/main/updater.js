@@ -1,10 +1,9 @@
-import { shell } from 'electron'
+import { app, shell } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { exePath } from './bootstrap'
 import { showNotification } from './notification'
 import { isLinux } from '../shared/env'
 import { request } from '../shared/utils'
-import pkg from '../../package.json'
 
 let forceUpdate = false
 
@@ -57,7 +56,7 @@ export function checkUpdate (force = false) {
   if (isLinux && !/\.appImage&/.test(exePath)) {
     request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/package.json').then(data => {
       const remotePkg = JSON.parse(data)
-      const currentVersion = pkg.version
+      const currentVersion = app.getVersion()
       const isOutdated = versionCheck(currentVersion, remotePkg.version)
       if (isOutdated) {
         showNotification(`最新版本为 v${remotePkg.version}，点击前往下载。`, '通知', () => {

@@ -67,6 +67,13 @@ export function getInitConfig () {
 }
 
 /**
+ * 切换menu显示
+ */
+export function toggleMenu () {
+  ipcRenderer.send(events.EVENT_APP_TOGGLE_MENU)
+}
+
+/**
  * 隐藏窗口
  */
 export function hideWindow () {

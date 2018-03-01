@@ -76,6 +76,7 @@ export function hideWindow () {
 export function destroyWindow () {
   if (mainWindow) {
     mainWindow.destroy()
+    mainWindow = null
   }
 }
 

@@ -1,4 +1,4 @@
-import { ipcMain } from 'electron'
+import { app, ipcMain } from 'electron'
 import { readJsonSync } from 'fs-extra'
 import downloadGitRepo from 'download-git-repo'
 import * as events from '../shared/events'
@@ -9,8 +9,8 @@ import { importConfigFromClipboard } from './tray-handler'
 import defaultConfig, { mergeConfig } from '../shared/config'
 import { showNotification } from './notification'
 import { sendData } from './window'
+import { toggleMenu } from './menu'
 import logger from './logger'
-import pkg from '../../package.json'
 
 /**
  * ipc-main事件
@@ -33,7 +33,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDERER, e => {
   e.returnValue = {
     config: stored,
     meta: {
-      version: pkg.version,
+      version: app.getVersion(),
       defaultSSRDownloadDir
     }
   }
@@ -68,6 +68,9 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDERER, e => {
 }).on(events.EVENT_APP_NOTIFY_RENDERER, (e, body, title) => {
   // 显示来自renderer进程的通知
   showNotification(body, title)
+}).on(events.EVENT_APP_TOGGLE_MENU, () => {
+  // 切换menu显示
+  toggleMenu()
 })
 
 /**
