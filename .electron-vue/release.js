@@ -20,6 +20,7 @@ function release (dir) {
     '!dist/electron/static/plane.svg',
     '!node_modules/{babel-runtime,batch-processor,cookie,core-js,deepmerge,element-resize-detector,erguotou-iview,mousetrap,rxjs,popper.js,qr-image,vue*}${/*}',
     '!node_modules/unbzip2-stream/dist${/*}',
+    'node_modules/mousetrap/{mousetrap.js,package.json}',
     '!**/*.{md,markdown,MD,txt}',
     '!**/{test.js,license,LICENSE,.jscsrc}',
     '!**/sample?(s)${/*}'
