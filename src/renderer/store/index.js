@@ -165,7 +165,6 @@ export default new Vuex.Store({
       }
       const correctConfig = (index !== undefined && index > -1) ? { ...targetConfig, index } : targetConfig
       commit('updateConfig', [correctConfig, true])
-      syncConfig(correctConfig)
     },
     updateConfigs ({ dispatch }, _configs) {
       const configs = _configs.map(config => {
