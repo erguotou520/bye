@@ -36,7 +36,9 @@ const isSecondInstance = app.makeSingleInstance((argv, workingDirectory) => {
 })
 
 if (isSecondInstance) {
-  app.quit()
+  // cannot find module '../dialog'
+  // https://github.com/electron/electron/issues/8862#issuecomment-294303518
+  app.exit()
 }
 
 bootstrap.then(() => {
@@ -88,9 +90,9 @@ bootstrap.then(() => {
     if (process.env.NODE_ENV === 'development') {
       console.log('power suspend')
     }
-    stopCommand(true)
     stopTask()
     setProxyToNone()
+    stopCommand(true)
   }).on('resume', () => {
     // 恢复
     if (process.env.NODE_ENV === 'development') {
@@ -119,13 +121,13 @@ app.on('will-quit', e => {
     console.log('will-quit')
   }
   e.preventDefault()
+  stopTask()
+  setProxyToNone()
+  destroyTray()
+  destroyWindow()
+  stopHttpProxyServer()
+  stopPacServer()
   stopCommand(true).then(() => {
-    destroyWindow()
-    destroyTray()
-    stopHttpProxyServer()
-    stopPacServer()
-    stopTask()
-    setProxyToNone()
     app.exit(0)
   })
 })

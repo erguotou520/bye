@@ -32,10 +32,8 @@
 </template>
 <script>
 import { mapActions } from 'vuex'
-import { remote } from 'electron'
 import { isSSRPathAvaliable, debounce } from '../../../shared/utils'
-
-const { dialog } = remote.require('electron')
+import { openDialog } from '../../ipc'
 export default {
   data () {
     const appConfig = this.$store.state.appConfig
@@ -90,7 +88,7 @@ export default {
     },
     // 选择目录
     selectPath () {
-      const path = dialog.showOpenDialog({
+      const path = openDialog({
         properties: ['openDirectory']
       })
       if (path && path.length) {
