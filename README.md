@@ -66,7 +66,7 @@ npm run dev
 npm run build
 
 # 单元测试
-npm test
+# npm test
 
 # 代码风格检查
 npm run lint
