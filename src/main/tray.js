@@ -119,7 +119,7 @@ function getTooltip (appConfig) {
   const selectedConfig = appConfig.configs[appConfig.index]
   if (selectedConfig) {
     arr.push('\n')
-    arr.push(`${selectedConfig.group ? selectedConfig.group + ' - ' : ''}${selectedConfig.remarks || (selectedConfig.server + ':' + selectedConfig.port)}`)
+    arr.push(`${selectedConfig.group ? selectedConfig.group + ' - ' : ''}${selectedConfig.remarks || (selectedConfig.server + ':' + selectedConfig.server_port)}`)
   }
   return arr.join('')
 }
