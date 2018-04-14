@@ -88,5 +88,25 @@
     "webpack-dev-server": "^2.7.1",
     "webpack-hot-middleware": "^2.18.2",
     "webpack-merge": "^4.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "parser": "babel-eslint",
+    "parserOptions": {
+      "sourceType": "module",
+      "allowImportExportEverywhere": false
+    },
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "extends": ["plugin:vue-libs/recommended"],
+    "globals": {
+      "__static": true
+    },
+    "plugins": ["html"],
+    "rules": {
+      "no-debugger": 2
+    }
   }
 }
