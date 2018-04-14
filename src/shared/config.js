@@ -23,6 +23,8 @@ const defaultConfig = {
   httpProxyEnable: true,
   // 是否开启快捷键
   shortcutEnable: false,
+  // 默认快捷键
+  shortcut: 'CommandOrControl+Shift+W',
   // http proxy端口
   httpProxyPort: 12333,
   // 是否自动更新订阅服务器
