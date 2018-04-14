@@ -15,6 +15,9 @@
         <i-form-item class="flex-1" label="http代理">
           <i-checkbox v-model="form.httpProxyEnable" @on-change="update('httpProxyEnable')"/>
         </i-form-item>
+        <i-form-item class="flex-1" label="开启快捷键">
+          <i-checkbox v-model="form.shortcutEnable" @on-change="update('shortcutEnable')"/>
+        </i-form-item>
       </div>
       <div class="flex">
         <i-form-item class="flex-1" label="pac端口">
@@ -45,6 +48,7 @@ export default {
         localPort: appConfig.localPort,
         pacPort: appConfig.pacPort,
         httpProxyEnable: appConfig.httpProxyEnable,
+        shortcutEnable: appConfig.shortcutEnable,
         httpProxyPort: appConfig.httpProxyPort
       },
       rules: {
