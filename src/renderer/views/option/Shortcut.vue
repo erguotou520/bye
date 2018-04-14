@@ -66,7 +66,6 @@ export default {
       }
     },
     keyup: function (e) {
-      console.log(e)
       if (e.code.includes('Key')) {
         this.keyDown[e.code.replace('Key', '')] = false
       }
