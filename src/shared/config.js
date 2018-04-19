@@ -41,7 +41,7 @@ export default defaultConfig
 // 合并默认配置，做好配置升级
 export function mergeConfig (appConfig) {
   Object.keys(defaultConfig).forEach(key => {
-    if (appConfig[key] === undefined) {
+    if (appConfig[key] === undefined || typeof appConfig[key] !== typeof defaultConfig[key]) {
       appConfig[key] = defaultConfig[key]
     } else if (typeof appConfig[key] === 'object') {
       for (const index in appConfig[key]) {
