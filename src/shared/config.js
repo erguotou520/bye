@@ -40,6 +40,12 @@ export function mergeConfig (appConfig) {
   Object.keys(defaultConfig).forEach(key => {
     if (appConfig[key] === undefined) {
       appConfig[key] = defaultConfig[key]
+    } else if (typeof appConfig[key] === 'object') {
+      for (const index in appConfig[key]) {
+        if (appConfig[key][index] === undefined) {
+          appConfig[key][index] = defaultConfig[key][index]
+        }
+      }
     }
   })
 }
