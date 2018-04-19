@@ -3,8 +3,12 @@ import logger from './logger'
 import { showWindow } from './window'
 import { appConfig$ } from './data'
 
-const registerShortcut = (key) => {
-  const openWindow = globalShortcut.register(key, showWindow)
+const func = {
+  toggleWindow: showWindow
+}
+
+const registerShortcut = (name, key) => {
+  const openWindow = globalShortcut.register(key, func[name])
   if (!openWindow) {
     if (process.env.NODE_ENV === 'development') {
       console.log('main window shortcut regist failed')
@@ -29,8 +33,14 @@ app.on('ready', () => {
   // 监听配置
   appConfig$.subscribe(data => {
     const [appConfig, changed, oldConfig] = data
-    if (changed.length === 0 && appConfig.shortcutEnable) {
+    if (changed.length === 0) {
       // 第一次打开
+      for (const shortcutName in appConfig.shortcut) {
+        // 这个快捷键是不是打开了
+        if (appConfig.shortcut[shortcutName].enable) {
+          registerShortcut(shortcutName, appConfig.shortcut[shortcutName])
+        }
+      }
       registerShortcut(appConfig.shortcut)
     } else if (changed.length !== 0 && appConfig.shortcutEnable !== oldConfig.shortcutEnable) {
       // 配置改变
