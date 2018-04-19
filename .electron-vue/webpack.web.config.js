@@ -10,6 +10,11 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
+const HappyPack = require('happypack')
+let happyThreadPool = HappyPack.ThreadPool({
+  size: require('os').cpus().length
+})
+
 let webConfig = {
   devtool: '#cheap-module-eval-source-map',
   entry: {
@@ -41,7 +46,7 @@ let webConfig = {
       },
       {
         test: /\.js$/,
-        use: 'babel-loader',
+        use: 'happypack/loader?id=js',
         include: [ path.resolve(__dirname, '../src/renderer') ],
         exclude: /node_modules/
       },
@@ -81,6 +86,12 @@ let webConfig = {
     ]
   },
   plugins: [
+    new HappyPack({
+      id: 'js',
+      loaders: ['babel-loader'],
+      threadPool: happyThreadPool,
+      verbose: true
+    }),
     new ExtractTextPlugin('styles.css'),
     new HtmlWebpackPlugin({
       filename: 'index.html',

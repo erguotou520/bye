@@ -70,6 +70,7 @@
     "eslint-plugin-vue-libs": "^2.1.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
+    "happypack": "^4.0.1",
     "html-webpack-plugin": "^2.30.1",
     "mocha": "^5.0.0",
     "multispinner": "^0.2.1",
