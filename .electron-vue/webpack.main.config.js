@@ -9,6 +9,11 @@ const webpack = require('webpack')
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
+const HappyPack = require('happypack')
+let happyThreadPool = HappyPack.ThreadPool({
+  size: require('os').cpus().length
+})
+
 let mainConfig = {
   entry: {
     main: path.join(__dirname, '../src/main/index.js')
@@ -31,7 +36,7 @@ let mainConfig = {
       },
       {
         test: /\.js$/,
-        use: 'babel-loader',
+        use: 'happypack/loader?id=js',
         exclude: /node_modules/
       },
       {
@@ -50,6 +55,12 @@ let mainConfig = {
     path: path.join(__dirname, '../dist/electron')
   },
   plugins: [
+    new HappyPack({
+      id: 'js',
+      loaders: ['babel-loader'],
+      threadPool: happyThreadPool,
+      verbose: true
+    }),
     new webpack.NoEmitOnErrorsPlugin()
   ],
   resolve: {

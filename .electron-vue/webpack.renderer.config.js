@@ -12,6 +12,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
+const HappyPack = require('happypack')
+let happyThreadPool = HappyPack.ThreadPool({
+  size: require('os').cpus().length
+})
+
 /**
  * List of node_modules to include in webpack bundle
  *
@@ -55,7 +60,7 @@ let rendererConfig = {
       },
       {
         test: /\.js$/,
-        use: 'babel-loader',
+        use: 'happypack/loader?id=js',
         exclude: /node_modules/
       },
       {
@@ -113,6 +118,12 @@ let rendererConfig = {
     __filename: process.env.NODE_ENV !== 'production'
   },
   plugins: [
+    new HappyPack({
+      id: 'js',
+      loaders: ['babel-loader'],
+      threadPool: happyThreadPool,
+      verbose: true
+    }),
     new ExtractTextPlugin('styles.css'),
     new HtmlWebpackPlugin({
       filename: 'index.html',
