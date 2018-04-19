@@ -1,12 +1,11 @@
 <template>
   <div class="options-container px-2 pb-2 scroll-y">
     <i-form ref="form" class="mt-1" :model="form" :label-width="120">
-      <i-form-item class="flex-1" label="开启快捷键">
-        <i-checkbox v-model="form.shortcutEnable" @on-change="update('shortcutEnable')"/>
-      </i-form-item>
-      <i-form-item class="flex-1" label="自定义快捷键">
-        <i-input v-model="shortcut" @on-keydown="keydown" @on-keyup="keyup"/>
-        <!--  @on-change="update('shortcut')" -->
+      <i-form-item class="flex-1">
+        <i-checkbox v-model="form.shortcut.toggleWindow.enable" @on-change="update('shortcut')">
+          打开程序设置
+        </i-checkbox>
+        <i-input v-model="form.shortcut.toggleWindow.key" @on-keydown="keydown" @on-keyup="keyup"/>
       </i-form-item>
     </i-form>
   </div>
@@ -20,10 +19,8 @@ export default {
     const appConfig = this.$store.state.appConfig
     return {
       form: {
-        shortcutEnable: appConfig.shortcutEnable,
         shortcut: appConfig.shortcut
       },
-      shortcut: appConfig.shortcut,
       keyCache: [],
       keyDown: {}
     }
@@ -33,9 +30,7 @@ export default {
   methods: {
     ...mapActions(['updateConfig']),
     update: debounce(function (field) {
-      if (this.form[field] !== this.$store.state.appConfig[field]) {
-        this.updateConfig({ [field]: this.form[field] })
-      }
+      this.updateConfig({ [field]: this.form[field] })
     }, 1000),
     keydown: function (e) {
       if (e.code.includes('Key')) {
@@ -60,8 +55,8 @@ export default {
             }
           }
         }
-        this.shortcut = this.keyCache.join(' + ')
-        this.form.shortcut = this.keyCache.join('+')
+        this.shortcut.toggleWindow.key = this.keyCache.join(' + ')
+        this.form.shortcut.toggleWindow.key = this.keyCache.join('+')
         this.update('shortcut')
       }
     },
