@@ -10,10 +10,15 @@ const func = {
 }
 
 const registerShortcut = (name, key) => {
+  if (process.env.NODE_ENV === 'development') {
+    console.info(`Register shortcut: ${name}, ${key}`)
+  } else {
+    logger.info(`Register shortcut: ${name}, ${key}`)
+  }
   const openWindow = globalShortcut.register(key, func[name])
   if (!openWindow) {
     if (process.env.NODE_ENV === 'development') {
-      console.log('main window shortcut regist failed')
+      console.warn('main window shortcut regist failed')
     } else {
       logger.warn('main window shortcut regist failed')
     }
