@@ -26,6 +26,10 @@ const defaultConfig = {
     toggleWindow: {
       key: 'CommandOrControl+Shift+W',
       enable: false
+    },
+    toggleMenu: {
+      key: 'CommandOrControl+Shift+B',
+      enable: true
     }
   },
   // http proxy端口

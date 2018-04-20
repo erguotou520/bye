@@ -2,9 +2,11 @@ import { app, globalShortcut } from 'electron'
 import logger from './logger'
 import { showWindow } from './window'
 import { appConfig$ } from './data'
+import { toggleMenu } from './menu'
 
 const func = {
-  toggleWindow: showWindow
+  toggleWindow: showWindow,
+  toggleMenu: toggleMenu
 }
 
 const registerShortcut = (name, key) => {
