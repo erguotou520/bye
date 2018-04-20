@@ -38,10 +38,9 @@ app.on('ready', () => {
       for (const shortcutName in appConfig.shortcut) {
         // 这个快捷键是不是打开了
         if (appConfig.shortcut[shortcutName].enable) {
-          registerShortcut(shortcutName, appConfig.shortcut[shortcutName])
+          registerShortcut(shortcutName, appConfig.shortcut[shortcutName].key)
         }
       }
-      registerShortcut(appConfig.shortcut)
     } else if (changed.length !== 0 && appConfig.shortcutEnable !== oldConfig.shortcutEnable) {
       // 配置改变
       switchRegister(appConfig.shortcutEnable, oldConfig.shortcut, appConfig.shortcut)
