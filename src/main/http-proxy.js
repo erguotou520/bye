@@ -19,7 +19,8 @@ export function startHttpProxyServer (appConfig, isProxyStarted) {
     isHostPortValid(host, appConfig.httpProxyPort).then(() => {
       server = proxyServer({
         listenHost: host,
-        listenPort: appConfig.httpProxyPort
+        listenPort: appConfig.httpProxyPort,
+        socksPort: appConfig.localPort
       }).withShutdown()
         .on('listening', () => {
           if (process.env.NODE_ENV === 'development') {
