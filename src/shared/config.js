@@ -11,7 +11,7 @@ const defaultConfig = {
   shareOverLan: false,
   // 本地socks端口
   localPort: 1080,
-  // 本地ssr目录
+  // 本地ss-local路径
   ssrPath: '',
   // pac端口号
   pacPort: 2333,

@@ -34,7 +34,7 @@
     </i-row>
     <div class="flex flex-ai-center mt-64">
       <i-checkbox v-model="autoDownload" @on-change="updateAutoDownload">自动下载SSR</i-checkbox>
-      <i-tooltip placement="top" content="勾选上后将自动下载ssr-python" style="margin-top:2px">
+      <i-tooltip placement="top" content="勾选上后将自动下载ss-local" style="margin-top:2px">
         <i-icon color="#495060" type="help-circled"></i-icon>
       </i-tooltip>
     </div>

@@ -1,7 +1,8 @@
 import fs from 'fs'
-import path from 'path'
 import { net } from 'electron'
 import Base64 from 'urlsafe-base64'
+import { execSync } from 'child_process'
+import { isWin } from './env'
 import { loadConfigsFromString } from './ssr'
 
 const STRING_PROTOTYPE = '[object String]'
@@ -238,10 +239,29 @@ export function groupConfigs (configs, selectedIndex) {
  * 判断选择的local.py的路径是否正确
  * @param {*String} path local.py所在的目录
  */
-export function isSSRPathAvaliable (folderPath) {
-  const localPyPath = path.join(folderPath, 'local.py')
-  console.log(localPyPath, fs.existsSync(localPyPath))
-  return fs.existsSync(localPyPath)
+export function isSSRPathAvaliable (ssrPath) {
+  if (!isWin) {
+    if (!/ss-local$/.test(ssrPath)) {
+      return false
+    }
+  } else {
+    if (!/ss-local.exe$/.test(ssrPath)) {
+      return false
+    }
+  }
+  return fs.existsSync(ssrPath)
+}
+
+/**
+ * 获取ss-local版本
+ */
+export function getSSRVersion (ssrPath) {
+  try {
+    const helpInfo = execSync(`${ssrPath} -h`).toString()
+    return /^shadowsocks-libev (\d+.\d+.\d) /.exec(helpInfo)[1]
+  } catch (e) {
+    return ''
+  }
 }
 
 export function somePromise (promiseArr) {

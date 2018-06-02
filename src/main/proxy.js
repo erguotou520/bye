@@ -8,6 +8,11 @@ import { winToolPath, macToolPath } from './bootstrap'
 import { currentConfig, appConfig$ } from './data'
 import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
 
+// linux的gsettings命令是否可用
+let isGsettingsAvaliable = false
+try {
+  isGsettingsAvaliable = /gsettings$/.test(execSync('which gsettings').toString().trim())
+} catch (e) {}
 let isProxyChanged = false
 
 /**
@@ -31,7 +36,7 @@ export function setProxyToNone (force = true) {
       command = `${winToolPath} pac ""`
     } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
       command = `"${macToolPath}" -m off`
-    } else if (isLinux) {
+    } else if (isLinux && isGsettingsAvaliable) {
       command = `gsettings set org.gnome.system.proxy mode 'none'`
     }
     runCommand(command)
@@ -47,7 +52,7 @@ export function setProxyToGlobal (host, port) {
     command = `${winToolPath} global ${host}:${port}`
   } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m global -p ${port}`
-  } else if (isLinux) {
+  } else if (isLinux && isGsettingsAvaliable) {
     command = `gsettings set org.gnome.system.proxy mode 'manual' && gsettings set org.gnome.system.proxy.socks host '${host}' && gsettings set org.gnome.system.proxy.socks port ${port}`
   }
   runCommand(command)
@@ -62,7 +67,7 @@ export function setProxyToPac (pacUrl) {
     command = `${winToolPath} pac ${pacUrl}`
   } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m auto -u ${pacUrl}`
-  } else if (isLinux) {
+  } else if (isLinux && isGsettingsAvaliable) {
     command = `gsettings set org.gnome.system.proxy mode 'auto' && gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`
   }
   runCommand(command)

@@ -1,4 +1,3 @@
-import path from 'path'
 import { execFile } from 'child_process'
 // import treeKill from 'tree-kill'
 import { dialog } from 'electron'
@@ -7,8 +6,6 @@ import { isHostPortValid } from './port'
 import logger, { clientLog } from './logger'
 import { isConfigEqual } from '../shared/utils'
 import { showNotification } from './notification'
-// import { pythonPromise } from './python'
-
 let child
 
 /**
@@ -26,17 +23,6 @@ export function runCommand (command, params) {
     child = execFile(command, params)
     child.stdout.on('data', clientLog.log)
     child.stderr.on('data', clientLog.error)
-    // pythonPromise.then(() => {
-    //   const commandStr = `${command} ${params.join(' ')}`
-    //   if (process.env.NODE_ENV === 'development') {
-    //     console.log('run command: %s', commandStr)
-    //   } else {
-    //     logger.debug('run command: %s', commandStr)
-    //   }
-    //   child = execFile(command, params)
-    //   child.stdout.on('data', logger.log)
-    //   child.stderr.on('data', logger.error)
-    // })
   }
 }
 
@@ -54,7 +40,7 @@ export function run (appConfig) {
   }).then(() => {
     const config = appConfig.configs[appConfig.index]
     // 参数
-    const params = [path.join(appConfig.ssrPath, 'local.py')]
+    const params = []
     params.push('-s')
     params.push(config.server)
     params.push('-p')
@@ -85,7 +71,7 @@ export function run (appConfig) {
       params.push('-t')
       params.push(config.timeout)
     }
-    runCommand('python', params)
+    runCommand(appConfig.ssrPath, params)
   }).catch(() => {
     dialog.showMessageBox({
       type: 'warning',
@@ -101,9 +87,9 @@ export function run (appConfig) {
 export async function stop (force = false) {
   if (child && child.pid) {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Kill python client')
+      console.log('Kill client')
     } else {
-      logger.log('Kill python client')
+      logger.log('Kill client')
     }
     return new Promise((resolve, reject) => {
       child.once('close', () => {
@@ -137,7 +123,7 @@ export async function stop (force = false) {
 }
 
 /**
- * 根据配置运行python命令
+ * 根据配置运行SSR命令
  * @param {Object} appConfig 应用配置
  */
 export function runWithConfig (appConfig) {

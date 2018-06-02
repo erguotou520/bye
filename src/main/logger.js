@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { EOL } from 'os'
 import tracer from 'tracer'
 import bootstrapPromise, { logPath } from './bootstrap'
 
@@ -15,7 +16,7 @@ function transport (data) {
     }).then(() => {
       fs.createWriteStream(logPath, {
         flags: 'a+'
-      }).write(data.output.endsWith('\n') ? data.output : data.output + '\n', 'utf8')
+      }).write(data.output.endsWith(EOL) ? data.output : data.output + EOL, 'utf8')
     }).catch(() => {})
   }
 }

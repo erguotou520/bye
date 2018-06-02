@@ -2,7 +2,7 @@
 
 <details>
   <summary>为什么我打开了应用但是没有代理成功？</summary>
-  <p>首先，确定服务器配置中有可用的服务器并选中了其中的一项。其次，确认“启用系统代理”菜单已选中。再次，尝试勾选“系统代理设置”-“全局设置”，然后查看浏览器是否已被代理。最后，点击“帮助”-“查看日志”查看<code>shadowsocksr-python</code>是否正常运行，日志中有没有报错，如有报错请先排错（比如端口占用）。</p>
+  <p>首先，确定服务器配置中有可用的服务器并选中了其中的一项。其次，确认“启用系统代理”菜单已选中。再次，尝试勾选“系统代理设置”-“全局设置”，然后查看浏览器是否已被代理。最后，点击“帮助”-“查看日志”查看<code>ssr-libev</code>是否正常运行，日志中有没有报错，如有报错请先排错（比如端口占用）。</p>
 </details>
 
 <details>
@@ -23,11 +23,6 @@
 <details>
   <summary>为什么我点击切换系统代理模式却没有效果？</summary>
   <p>我们暂时只支持<code>Gnome</code>桌面的Linux系统，其它桌面环境的如果你有解决方案请发issue。Windows和Mac应该正常。</p>
-</details>
-
-<details>
-  <summary>错误日志option -O not recognized</summary>
-  <p>该错误的原因是因为<code>shadowsocksr-python</code>版本过低而不支持<code>-O</code>参数导致，请升级<code>shadowsocksr-python</code>版本。其它相类似的错误采用同样的处理方案。</p>
 </details>
 
 <details>

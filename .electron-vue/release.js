@@ -65,9 +65,15 @@ function release (dir) {
     },
     files,
     extraFiles: extraFiles,
-    publish: {
+    publish: [{
+      provider: 'bintray',
+      package: 'electron-ssr',
+      repo: 'generic',
+      owner: 'erguotou520',
+      user: 'erguotou520'
+    }, {
       provider: 'github'
-    }
+    }]
   }
   const options = Object.assign({}, baseConfig)
   const x64Promise = builder.build(Object.assign({}, baseOptions, {

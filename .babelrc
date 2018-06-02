@@ -4,11 +4,10 @@
     "test": {
       "presets": [
         ["env", {
-          "targets": { "node": 7 }
+          "targets": { "node": "current" }
         }],
         "stage-0"
-      ],
-      "plugins": ["istanbul"]
+      ]
     },
     "main": {
       "presets": [

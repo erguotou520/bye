@@ -23,9 +23,11 @@
 
 [![](https://img.shields.io/badge/Telegram-electron--ssr-blue.svg)](https://t.me/joinchat/E7ViZhJAZpKtnIJy9WepDA) -->
 
-## 环境要求
+## 配置文件
 
-- 只需要系统已安装 [python](https://www.python.org/downloads/) 可正常执行`shadowsocksr`的python版即可
+- Windows `C:\Users\{your username}\AppData\Local\Programs\electron-ssr\gui-config.json`
+- Mac `~/Library/Application Support/electron-ssr/gui-config.json`
+- Linux `~/.config/gui-config.json`
 
 ## 已知Bug
 
@@ -79,8 +81,8 @@ npm run lint
 
 ## ShadowsocksR 参考文档
 
-- [Python client setup (Mult language)](https://github.com/breakwa11/shadowsocks-rss/wiki/Python-client-setup-(Mult-language))
-- [Python client setup (Mult language)备份](https://github.com/shadowsocksr-backup/shadowsocks-rss/wiki/Python-client-setup-(Mult-language))
+- [ssr-libev](https://github.com/breakwa11/shadowsocksr-libev)
+- [ssr-libev 备份](https://github.com/shadowsocksr-backup/shadowsocksr-libev)
 - [SSR QRcode scheme](https://github.com/breakwa11/shadowsocks-rss/wiki/SSR-QRcode-scheme)
 - [SSR QRcode scheme备份](https://github.com/shadowsocksr-backup/shadowsocks-rss/wiki/SSR-QRcode-scheme)
 
