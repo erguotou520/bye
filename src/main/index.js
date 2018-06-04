@@ -13,7 +13,7 @@ import { setProxyToNone, startProxy } from './proxy'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import { startTask, stopTask } from './subscribe'
 import logger from './logger'
-import './shortcut'
+import { clearShortcuts } from './shortcut'
 import { loadConfigsFromString } from '../shared/ssr'
 import { isMac, isWin } from '../shared/env'
 
@@ -127,6 +127,7 @@ app.on('will-quit', e => {
   destroyWindow()
   stopHttpProxyServer()
   stopPacServer()
+  clearShortcuts()
   stopCommand(true).then(() => {
     app.exit(0)
   })

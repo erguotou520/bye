@@ -10,6 +10,9 @@
       <i-tab-pane label="订阅管理" name="subscribes">
         <option-subscribe></option-subscribe>
       </i-tab-pane>
+      <i-tab-pane label="快捷键管理" name="shortcuts">
+        <option-shortcut></option-shortcut>
+      </i-tab-pane>
     </i-tabs>
     <div class="w-100 flex flex-jc-end px-2 py-1 border-1px-t">
       <i-button class="w-6r mr-2" @click="$emit('back')">返回</i-button>
@@ -23,13 +26,14 @@ import { hideWindow } from '../ipc'
 import OptionCommon from './option/Common'
 import OptionSsr from './option/SSR'
 import OptionSubscribe from './option/Subscribe'
+import OptionShortcut from './option/Shortcut'
 
 export default {
   computed: {
     ...mapState(['view'])
   },
   components: {
-    OptionCommon, OptionSsr, OptionSubscribe
+    OptionCommon, OptionSsr, OptionSubscribe, OptionShortcut
   },
   methods: {
     ...mapMutations(['resetState', 'updateView']),

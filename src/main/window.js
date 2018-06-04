@@ -71,6 +71,19 @@ export function hideWindow () {
 }
 
 /**
+ * 切换窗体显隐
+ */
+export function toggleWindow () {
+  if (mainWindow) {
+    if (mainWindow.isVisible()) {
+      mainWindow.hide()
+    } else {
+      mainWindow.show()
+    }
+  }
+}
+
+/**
  * 销毁主视图
  */
 export function destroyWindow () {

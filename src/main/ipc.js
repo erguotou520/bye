@@ -73,7 +73,6 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDERER, e => {
   // 切换menu显示
   toggleMenu()
 }).on(events.EVENT_APP_OPEN_DIALOG, (e, params) => {
-  console.log(params)
   e.returnValue = dialog.showOpenDialog(params)
 })
 
