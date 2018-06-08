@@ -76,6 +76,7 @@ function generateMenus (appConfig) {
       { label: '捐赠', click: () => { handler.openURL('https://github.com/erguotou520/donate') } },
       { label: '打开开发者工具', click: handler.openDevtool }
     ] },
+    { label: '重启', click: handler.relaunchApp },
     { label: '退出', click: handler.exitApp }
   ]
   if (!isOldMacVersion) {

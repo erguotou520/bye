@@ -130,6 +130,12 @@ export function openURL (url) {
   return shell.openExternal(url)
 }
 
+// 重启
+export function relaunchApp () {
+  app.relaunch()
+  app.quit()
+}
+
 // 退出
 export function exitApp () {
   app.quit()
