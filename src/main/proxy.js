@@ -28,7 +28,7 @@ export function setProxyToNone (force = true) {
   if (force || isProxyChanged) {
     let command
     if (isWin && pathExistsSync(winToolPath)) {
-      command = `${winToolPath} pac ""`
+      command = `\"${winToolPath}\" pac ""`
     } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
       command = `"${macToolPath}" -m off`
     } else if (isLinux) {
@@ -44,7 +44,7 @@ export function setProxyToNone (force = true) {
 export function setProxyToGlobal (host, port) {
   let command
   if (isWin && pathExistsSync(winToolPath)) {
-    command = `${winToolPath} global ${host}:${port}`
+    command = `\"${winToolPath}\" global ${host}:${port}`
   } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m global -p ${port}`
   } else if (isLinux) {
@@ -59,7 +59,7 @@ export function setProxyToGlobal (host, port) {
 export function setProxyToPac (pacUrl) {
   let command
   if (isWin && pathExistsSync(winToolPath)) {
-    command = `${winToolPath} pac ${pacUrl}`
+    command = `\"${winToolPath}\" pac ${pacUrl}`
   } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m auto -u ${pacUrl}`
   } else if (isLinux) {
