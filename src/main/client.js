@@ -85,7 +85,7 @@ export function run (appConfig) {
       params.push('-t')
       params.push(config.timeout)
     }
-    runCommand('python', params)
+    runCommand('python3', params)
   }).catch(() => {
     dialog.showMessageBox({
       type: 'warning',
