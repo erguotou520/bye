@@ -16,7 +16,7 @@ function transport (data) {
     }).then(() => {
       fs.createWriteStream(logPath, {
         flags: 'a+'
-      }).write(data.output.endsWith(EOL) ? data.output : data.output + EOL, 'utf8')
+      }).write(data.output.endsWith(EOL) ? data.output : `${data.output}${EOL}`, 'utf8')
     }).catch(() => {})
   }
 }
@@ -47,11 +47,11 @@ export function clearLog () {
           data.push(chunk.toString())
         }).on('end', () => {
           // 分割日志
-          const saved = data.join('').split('\n').slice(1)
+          const saved = data.join('').split(EOL).slice(1)
           // 保存日志
           fs.createWriteStream(logPath, {
             flags: 'w'
-          }).write(saved.join('\n'), 'utf-8', resolve)
+          }).write(saved.join(EOL), 'utf-8', resolve)
         })
       } else {
         resolve()
