@@ -69,7 +69,7 @@
 
 ## 打赏
 
-[如果觉得本项目对你有所帮助，欢迎打赏](https://github.com/erguotou520/donate)
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/erguotou520)
 
 ## 开发和构建
 
