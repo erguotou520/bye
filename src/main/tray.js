@@ -63,7 +63,7 @@ function generateMenus (appConfig) {
     { label: '配置', submenu: [
       { label: '选项设置...', click: handler.showOptions },
       { label: '导入gui-config.json文件', click: handler.importConfigFromFile },
-      { label: '导出gui-confi.gjson文件', click: handler.exportConfigToFile },
+      { label: '导出gui-config.json文件', click: handler.exportConfigToFile },
       { label: '从剪贴板批量导入ssr://地址', click: handler.importConfigFromClipboard },
       { label: '打开配置文件', click: handler.openConfigFile }
     ] },
