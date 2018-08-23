@@ -24,7 +24,7 @@ export async function downloadPac (force = false) {
   const pacExisted = await pathExists(pacPath)
   if (force || !pacExisted) {
     logger.debug('start download pac')
-    const pac = await request('https://softs.fun/Other/pac.txt')
+    const pac = await request('https://softs.loan/Other/pac.txt')
     pacContent = pac
     return await writeFile(pacPath, pac)
   }
