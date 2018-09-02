@@ -54,6 +54,7 @@ function generateConfigSubmenus (configs, selectedIndex) {
  */
 function generateMenus (appConfig) {
   const base = [
+    { label: '主界面', click: handler.showManagePanel },
     { label: '开启应用', type: 'checkbox', checked: appConfig.enable, click: handler.toggleEnable },
     { label: 'PAC', submenu: [
       { label: '更新PAC', click: handler.updatePac }

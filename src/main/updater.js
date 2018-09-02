@@ -1,11 +1,15 @@
 import { app, shell } from 'electron'
 import { autoUpdater } from 'electron-updater'
 import { exePath } from './bootstrap'
+import logger from './logger'
+import { getWindow } from './window'
 import { showNotification } from './notification'
 import { isLinux } from '../shared/env'
 import { request } from '../shared/utils'
 
 let forceUpdate = false
+autoUpdater.logger = logger
+autoUpdater.autoDownload = false
 
 // 自定义检测更新事件
 autoUpdater
@@ -15,6 +19,12 @@ autoUpdater
   .on('update-available', UpdateInfo => {
     showNotification(`检测到最新版本${UpdateInfo.version}，系统将自动下载并更新`)
     autoUpdater.downloadUpdate()
+  })
+  .on('download-progress', ({ percent }) => {
+    const mainWindow = getWindow()
+    if (mainWindow) {
+      mainWindow.setProgressBar(percent >= 100 ? -1 : percent / 100)
+    }
   })
   .on('update-not-available', () => {
     forceUpdate && showNotification('当前已是最新版，无需更新')
@@ -53,7 +63,7 @@ export function versionCheck (oldVersion, newVersion) {
 
 // 检查更新
 export function checkUpdate (force = false) {
-  if (isLinux && !/\.appImage&/.test(exePath)) {
+  if (isLinux && !/\.AppImage&/.test(exePath)) {
     request('https://raw.githubusercontent.com/erguotou520/electron-ssr/master/package.json').then(data => {
       const remotePkg = JSON.parse(data)
       const currentVersion = app.getVersion()

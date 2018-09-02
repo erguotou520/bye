@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import { isQuiting } from './data'
+import logger from './logger'
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
@@ -101,7 +102,7 @@ export async function sendData (channel, ...args) {
     await readyPromise
     mainWindow.webContents.send(channel, ...args)
   } else {
-    console.log('not ready')
+    logger.debug('not ready')
   }
 }
 
@@ -113,6 +114,6 @@ export async function openDevtool () {
     await readyPromise
     mainWindow.webContents.openDevTools()
   } else {
-    console.log('not ready')
+    logger.debug('not ready')
   }
 }

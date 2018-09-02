@@ -3,7 +3,7 @@ import { execFile } from 'child_process'
 import { dialog } from 'electron'
 import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import logger, { clientLog } from './logger'
+import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
 import { showNotification } from './notification'
 let child
@@ -15,14 +15,10 @@ let child
 export function runCommand (command, params) {
   if (command && params.length) {
     const commandStr = `${command} ${params.join(' ')}`
-    if (process.env.NODE_ENV === 'development') {
-      console.log('run command: %s', commandStr)
-    } else {
-      logger.debug('run command: %s', commandStr.replace(/-k [\d\w]* /, ''))
-    }
+    logger.info('run command: %s', commandStr.replace(/-k [\d\w]* /, '-k ******'))
     child = execFile(command, params)
-    child.stdout.on('data', clientLog.log)
-    child.stderr.on('data', clientLog.error)
+    child.stdout.on('data', logger.info)
+    child.stderr.on('data', logger.error)
   }
 }
 
@@ -76,7 +72,7 @@ export function run (appConfig) {
     dialog.showMessageBox({
       type: 'warning',
       title: '警告',
-      message: `ssr端口 ${appConfig.localPort} 被占用`
+      message: `端口 ${appConfig.localPort} 被占用`
     })
   })
 }
@@ -86,11 +82,7 @@ export function run (appConfig) {
  */
 export async function stop (force = false) {
   if (child && child.pid) {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Kill client')
-    } else {
-      logger.log('Kill client')
-    }
+    logger.log('Kill client')
     return new Promise((resolve, reject) => {
       child.once('close', () => {
         child = null
@@ -105,7 +97,8 @@ export async function stop (force = false) {
         !force && showNotification(`进程 ${child.pid} 可能无法关闭，尝试手动关闭`)
         resolve()
       }, 5000)
-      child.kill()
+      process.kill(child.pid, 'SIGKILL')
+      // child.kill()
       // treeKill(child.pid, 'SIGKILL', err => {
       //   if (err) {
       //     reject(err)

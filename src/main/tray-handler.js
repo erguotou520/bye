@@ -1,7 +1,8 @@
-import { app, shell, clipboard, dialog } from 'electron'
+import { app, shell, clipboard } from 'electron'
 import { readJson, writeJson } from 'fs-extra'
 import { join } from 'path'
-import bootstrapPromise, { logPath, appConfigPath } from './bootstrap'
+import bootstrapPromise, { appConfigPath } from './bootstrap'
+import { logPath } from './logger'
 import { showWindow, sendData } from './window'
 export { openDevtool } from './window'
 export { updateSubscribes } from './subscribe'
@@ -11,6 +12,7 @@ import { startProxy } from './proxy'
 import { showNotification } from './notification'
 import * as events from '../shared/events'
 import { loadConfigsFromString } from '../shared/ssr'
+import { chooseFile, chooseSavePath } from '../shared/dialog'
 
 // 切换启用状态
 export function toggleEnable () {
@@ -49,29 +51,20 @@ export function openOptionsWindow () {
 
 // 导入配置文件
 export function importConfigFromFile () {
-  dialog.showOpenDialog({
-    title: '选择gui-config.json',
-    properties: ['openFile'],
-    filters: [{ name: 'Json', extensions: ['json'] }]
-  }, pathes => {
-    if (pathes && pathes.length === 1) {
-      readJson(pathes[0]).then(fileConfig => {
-        updateAppConfig(fileConfig, false, true)
-      }).catch(() => {})
-    }
-  })
+  const _path = chooseFile('选择gui-config.json', [{ name: 'Json', extensions: ['json'] }])
+  if (_path) {
+    readJson(_path).then(fileConfig => {
+      updateAppConfig(fileConfig, false, true)
+    }).catch(() => {})
+  }
 }
 
 // 导出配置文件
 export function exportConfigToFile () {
-  dialog.showOpenDialog({
-    title: '选择导出的目录',
-    properties: ['openDirectory', 'createDirectory']
-  }, pathes => {
-    if (pathes && pathes.length === 1) {
-      writeJson(join(pathes[0], 'gui-config.json'), currentConfig, { spaces: '\t' })
-    }
-  })
+  const _path = chooseSavePath('选择导出的目录')
+  if (_path) {
+    writeJson(join(_path, 'gui-config.json'), currentConfig, { spaces: '\t' })
+  }
 }
 
 // 从剪贴板批量导入

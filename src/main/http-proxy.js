@@ -23,18 +23,13 @@ export function startHttpProxyServer (appConfig, isProxyStarted) {
         socksPort: appConfig.localPort
       }).withShutdown()
         .on('listening', () => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('http proxy server listen at: %s:%s', host, appConfig.httpProxyPort)
-          } else {
-            logger.debug(`http proxy server listen at: ${host}:${appConfig.httpProxyPort}`)
-          }
+          logger.info(`http proxy server listen at: ${host}:${appConfig.httpProxyPort}`)
+        })
+        .on('connect:error', err => {
+          logger.error(`http proxy server connect error: ${err}`)
         })
         .once('error', err => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('http proxy server error: ', err)
-          } else {
-            logger.debug(`http proxy server error: ${err}`)
-          }
+          logger.error(`http proxy server error: ${err}`)
           server.shutdown()
         })
     }).catch(() => {
@@ -55,18 +50,10 @@ export async function stopHttpProxyServer () {
     return new Promise((resolve, reject) => {
       server.shutdown(err => {
         if (err) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log(err)
-          } else {
-            logger.warn(`close http proxy server error: ${err}`)
-          }
+          logger.warn(`close http proxy server error: ${err}`)
           reject()
         } else {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('http proxy server closed.')
-          } else {
-            logger.debug('http proxy server closed.')
-          }
+          logger.info('http proxy server closed.')
           resolve()
         }
       })

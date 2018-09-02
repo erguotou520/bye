@@ -3,7 +3,7 @@ import logger from './logger'
 import { toggleWindow, showWindow, sendData } from './window'
 import { appConfig$ } from './data'
 import { showNotification } from './notification'
-import events from '../shared/events'
+import { EVENT_APP_SHOW_PAGE } from '../shared/events'
 
 const func = {
   toggleWindow
@@ -15,11 +15,7 @@ const func = {
  * @param {String} key 要注册的快捷键的按键
  */
 function registerShortcut (name, key) {
-  if (process.env.NODE_ENV === 'development') {
-    console.info(`Register shortcut: ${name}, ${key}`)
-  } else {
-    logger.info(`Register shortcut: ${name}, ${key}`)
-  }
+  logger.info(`Register shortcut: ${name}, ${key}`)
   const ret = globalShortcut.register(key, func[name])
   if (!ret) {
     return false
@@ -33,6 +29,7 @@ function registerShortcut (name, key) {
  */
 function unregisterShortcut (key) {
   globalShortcut.unregister(key)
+  logger.info(`Unregister shortcut: ${key}`)
 }
 
 /**
@@ -42,6 +39,12 @@ export function clearShortcuts () {
   globalShortcut.unregisterAll()
 }
 
+/**
+ * 变更快捷键绑定
+ * @param {Boolean} shortcutEnable 是否启用快捷键
+ * @param {String} oldKey 旧的快捷键
+ * @param {String} newKey 新的快捷键
+ */
 function switchRegister (shortcutEnable, oldKey, newKey) {
   unregisterShortcut(oldKey)
   if (shortcutEnable) {
@@ -66,7 +69,7 @@ app.on('ready', () => {
       if (failed.length) {
         showNotification(`检测到${failed.length}个全局快捷键注册失败，请在快捷键页面重新设置`, '错误', () => {
           showWindow()
-          sendData(events.EVENT_APP_SHOW_PAGE, { page: 'Options', tab: 'shortcuts' })
+          sendData(EVENT_APP_SHOW_PAGE, { page: 'Options', tab: 'shortcuts' })
         })
       }
     }

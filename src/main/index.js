@@ -87,17 +87,13 @@ bootstrap.then(() => {
   // 电源状态检测
   powerMonitor.on('suspend', () => {
     // 系统挂起时
-    if (process.env.NODE_ENV === 'development') {
-      console.log('power suspend')
-    }
+    logger.debug('power suspend')
     stopTask()
     setProxyToNone()
     stopCommand(true)
   }).on('resume', () => {
     // 恢复
-    if (process.env.NODE_ENV === 'development') {
-      console.log('power resumed')
-    }
+    logger.debug('power resumed')
     runWithConfig(currentConfig)
     startProxy()
     startTask(currentConfig)
@@ -105,9 +101,7 @@ bootstrap.then(() => {
 })
 
 app.on('window-all-closed', () => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('window-all-closed')
-  }
+  logger.debug('window-all-closed')
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -117,9 +111,7 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => { isQuiting(true) })
 
 app.on('will-quit', e => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('will-quit')
-  }
+  logger.debug('will-quit')
   e.preventDefault()
   stopTask()
   setProxyToNone()

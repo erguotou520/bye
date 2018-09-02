@@ -5,6 +5,7 @@ import { readFile, writeFile } from './promisify'
 import { subscribeUpdateFile } from './bootstrap'
 import { appConfig$ } from './data'
 import { sendData } from './window'
+import logger from './logger'
 import { EVENT_SUBSCRIBE_UPDATE_MAIN } from '../shared/events'
 
 // 上次更新时间
@@ -31,9 +32,7 @@ export async function startTask (appConfig, forceUpdate = false) {
         lastUpdateTime = new Date(content.toString())
       }
       const nextUpdateTime = new Date(+lastUpdateTime + intervalTime)
-      if (process.env.NODE_ENV === 'development') {
-        console.log('next subscribe update time: %s', nextUpdateTime)
-      }
+      logger.info('next subscribe update time: %s', nextUpdateTime)
       timeout(nextUpdateTime, intervalTime, appConfig)
     } catch (e) {
       update(appConfig)
@@ -60,9 +59,7 @@ function interval (intervalTime, appConfig) {
 async function saveUpdateTime () {
   const date = new Date()
   lastUpdateTime = date
-  if (process.env.NODE_ENV === 'development') {
-    console.log('last update time: %s', lastUpdateTime)
-  }
+  logger.info('last update time: %s', lastUpdateTime)
   return await writeFile(subscribeUpdateFile, date)
 }
 
