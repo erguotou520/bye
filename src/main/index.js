@@ -9,7 +9,7 @@ import './ipc'
 import { stopPacServer } from './pac'
 import { stopHttpProxyServer } from './http-proxy'
 import { stop as stopCommand, runWithConfig } from './client'
-import { setProxyToNone, startProxy } from './proxy'
+import { setProxyToNone } from './proxy'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import { startTask, stopTask } from './subscribe'
 import logger from './logger'
@@ -87,15 +87,15 @@ bootstrap.then(() => {
   // 电源状态检测
   powerMonitor.on('suspend', () => {
     // 系统挂起时
-    logger.debug('power suspend')
+    logger.info('power suspend')
     stopTask()
-    setProxyToNone()
+    // setProxyToNone()
     stopCommand(true)
   }).on('resume', () => {
     // 恢复
-    logger.debug('power resumed')
+    logger.info('power resumed')
     runWithConfig(currentConfig)
-    startProxy()
+    // startProxy()
     startTask(currentConfig)
   })
 })

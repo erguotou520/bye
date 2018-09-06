@@ -32,7 +32,7 @@ const defaultConfig = {
   // 窗口快捷键
   windowShortcuts: {
     toggleMenu: {
-      key: 'CommandOrControl+Shift+B',
+      key: 'mod+s',
       enable: isLinux
     }
   },

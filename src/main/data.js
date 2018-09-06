@@ -47,9 +47,9 @@ const source = Observable.create(observe => {
   })
 })
 
-// 当前是否已选择某节点，即socks代理是否选中比启用
+// 当前是否已选择某节点，即socks代理是否选中并启用
 export function isProxyStarted (appConfig) {
-  return !!(appConfig.enable && appConfig.httpProxyEnable && appConfig.configs && appConfig.configs[appConfig.index])
+  return !!(appConfig.enable && appConfig.configs && appConfig.configs[appConfig.index])
 }
 
 /**

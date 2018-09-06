@@ -45,10 +45,10 @@ export function clearShortcuts () {
  * @param {String} oldKey 旧的快捷键
  * @param {String} newKey 新的快捷键
  */
-function switchRegister (shortcutEnable, oldKey, newKey) {
+function switchRegister (funcName, shortcutEnable, oldKey, newKey) {
   unregisterShortcut(oldKey)
   if (shortcutEnable) {
-    registerShortcut(newKey)
+    registerShortcut(funcName, newKey)
   }
 }
 
@@ -56,9 +56,7 @@ app.on('ready', () => {
   // 监听配置
   appConfig$.subscribe(data => {
     const [appConfig, changed, oldConfig] = data
-    if (changed.length) {
-
-    } else {
+    if (!changed.length) {
       // 注册，并返回注册失败的
       const failed = Object.keys(appConfig.globalShortcuts).filter(funcName => {
         if (appConfig.globalShortcuts[funcName].enable) {
@@ -72,20 +70,18 @@ app.on('ready', () => {
           sendData(EVENT_APP_SHOW_PAGE, { page: 'Options', tab: 'shortcuts' })
         })
       }
-    }
-    if (changed.length === 0) {
-      // 第一次打开
-      for (const shortcutName in appConfig.globalShortcuts) {
-        // 这个快捷键是不是启用了
-        if (appConfig.shortcut[shortcutName].enable) {
-          registerShortcut(shortcutName, appConfig.shortcut[shortcutName].key)
-        }
+    } else {
+      if (changed.indexOf('globalShortcuts') > -1) {
+        // 配置改变
+        Object.keys(appConfig.globalShortcuts).forEach(funcName => {
+          const oldShortcut = oldConfig.globalShortcuts[funcName]
+          const newShortcut = appConfig.globalShortcuts[funcName]
+          // 配置项变更时才更新快捷键
+          if (oldShortcut.key !== newShortcut.key || oldShortcut.enable !== newShortcut.enable) {
+            switchRegister(funcName, newShortcut.enable, oldShortcut.key, newShortcut.key)
+          }
+        })
       }
-    } else if (changed.length !== 0 && appConfig.shortcutEnable !== oldConfig.shortcutEnable) {
-      // 配置改变
-      switchRegister(appConfig.shortcutEnable, oldConfig.shortcut, appConfig.shortcut)
-    } else if (changed.length !== 0 && appConfig.shortcut !== oldConfig.shortcut) {
-      switchRegister(appConfig.shortcutEnable, oldConfig.shortcut, appConfig.shortcut)
     }
   })
 })

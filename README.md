@@ -12,7 +12,7 @@
 
   ![](docs/assets/scan.jpg)
 - 支持从剪贴板复制、从配置文件导入等方式添加配置
-- 支持复制二维码图片(右键二维码点击复制)、复制SSR链接
+- 支持复制二维码图片、复制SSR链接(右键应用内二维码，点击右键菜单中的复制)
 - 支持通过点击ss/ssr链接添加配置并打开应用(仅Mac和Windows)，[因Github平台限制，请前往该地址点击测试](https://erguotou520.github.io/electron-ssr)
 - 支持切换系统代理模式:PAC、全局、不代理
 - [内置http_proxy服务](docs/HTTP_PROXY.md)，可在选项中开启或关闭
@@ -25,7 +25,7 @@
 
 ## 下载
 
-下载地址见[Github release](https://github.com/erguotou520/electron-ssr/releases)，对于的操作系统下载的文件为
+下载地址见[Github release](https://github.com/erguotou520/electron-ssr/releases)，对应的操作系统下载的文件为
 
 - Windows `electron-ssr-setup-x.x.x.exe`
 - Mac `electron-ssr-x.x.x.dmg`
@@ -40,6 +40,17 @@
 - Windows `C:\Users\{your username}\AppData\Local\Programs\electron-ssr\gui-config.json`
 - Mac `~/Library/Application Support/electron-ssr/gui-config.json`
 - Linux `~/.config/gui-config.json`
+
+## 快捷键
+
+加入快捷键本来是为了解决部分Linux发行版无法显示图标导致功能无法使用而加入的，当然其它系统也是可以使用的，同时支持在设置中进行开启/关闭以及更换按键的操作。
+
+### 全局快捷键
+
+- `CommandOrControl+Shift+W` 切换主窗口显隐
+
+### 应用内快捷键
+- `CommandOrControl+Shift+B` 切换是否显示操作菜单
 
 ## 已知Bug
 

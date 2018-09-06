@@ -28,12 +28,12 @@
 
 <details>
   <summary>是否支持32位系统？</summary>
-  <p>不好意思，我们默认不提供32位应用下载，如果需要请自行构建。</p>
+  <p>支持的，但只是windows支持，其它系统不支持32位。</p>
 </details>
 
 <details>
   <summary>为什么我的Linux在安装了SSR客户端后打开没有看到小飞机图标？</summary>
-  <p>尝试安装<code>libappindicator1</code>应用程序指示器。</p>
+  <p>尝试安装<code>libappindicator1</code>应用程序指示器。如果不行，请使用快捷键切换主界面和操作菜单，[详情请看](../README.md#快捷键)</p>
 </details>
 
 <details>
