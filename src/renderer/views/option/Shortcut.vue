@@ -17,7 +17,7 @@
           </i-col>
         </i-row>
       </i-form-item>
-      <i-form-item class="flex-1">
+      <i-form-item v-if="isLinux" class="flex-1">
         <i-row type="flex" :gutter="24">
           <i-col :span="5">
             <i-checkbox v-model="form.windowShortcuts.toggleMenu.enable"
@@ -37,12 +37,19 @@
   </div>
 </template>
 <script>
+import { remote } from 'electron'
 import { mapActions } from 'vuex'
+import { changeBind } from '../../shortcut'
 import { debounce } from '../../../shared/utils'
+import { isLinux } from '../../../shared/env'
+
+const globalShortcut = remote.globalShortcut
+
 export default {
   data () {
     const appConfig = this.$store.state.appConfig
     return {
+      isLinux,
       form: {
         globalShortcuts: appConfig.globalShortcuts,
         windowShortcuts: appConfig.windowShortcuts
@@ -81,7 +88,18 @@ export default {
         if (this.actionKey) {
           keys.push(this.actionKey)
         }
-        this.form[parent][field].key = keys.join('+')
+        const shortcutStr = keys.join('+')
+        // 全局快捷键的判断
+        if (parent === 'globalShortcuts') {
+          if (globalShortcut.isRegistered(shortcutStr)) {
+            return this.$message.error(`快捷键 ${shortcutStr} 已被注册，请更换`)
+          }
+        } else {
+          if (this.form[parent][field].key) {
+            changeBind(field, this.form[parent][field].key, shortcutStr)
+          }
+        }
+        this.form[parent][field].key = shortcutStr
         this.funcKeys.clear()
         this.actionKey = ''
         this.update(parent, field)

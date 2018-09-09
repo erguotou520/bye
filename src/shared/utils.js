@@ -181,7 +181,7 @@ export function clone (obj, deep = false) {
     case OBJECT_PROTOTYPE:
       const r = {}
       for (const key in obj) {
-        r[key] = deep ? clone(obj[key]) : obj[key]
+        r[key] = deep ? clone(obj[key], deep) : obj[key]
       }
       return r
     default:

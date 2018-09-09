@@ -50,7 +50,7 @@
 - `CommandOrControl+Shift+W` 切换主窗口显隐
 
 ### 应用内快捷键
-- `CommandOrControl+Shift+B` 切换是否显示操作菜单
+- `CommandOrControl+Shift+B` 切换是否显示操作菜单，仅Linux可用
 
 ## 已知Bug
 

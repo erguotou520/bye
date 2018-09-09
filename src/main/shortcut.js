@@ -28,8 +28,10 @@ function registerShortcut (name, key) {
  * @param {String} key 要取消注册的快捷键的按键
  */
 function unregisterShortcut (key) {
-  globalShortcut.unregister(key)
-  logger.info(`Unregister shortcut: ${key}`)
+  if (key) {
+    globalShortcut.unregister(key)
+    logger.info(`Unregister shortcut: ${key}`)
+  }
 }
 
 /**

@@ -60,7 +60,7 @@ export function updateAppConfig (targetConfig, fromRenderer = false, forceAppend
   const changedKeys = getUpdatedKeys(currentConfig, targetConfig)
   // 只有有数据变更才更新配置
   if (changedKeys.length) {
-    const oldConfig = clone(currentConfig)
+    const oldConfig = clone(currentConfig, true)
     configMerge(currentConfig, targetConfig, forceAppendArray)
     isFromRenderer = fromRenderer
     _observe.next([currentConfig, changedKeys, oldConfig, isProxyStarted(currentConfig), isProxyStarted(oldConfig)])

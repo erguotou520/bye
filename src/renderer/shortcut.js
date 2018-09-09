@@ -12,3 +12,8 @@ export function init (appConfig) {
     }
   })
 }
+
+export function changeBind (funcName, oldKey, newKey) {
+  Mousetrap.unbind(oldKey)
+  Mousetrap.bind(newKey, func[funcName])
+}
