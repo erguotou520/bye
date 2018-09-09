@@ -27,6 +27,10 @@
 
 - 只需要系统已安装 [python](https://www.python.org/downloads/) 可正常执行`shadowsocksr`的python版即可
 
+## 快捷键
+
+为了解决部分Linux发行版无法显示图标导致功能无法使用而加入了2个快捷键一个全局打开主窗口`Ctrl+Shift+W`，一个在窗口按`Ctrl+Shift+B`打开操作菜单，目前仅Linux可用。
+
 ## 已知Bug
 
 - 部分Linux系统无法切换系统代理模式（使用`gsetting`设置的，非gnome桌面可能不生效），如果你知道如何实现，欢迎发issue告知。
