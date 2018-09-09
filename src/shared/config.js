@@ -25,14 +25,14 @@ const defaultConfig = {
   // 全局快捷键
   globalShortcuts: {
     toggleWindow: {
-      key: 'CommandOrControl+Shift+W',
+      key: isLinux ? 'Command+Shift+W' : '',
       enable: isLinux
     }
   },
   // 窗口快捷键
   windowShortcuts: {
     toggleMenu: {
-      key: 'mod+s',
+      key: isLinux ? 'Command+Shift+B' : '',
       enable: isLinux
     }
   },
