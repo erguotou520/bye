@@ -35,7 +35,7 @@
     "mousetrap": "^1.6.1",
     "qr-image": "^3.2.0",
     "rxjs": "^5.5.5",
-    "simple-web-proxy": "^0.1.0",
+    "simple-web-proxy": "^0.2.0",
     "sudo-prompt": "^8.1.0",
     "urlsafe-base64": "^1.0.0",
     "vue": "^2.3.3",
