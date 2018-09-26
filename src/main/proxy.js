@@ -54,7 +54,7 @@ export function setProxyToGlobal (host, port) {
 }
 
 /**
- * 设置代理为全局
+ * 设置代理为PAC代理
  */
 export function setProxyToPac (pacUrl) {
   let command
