@@ -120,7 +120,7 @@ export function configMerge (to, from, appendArray = false) {
  * @param {Object} appConfig 当前的应用配置
  * @param {Object} targetConfig 新的应用配置
  */
-export function getUpdatedKeys (appConfig, targetConfig) {
+export function getUpdatedKeys (appConfig = {}, targetConfig) {
   return Object.keys(targetConfig).filter(key => {
     // 如果原对象类型和新的类型不一致直接返回true
     if (protoString(appConfig[key]) !== protoString(value)) {
