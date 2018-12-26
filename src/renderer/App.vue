@@ -33,7 +33,6 @@ export default {
 }
 </script>
 <style lang="stylus">
-@import '~erguotou-iview/dist/styles/iview.css'
 @import './assets/styles'
 @import './assets/base.styl'
 </style>

@@ -47,9 +47,9 @@ const source = Observable.create(observe => {
   })
 })
 
-// 当前是否已选择某节点，即socks代理是否选中比启用
+// 当前是否已选择某节点，即socks代理是否选中并启用
 export function isProxyStarted (appConfig) {
-  return !!(appConfig.enable && appConfig.httpProxyEnable && appConfig.configs && appConfig.configs[appConfig.index])
+  return !!(appConfig.enable && appConfig.configs && appConfig.configs[appConfig.index])
 }
 
 /**
@@ -60,7 +60,7 @@ export function updateAppConfig (targetConfig, fromRenderer = false, forceAppend
   const changedKeys = getUpdatedKeys(currentConfig, targetConfig)
   // 只有有数据变更才更新配置
   if (changedKeys.length) {
-    const oldConfig = clone(currentConfig)
+    const oldConfig = clone(currentConfig, true)
     configMerge(currentConfig, targetConfig, forceAppendArray)
     isFromRenderer = fromRenderer
     _observe.next([currentConfig, changedKeys, oldConfig, isProxyStarted(currentConfig), isProxyStarted(oldConfig)])

@@ -9,11 +9,11 @@ import './ipc'
 import { stopPacServer } from './pac'
 import { stopHttpProxyServer } from './http-proxy'
 import { stop as stopCommand, runWithConfig } from './client'
-import { setProxyToNone, startProxy } from './proxy'
+import { setProxyToNone } from './proxy'
 import { createWindow, showWindow, getWindow, destroyWindow } from './window'
 import { startTask, stopTask } from './subscribe'
 import logger from './logger'
-import './shortcut'
+import { clearShortcuts } from './shortcut'
 import { loadConfigsFromString } from '../shared/ssr'
 import { isMac, isWin } from '../shared/env'
 
@@ -87,27 +87,21 @@ bootstrap.then(() => {
   // 电源状态检测
   powerMonitor.on('suspend', () => {
     // 系统挂起时
-    if (process.env.NODE_ENV === 'development') {
-      console.log('power suspend')
-    }
+    logger.info('power suspend')
     stopTask()
-    setProxyToNone()
+    // setProxyToNone()
     stopCommand(true)
   }).on('resume', () => {
     // 恢复
-    if (process.env.NODE_ENV === 'development') {
-      console.log('power resumed')
-    }
+    logger.info('power resumed')
     runWithConfig(currentConfig)
-    startProxy()
+    // startProxy()
     startTask(currentConfig)
   })
 })
 
 app.on('window-all-closed', () => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('window-all-closed')
-  }
+  logger.debug('window-all-closed')
   if (process.platform !== 'darwin') {
     app.quit()
   }
@@ -117,9 +111,7 @@ app.on('window-all-closed', () => {
 app.on('before-quit', () => { isQuiting(true) })
 
 app.on('will-quit', e => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('will-quit')
-  }
+  logger.debug('will-quit')
   e.preventDefault()
   stopTask()
   setProxyToNone()
@@ -127,6 +119,7 @@ app.on('will-quit', e => {
   destroyWindow()
   stopHttpProxyServer()
   stopPacServer()
+  clearShortcuts()
   stopCommand(true).then(() => {
     app.exit(0)
   })

@@ -1,6 +1,6 @@
 const builder = require('electron-builder')
 const os = require('os')
-const path = require('path')
+const pkg = require('../package.json')
 
 const platform = os.platform()
 const Platform = builder.Platform
@@ -11,14 +11,14 @@ const END = '\x1b[0m'
 let targets
 const extraFiles = []
 
-function release (dir) {
+function release () {
   let files = [
     'dist/electron/**/*',
     '!dist/electron/imgs/ionicons--fonts.svg',
     '!dist/electron/fonts/ionicons--fonts.eot',
     '!dist/electron/fonts/ionicons--fonts.ttf',
     '!dist/electron/static/plane.svg',
-    '!node_modules/{babel-runtime,batch-processor,cookie,core-js,deepmerge,element-resize-detector,erguotou-iview,mousetrap,rxjs,popper.js,qr-image,vue*}${/*}',
+    '!node_modules/{babel-runtime,batch-processor,core-js,deepmerge,element-resize-detector,erguotou-iview,mousetrap,rxjs,popper.js,qr-image,vue*}${/*}',
     '!node_modules/unbzip2-stream/dist${/*}',
     'node_modules/mousetrap/{mousetrap.js,package.json}',
     '!**/*.{md,markdown,MD,txt}',
@@ -50,28 +50,27 @@ function release (dir) {
       targets = Platform.LINUX.createTarget()
       files = files.concat(macImages)
   }
-  const baseOptions = {
+  return builder.build({
     targets: targets,
-    dir: dir
-  }
-  const baseConfig = {
-    // electronVersion
-    // afterPack
-    productName: 'electron-ssr',
-    appId: 'me.erguotou.ssr',
-    compression: 'maximum',
-    directories: {
-      output: 'build'
-    },
-    files,
-    extraFiles: extraFiles,
-    publish: {
-      provider: 'github'
-    }
-  }
-  const options = Object.assign({}, baseConfig)
-  const x64Promise = builder.build(Object.assign({}, baseOptions, {
-    config: Object.assign({}, baseConfig, {
+    config: {
+      productName: 'electron-ssr',
+      appId: 'me.erguotou.ssr',
+      artifactName: '${productName}-${version}.${ext}',
+      compression: 'maximum',
+      files,
+      extraFiles: extraFiles,
+      directories: {
+        output: 'build'
+      },
+      publish: [{
+        provider: 'bintray',
+        package: 'electron-ssr',
+        repo: 'generic',
+        owner: 'erguotou520',
+        user: 'erguotou520'
+      }, {
+        provider: 'github'
+      }],
       dmg: {
         contents: [
           {
@@ -103,50 +102,37 @@ function release (dir) {
         target: [
           {
             target: 'nsis',
-            arch: [
-              'x64'
-            ]
+            arch: ['ia32']
           }
         ]
       },
       nsis: {
-        license: 'LICENSE'
+        license: 'LICENSE',
+        oneClick: false,
+        perMachine: true,
+        allowToChangeInstallationDirectory: true,
       },
       linux: {
         icon: 'build/icons',
         category: 'Development',
+        synopsis: pkg.description,
         target: [
           'deb',
           'rpm',
           'tar.gz',
           'pacman',
           'appImage'
-        ]
+        ],
+        desktop: {
+          Name: 'electron-ssr',
+          Encoding: 'UTF-8',
+          Type: 'Application',
+          Comment: pkg.description,
+          Terminal: true
+        }
       }
-    })
-  }))
-  return x64Promise.then(() => {
-    // if (platform === 'win32') {
-    //   return builder.build(Object.assign({}, baseOptions, {
-    //     config: Object.assign({}, baseConfig, {
-    //       win: {
-    //         icon: 'build/icons/icon.ico',
-    //         artifactName: '${productName} Setup ${version}-ia32.${ext}',
-    //         target: [
-    //           {
-    //             target: 'nsis',
-    //             arch: [
-    //               'ia32'
-    //             ]
-    //           }
-    //         ]
-    //       }
-    //     })
-    //   }))
-    // } else {
-    //   return Promise.resolve()
-    // }
-  // }).then(() => {
+    }
+  }).then(() => {
     console.log(`${BLUE}Done${END}`)
   }).catch(error => {
     console.error(`${YELLOW}Build error: ${error}${END}`)

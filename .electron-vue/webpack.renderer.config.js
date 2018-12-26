@@ -84,7 +84,7 @@ let rendererConfig = {
         }
       },
       {
-        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        test: /\.(png|jpe?g|gif)(\?.*)?$/,
         use: {
           loader: 'url-loader',
           query: {
@@ -92,6 +92,10 @@ let rendererConfig = {
             name: 'imgs/[name]--[folder].[ext]'
           }
         }
+      },
+      {
+        test: /\.svg$/,
+        loader: 'vue-svg-loader'
       },
       {
         test: /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/,

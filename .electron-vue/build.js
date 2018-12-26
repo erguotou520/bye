@@ -47,7 +47,7 @@ function build () {
     console.log(`\n\n${results}`)
     console.log(`${okayLog}take it away ${chalk.yellow('`electron-builder`')}\n`)
     // 打包发布版本
-    release(process.env.DIR === 'true').then(function () {
+    release().then(function () {
       process.exit()
     })
   })

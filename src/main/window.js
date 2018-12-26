@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from 'electron'
 import { isQuiting } from './data'
+import logger from './logger'
 
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
@@ -71,6 +72,19 @@ export function hideWindow () {
 }
 
 /**
+ * 切换窗体显隐
+ */
+export function toggleWindow () {
+  if (mainWindow) {
+    if (mainWindow.isVisible()) {
+      mainWindow.hide()
+    } else {
+      mainWindow.show()
+    }
+  }
+}
+
+/**
  * 销毁主视图
  */
 export function destroyWindow () {
@@ -88,7 +102,7 @@ export async function sendData (channel, ...args) {
     await readyPromise
     mainWindow.webContents.send(channel, ...args)
   } else {
-    console.log('not ready')
+    logger.debug('not ready')
   }
 }
 
@@ -100,6 +114,6 @@ export async function openDevtool () {
     await readyPromise
     mainWindow.webContents.openDevTools()
   } else {
-    console.log('not ready')
+    logger.debug('not ready')
   }
 }

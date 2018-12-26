@@ -1,7 +1,7 @@
 <template>
   <div class="options-container px-2 pb-2 scroll-y">
     <i-form ref="form" class="mt-1" :model="form" :rules="rules" :label-width="120">
-      <i-form-item prop="ssrPath" label="SSR python目录">
+      <i-form-item prop="ssrPath" label="ssr python目录">
         <i-input v-model="form.ssrPath" placeholder="请选择shadowsocks目录" @on-change="changeSSRPath" style="width:200px"/>
         <i-button type="primary" @click="selectPath">选择ssr目录</i-button>
       </i-form-item>

@@ -87,11 +87,11 @@ export default {
       this.autoError = ''
       const self = this
 
-      function callback (e, err) {
-        console.log('download ssr result', e, err)
+      function callback (e, errMessage) {
+        console.log('download ssr result', e, errMessage)
         ipcRenderer.removeListener(EVENT_SSR_DOWNLOAD_MAIN, callback)
-        if (err) {
-          self.autoError = err.message
+        if (errMessage) {
+          self.autoError = errMessage
         } else {
           self.$nextTick(() => {
             // 需要在下载目录后追加shadowsocks子目录

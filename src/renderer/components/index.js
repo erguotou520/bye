@@ -4,6 +4,8 @@ import { Select, Option, OptionGroup } from 'erguotou-iview/src/components/selec
 import AppView from './AppView'
 import ExternalLink from './ExternalLink'
 
+import 'erguotou-iview/dist/styles/iview.css'
+
 import {
   Alert,
   AutoComplete,
