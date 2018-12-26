@@ -16,7 +16,7 @@ let child
 export function runCommand (command, params) {
   if (command && params.length) {
     const commandStr = `${command} ${params.join(' ')}`
-    logger.info('run command: %s', commandStr.replace(/-k [\d\w]* /, '-k ******'))
+    logger.info('run command: %s', commandStr.replace(/-k [\d\w]* /, '-k ****** '))
     child = execFile(command, params)
     child.stdout.on('data', logger.info)
     child.stderr.on('data', logger.error)

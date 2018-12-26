@@ -17,7 +17,7 @@
           </i-col>
         </i-row>
       </i-form-item>
-      <i-form-item class="flex-1">
+      <i-form-item v-if="isLinux" class="flex-1">
         <i-row type="flex" :gutter="24">
           <i-col :span="5">
             <i-checkbox v-model="form.windowShortcuts.toggleMenu.enable"

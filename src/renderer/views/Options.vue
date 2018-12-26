@@ -12,7 +12,7 @@
       </i-tab-pane>
       <i-tab-pane label="快捷键管理" name="shortcuts">
         <option-shortcut></option-shortcut>
-      </i-tab-pane> -->
+      </i-tab-pane>
     </i-tabs>
     <div class="w-100 flex flex-jc-end px-2 py-1 border-1px-t">
       <i-button class="w-6r mr-2" @click="$emit('back')">返回</i-button>

@@ -68,9 +68,14 @@ export default {
               nativeOn: {
                 keyup (e) {
                   if (e.keyCode === 13) {
+                    const url = self.editingRowUrl
+                    // 未发生改变
+                    if (url === self.appConfig.serverSubscribes[params.index].URL) {
+                      self.cancelEditing()
+                      return
+                    }
                     self.loading = true
-                    if (URL_REGEX.test(self.editingRowUrl)) {
-                      const url = self.editingRowUrl
+                    if (URL_REGEX.test(url)) {
                       self.requestSubscribeUrl(url).then(res => {
                         self.loading = false
                         const [valid, configs] = isSubscribeContentValid(res)
@@ -78,7 +83,10 @@ export default {
                           const clone = self.appConfig.serverSubscribes.slice()
                           clone.splice(params.index, 1)
                           clone.splice(params.index, 0, { URL: url, Group: configs[0].group })
-                          self.updateConfig({ serverSubscribes: clone, configs })
+                          self.updateConfig({
+                            serverSubscribes: clone,
+                            configs: self.appConfig.configs.concat(configs)
+                          })
                         }
                       }).catch(() => {
                         self.loading = false
@@ -216,7 +224,10 @@ export default {
           if (valid) {
             const clone = this.appConfig.serverSubscribes.slice()
             clone.push({ URL: url, Group: configs[0].group })
-            this.updateConfig({ serverSubscribes: clone, configs })
+            this.updateConfig({
+              serverSubscribes: clone,
+              configs: this.appConfig.configs.concat(configs)
+            })
           }
         }).catch(() => {
           this.loading = false
@@ -231,9 +242,9 @@ export default {
     // 支持初始化打开新增输入框
     if (this.$store.state.view.active) {
       this.showNewUrl = true
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$refs.input.focus()
-      })
+      }, 300)
     }
   }
 }
