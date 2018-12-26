@@ -1,19 +1,19 @@
 <template>
   <div class="options-container px-2 pb-2 scroll-y">
     <i-form ref="form" class="mt-1" :model="form" :label-width="0">
-      <i-form-item>
+      <i-form-item v-for="(funcText,funcName) in globalShortcutMaps" :key="funcName">
         <i-row type="flex" :gutter="24">
           <i-col :span="5">
-            <i-checkbox v-model="form.globalShortcuts.toggleWindow.enable"
-              @on-change="update('globalShortcuts', 'toggleWindow')">
-              切换窗口显隐
+            <i-checkbox v-model="form.globalShortcuts[funcName].enable"
+              @on-change="update('globalShortcuts', funcName)">
+              {{funcText}}
             </i-checkbox>
           </i-col>
           <i-col :span="8">
-            <i-input v-model="form.globalShortcuts.toggleWindow.key"
-              readonly :disabled="!form.globalShortcuts.toggleWindow.enable"
-              @on-keydown="e=>keydown(e,'globalShortcuts', 'toggleWindow')"
-              @on-keyup="e=>keyup(e,'globalShortcuts', 'toggleWindow')"/>
+            <i-input v-model="form.globalShortcuts[funcName].key"
+              readonly :disabled="!form.globalShortcuts[funcName].enable"
+              @on-keydown="e=>keydown(e,'globalShortcuts', funcName)"
+              @on-keyup="e=>keyup(e,'globalShortcuts', funcName)"/>
           </i-col>
         </i-row>
       </i-form-item>
@@ -50,6 +50,10 @@ export default {
     const appConfig = this.$store.state.appConfig
     return {
       isLinux,
+      globalShortcutMaps: {
+        toggleWindow: '切换窗口显隐',
+        switchSystemProxy: '切换系统代理模式'
+      },
       form: {
         globalShortcuts: appConfig.globalShortcuts,
         windowShortcuts: appConfig.windowShortcuts
