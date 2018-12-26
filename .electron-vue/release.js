@@ -107,10 +107,7 @@ function release () {
         ]
       },
       nsis: {
-        license: 'LICENSE',
-        oneClick: false,
-        perMachine: true,
-        allowToChangeInstallationDirectory: true,
+        license: 'LICENSE'
       },
       linux: {
         icon: 'build/icons',
