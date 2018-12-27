@@ -65,9 +65,9 @@ app.on('ready', () => {
       // 注册，并返回注册失败的
       const failed = Object.keys(appConfig.globalShortcuts).filter(funcName => {
         if (appConfig.globalShortcuts[funcName].enable) {
-          return registerShortcut(funcName, appConfig.globalShortcuts[funcName].key)
+          return !registerShortcut(funcName, appConfig.globalShortcuts[funcName].key)
         }
-        return true
+        return false
       })
       if (failed.length) {
         showNotification(`检测到${failed.length}个全局快捷键注册失败，请在快捷键页面重新设置`, '错误', () => {
