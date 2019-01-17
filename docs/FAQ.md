@@ -51,6 +51,11 @@
   [见已知bug](../README.md#已知Bug)
 </details>
 
+<details>	
+  <summary>错误日志Exception: libsodium not found</summary>	
+  <p>该错误是因为当前系统缺少libsodium库导致，Mac下使用<code>brew install libsodium</code>安装，Ubuntu可参考<a href="https://gist.github.com/jonathanpmartins/2510f38abee1e65c6d92">https://gist.github.com/jonathanpmartins/2510f38abee1e65c6d92</a>安装，Windows前往<a href="https://download.libsodium.org/libsodium/releases/">https://download.libsodium.org/libsodium/releases/</a>下载<code>libsodium-{version}-msvc.zip</code>文件并解压，复制解压目录中的<code>libsodium.dll</code>至<code>C:\windows\system32</code>目录（注意dll文件是64的还是32的）,其它系统请自行搜索。</p>	
+</details>
+
 <details>
   <summary>加密方法、协议、混淆中没有我想设置的选项怎么办？</summary>
   <p>请右击任务栏图标-配置-选项设置...，然后切换到SSR设置选项卡中自行添加，前提是当前使用的ssr要支持这些新增选项。</p>
