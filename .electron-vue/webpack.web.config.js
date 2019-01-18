@@ -7,13 +7,9 @@ const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-
-const HappyPack = require('happypack')
-let happyThreadPool = HappyPack.ThreadPool({
-  size: require('os').cpus().length
-})
+const { VueLoaderPlugin } = require('vue-loader')
 
 let webConfig = {
   devtool: '#cheap-module-eval-source-map',
@@ -35,10 +31,11 @@ let webConfig = {
       },
       {
         test: /\.css$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: 'css-loader'
-        })
+        use: ['vue-style-loader', 'css-loader']
+      },
+      {
+        test: /\.styl(us)?$/,
+        use: ['vue-style-loader', 'css-loader', 'stylus-loader']
       },
       {
         test: /\.html$/,
@@ -46,7 +43,7 @@ let webConfig = {
       },
       {
         test: /\.js$/,
-        use: 'happypack/loader?id=js',
+        use: 'babel-loader',
         include: [ path.resolve(__dirname, '../src/renderer') ],
         exclude: /node_modules/
       },
@@ -86,13 +83,8 @@ let webConfig = {
     ]
   },
   plugins: [
-    new HappyPack({
-      id: 'js',
-      loaders: ['babel-loader'],
-      threadPool: happyThreadPool,
-      verbose: true
-    }),
-    new ExtractTextPlugin('styles.css'),
+    new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({filename: 'styles.css'}),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: path.resolve(__dirname, '../src/index.ejs'),

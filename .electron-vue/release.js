@@ -57,6 +57,7 @@ function release () {
       appId: 'me.erguotou.ssr',
       artifactName: '${productName}-${version}.${ext}',
       compression: 'maximum',
+      copyright: 'erguotou525@gmail.com',
       files,
       extraFiles: extraFiles,
       directories: {
@@ -107,7 +108,10 @@ function release () {
         ]
       },
       nsis: {
-        license: 'LICENSE'
+        license: 'LICENSE',
+        oneClick: false,
+        perMachine: true,
+        allowToChangeInstallationDirectory: true,
       },
       linux: {
         icon: 'build/icons',
@@ -125,8 +129,11 @@ function release () {
           Encoding: 'UTF-8',
           Type: 'Application',
           Comment: pkg.description,
-          Terminal: true
+          StartupWMClass: 'electron-ssr'
         }
+      },
+      appImage: {
+        license: 'LICENSE'
       }
     }
   }).then(() => {

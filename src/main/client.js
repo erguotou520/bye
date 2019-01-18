@@ -29,59 +29,60 @@ export function runCommand (command, params) {
  * @param {*String} ssrPath local.py的路径
  * @param {*[Number|String]} localPort 本地共享端口
  */
-export function run (appConfig) {
+export async function run (appConfig) {
   const listenHost = appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
   // 先结束之前的
-  return stop().then(() => {
-    return isHostPortValid(listenHost, appConfig.localPort || 1080)
-  }).then(() => {
-    const config = appConfig.configs[appConfig.index]
-    // 参数
-    const params = [path.join(appConfig.ssrPath, 'local.py')]
-    params.push('-s')
-    params.push(config.server)
-    params.push('-p')
-    params.push(config.server_port)
-    params.push('-k')
-    params.push(config.password)
-    params.push('-m')
-    params.push(config.method)
-    params.push('-O')
-    params.push(config.protocol)
-    if (config.protocolparam) {
-      params.push('-G')
-      params.push(config.protocolparam)
-    }
-    if (config.obfs) {
-      params.push('-o')
-      params.push(config.obfs)
-    }
-    if (config.obfsparam) {
-      params.push('-g')
-      params.push(config.obfsparam)
-    }
-    params.push('-b')
-    params.push(listenHost)
-    params.push('-l')
-    params.push(appConfig.localPort || 1080)
-    if (config.timeout) {
-      params.push('-t')
-      params.push(config.timeout)
-    }
-    runCommand('python', params)
-  }).catch(() => {
+  await stop()
+  try {
+    await isHostPortValid(listenHost, appConfig.localPort || 1080)
+  } catch (e) {
+    logger.error(e)
     dialog.showMessageBox({
       type: 'warning',
       title: '警告',
       message: `端口 ${appConfig.localPort} 被占用`
     })
-  })
+  }
+  const config = appConfig.configs[appConfig.index]
+  // 参数
+  const params = [path.join(appConfig.ssrPath, 'local.py')]
+  params.push('-s')
+  params.push(config.server)
+  params.push('-p')
+  params.push(config.server_port)
+  params.push('-k')
+  params.push(config.password)
+  params.push('-m')
+  params.push(config.method)
+  params.push('-O')
+  params.push(config.protocol)
+  if (config.protocolparam) {
+    params.push('-G')
+    params.push(config.protocolparam)
+  }
+  if (config.obfs) {
+    params.push('-o')
+    params.push(config.obfs)
+  }
+  if (config.obfsparam) {
+    params.push('-g')
+    params.push(config.obfsparam)
+  }
+  params.push('-b')
+  params.push(listenHost)
+  params.push('-l')
+  params.push(appConfig.localPort || 1080)
+  if (config.timeout) {
+    params.push('-t')
+    params.push(config.timeout)
+  }
+  runCommand('python', params)
 }
 
 /**
  * 结束command的后台运行
  */
-export async function stop (force = false) {
+export function stop (force = false) {
   if (child && child.pid) {
     logger.log('Kill client')
     return new Promise((resolve, reject) => {

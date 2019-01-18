@@ -37,7 +37,7 @@
 
 ## 配置文件位置
 
-- Windows `C:\Users\{your username}\AppData\Local\Programs\electron-ssr\gui-config.json`
+- Windows `C:\Users\{your username}\AppData\Roaming\electron-ssr\gui-config.json`
 - Mac `~/Library/Application Support/electron-ssr/gui-config.json`
 - Linux `~/.config/gui-config.json`
 

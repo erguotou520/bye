@@ -57,7 +57,8 @@ ipcMain.on(events.EVENT_APP_HIDE_WINDOW, () => {
   // 切换menu显示
   toggleMenu()
 }).on(events.EVENT_APP_OPEN_DIALOG, (e, params) => {
-  e.returnValue = dialog.showOpenDialog(params)
+  const ret = dialog.showOpenDialog(params)
+  e.returnValue = ret || ''
 })
 
 /**

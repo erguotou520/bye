@@ -11,7 +11,7 @@ export function isHostPortValid (host, port) {
     const tester = createServer().listen(port, host)
       .once('error', err => {
         logger.debug(err)
-        reject()
+        reject(err)
       })
       .once('listening', () => {
         let closed = false
@@ -24,7 +24,7 @@ export function isHostPortValid (host, port) {
         })
         const timeout = setTimeout(() => {
           if (!closed) {
-            reject()
+            reject('Timeout when release port.')
           }
         }, 5000)
       })
