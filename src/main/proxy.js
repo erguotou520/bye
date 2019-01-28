@@ -6,6 +6,7 @@ import { execSync } from 'child_process'
 import { pathExistsSync } from 'fs-extra'
 import { winToolPath, macToolPath } from './bootstrap'
 import { currentConfig, appConfig$, updateAppConfig } from './data'
+import logger from './logger'
 import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
 
 // linux的gsettings命令是否可用
@@ -22,7 +23,11 @@ let isProxyChanged = false
 function runCommand (command) {
   if (command) {
     isProxyChanged = true
-    execSync(command)
+    try {
+      execSync(command)
+    } catch (error) {
+      logger.error(error)
+    }
   }
 }
 

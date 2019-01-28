@@ -131,10 +131,10 @@ function release () {
           Comment: pkg.description,
           StartupWMClass: 'electron-ssr'
         }
-      },
-      appImage: {
-        license: 'LICENSE'
       }
+      // appImage: {
+      //   license: 'LICENSE'
+      // }
     }
   }).then(() => {
     console.log(`${BLUE}Done${END}`)
