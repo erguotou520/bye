@@ -28,12 +28,12 @@ function release () {
   const macImages = [
     '!dist/electron/static/enabled@(Template|Highlight)?(@2x).png',
     '!dist/electron/static/pac@(Template|Highlight)?(@2x).png',
-    '!dist/electron/static/global@(Template|Highlight)?(@2x).png',
+    '!dist/electron/static/global@(Template|Highlight)?(@2x).png'
   ]
   const winImages = [
     '!dist/electron/static/enabled?(@2x).png',
     '!dist/electron/static/pac?(@2x).png',
-    '!dist/electron/static/global?(@2x).png',
+    '!dist/electron/static/global?(@2x).png'
   ]
   switch (platform) {
     case 'darwin':
@@ -63,15 +63,9 @@ function release () {
       directories: {
         output: 'build'
       },
-      publish: [{
-        provider: 'bintray',
-        package: 'electron-ssr',
-        repo: 'generic',
-        owner: 'erguotou520',
-        user: 'erguotou520'
-      }, {
+      publish: {
         provider: 'github'
-      }],
+      },
       dmg: {
         contents: [
           {
@@ -111,7 +105,7 @@ function release () {
         license: 'LICENSE',
         oneClick: false,
         perMachine: true,
-        allowToChangeInstallationDirectory: true,
+        allowToChangeInstallationDirectory: true
       },
       linux: {
         icon: 'build/icons',
