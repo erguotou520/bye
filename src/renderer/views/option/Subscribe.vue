@@ -78,14 +78,20 @@ export default {
                     if (URL_REGEX.test(url)) {
                       self.requestSubscribeUrl(url).then(res => {
                         self.loading = false
-                        const [valid, configs] = isSubscribeContentValid(res)
-                        if (valid) {
+                        const [groupCount, groupConfigs] = isSubscribeContentValid(res)
+                        if (groupCount > 0) {
                           const clone = self.appConfig.serverSubscribes.slice()
                           clone.splice(params.index, 1)
-                          clone.splice(params.index, 0, { URL: url, Group: configs[0].group })
+                          let groups = ''
+                          for (const groupName in groupConfigs) {
+                            groups = groups + groupName + '|'
+                            self.updateConfig({
+                              configs: self.appConfig.configs.concat(groupConfigs[groupName])
+                            })
+                          }
+                          clone.splice(params.index, 0, { URL: url, Group: groups.slice(0, -1) })
                           self.updateConfig({
-                            serverSubscribes: clone,
-                            configs: self.appConfig.configs.concat(configs)
+                            serverSubscribes: clone
                           })
                         }
                       }).catch(() => {
@@ -218,20 +224,33 @@ export default {
       if (URL_REGEX.test(this.url)) {
         this.loading = true
         const url = this.url
-        this.requestSubscribeUrl(url).then(res => {
+        // 未发生改变
+        if (this.appConfig.serverSubscribes.every(serverSubscribe => {
+          return serverSubscribe.URL !== url
+        })) {
+          this.requestSubscribeUrl(url).then(res => {
+            this.loading = false
+            const [groupCount, groupConfigs] = isSubscribeContentValid(res)
+            if (groupCount > 0) {
+              const clone = this.appConfig.serverSubscribes.slice()
+              let groups = ''
+              for (const groupName in groupConfigs) {
+                groups = groups + groupName + '|'
+                this.updateConfig({
+                  configs: this.appConfig.configs.concat(groupConfigs[groupName])
+                })
+              }
+              clone.push({ URL: url, Group: groups.slice(0, -1) })
+              this.updateConfig({
+                serverSubscribes: clone
+              })
+            }
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
           this.loading = false
-          const [valid, configs] = isSubscribeContentValid(res)
-          if (valid) {
-            const clone = this.appConfig.serverSubscribes.slice()
-            clone.push({ URL: url, Group: configs[0].group })
-            this.updateConfig({
-              serverSubscribes: clone,
-              configs: this.appConfig.configs.concat(configs)
-            })
-          }
-        }).catch(() => {
-          this.loading = false
-        })
+        }
         this.cancel()
       } else {
         this.urlError = true
