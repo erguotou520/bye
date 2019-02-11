@@ -83,15 +83,15 @@ export default {
                           const clone = self.appConfig.serverSubscribes.slice()
                           clone.splice(params.index, 1)
                           let groups = ''
+                          let configs = []
                           for (const groupName in groupConfigs) {
                             groups = groups + groupName + '|'
-                            self.updateConfig({
-                              configs: self.appConfig.configs.concat(groupConfigs[groupName])
-                            })
+                            configs = configs.concat(groupConfigs[groupName])
                           }
                           clone.splice(params.index, 0, { URL: url, Group: groups.slice(0, -1) })
                           self.updateConfig({
-                            serverSubscribes: clone
+                            serverSubscribes: clone,
+                            configs: self.appConfig.configs.concat(configs)
                           })
                         }
                       }).catch(() => {
@@ -234,15 +234,15 @@ export default {
             if (groupCount > 0) {
               const clone = this.appConfig.serverSubscribes.slice()
               let groups = ''
+              let configs = []
               for (const groupName in groupConfigs) {
                 groups = groups + groupName + '|'
-                this.updateConfig({
-                  configs: this.appConfig.configs.concat(groupConfigs[groupName])
-                })
+                configs = configs.concat(groupConfigs[groupName])
               }
               clone.push({ URL: url, Group: groups.slice(0, -1) })
               this.updateConfig({
-                serverSubscribes: clone
+                serverSubscribes: clone,
+                configs: this.appConfig.configs.concat(configs)
               })
             }
           }).catch(() => {

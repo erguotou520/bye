@@ -311,8 +311,7 @@ export function isSubscribeContentValid (content) {
       if (groupConfigs.hasOwnProperty(config.group)) {
         groupConfigs[config.group].push(config)
       } else {
-        groupConfigs[config.group] = []
-        groupConfigs[config.group].push(config)
+        groupConfigs[config.group] = [config]
       }
     })
     const groupCount = Object.keys(groupConfigs).length
