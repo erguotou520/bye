@@ -306,8 +306,15 @@ export function isSubscribeContentValid (content) {
   if (!configs.length) {
     return [false]
   } else {
-    const group = configs[0].group
-    const inOneGroup = configs.slice(1).every(config => config.group === group)
-    return [inOneGroup, inOneGroup ? configs : []]
+    const groupConfigs = {}
+    configs.forEach(config => {
+      if (groupConfigs.hasOwnProperty(config.group)) {
+        groupConfigs[config.group].push(config)
+      } else {
+        groupConfigs[config.group] = [config]
+      }
+    })
+    const groupCount = Object.keys(groupConfigs).length
+    return [groupCount, groupCount > 0 ? groupConfigs : {}]
   }
 }
