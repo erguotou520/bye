@@ -25,15 +25,13 @@
 <script>
 import { ipcRenderer } from 'electron'
 import { join } from 'path'
-import { remote } from 'electron'
-import { mapState } from 'vuex'
-import { syncConfig } from '../ipc'
+import { mapState, mapMutations } from 'vuex'
+import { openDialog } from '../ipc'
 import { isSSRPathAvaliable } from '../../shared/utils'
 import { STORE_KEY_AUTO_DOWNLOAD } from '../constants'
 import { EVENT_SSR_DOWNLOAD_RENDERER, EVENT_SSR_DOWNLOAD_MAIN } from '../../shared/events'
 import Dot from '../components/Dot'
 
-const { dialog } = remote.require('electron')
 export default {
   data () {
     return {
@@ -78,6 +76,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations(['updateConfig']),
     restart () {
       this.autoError = ''
       this.autoStart()
@@ -88,11 +87,11 @@ export default {
       this.autoError = ''
       const self = this
 
-      function callback (e, err) {
-        console.log('download ssr result', e, err)
+      function callback (e, errMessage) {
+        console.log('download ssr result', e, errMessage)
         ipcRenderer.removeListener(EVENT_SSR_DOWNLOAD_MAIN, callback)
-        if (err) {
-          self.autoError = err.message
+        if (errMessage) {
+          self.autoError = errMessage
         } else {
           self.$nextTick(() => {
             // 需要在下载目录后追加shadowsocks子目录
@@ -107,7 +106,7 @@ export default {
     // 选择目录
     selectPath () {
       this.manualDownload = false
-      const path = dialog.showOpenDialog({
+      const path = openDialog({
         properties: ['openDirectory']
       })
       if (path && path.length) {
@@ -122,7 +121,7 @@ export default {
     // 完成初始化
     setup (ssrPath) {
       this.$Message.destroy()
-      syncConfig({ ssrPath: ssrPath || this.form.ssrPath })
+      this.updateConfig([{ ssrPath: ssrPath || this.form.ssrPath }, true])
       this.$emit('finished')
     }
   },

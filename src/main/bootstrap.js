@@ -1,7 +1,7 @@
 import path from 'path'
 import { app, dialog } from 'electron'
-import { ensureDir, pathExists, ensureFile, outputJson } from 'fs-extra'
-import logger, { clearLog } from './logger'
+import { ensureDir, pathExists, outputJson } from 'fs-extra'
+import logger from './logger'
 import sudo from 'sudo-prompt'
 import defaultConfig from '../shared/config'
 import { isWin, isMac, isLinux, isOldMacVersion, isPythonInstalled } from '../shared/env'
@@ -33,19 +33,13 @@ if (process.env.NODE_ENV !== 'development') {
 
 // 未捕获的rejections
 process.on('unhandledRejection', (reason, p) => {
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Unhandled Rejection at: Promise', p, 'reason:', reason)
-  } else {
-    logger.log(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`)
-  }
+  logger.error(`Unhandled Rejection at: Promise ${p}, reason: ${reason}`)
 })
 
 // 应用配置存储目录
 export const appConfigDir = app.getPath('userData')
 // 应用配置存储路径
 export const appConfigPath = path.join(appConfigDir, 'gui-config.json')
-// 日志路径
-export const logPath = path.join(appConfigDir, 'logs/shadowsocksr-client.log')
 // 默认的ssr下载目录
 export const defaultSSRDownloadDir = path.join(appConfigDir, 'shadowsocksr')
 // pac文件下载目录
@@ -97,8 +91,6 @@ async function init () {
     await outputJson(appConfigPath, defaultConfig, { spaces: '\t' })
   }
   await ensureDir(path.join(appConfigDir, 'logs'))
-  await ensureFile(logPath)
-  await clearLog()
 
   // 初始化确保文件存在, 10.11版本以下不支持该功能
   if (isMac && !isOldMacVersion && !await pathExists(macToolPath)) {
@@ -106,12 +98,6 @@ async function init () {
       ? path.join(__dirname, '../lib/proxy_conf_helper')
       : path.join(exePath, '../../../Contents/proxy_conf_helper')
     await sudoMacCommand(`cp ${helperPath} "${macToolPath}" && chown root:admin "${macToolPath}" && chmod a+rx "${macToolPath}" && chmod +s "${macToolPath}"`)
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Config file\'s path: %s\nLog file\'s path: %s', appConfigPath, logPath)
-  } else {
-    logger.info('file ensured')
   }
   return readyPromise
 }

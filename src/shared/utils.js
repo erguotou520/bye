@@ -120,7 +120,7 @@ export function configMerge (to, from, appendArray = false) {
  * @param {Object} appConfig 当前的应用配置
  * @param {Object} targetConfig 新的应用配置
  */
-export function getUpdatedKeys (appConfig, targetConfig) {
+export function getUpdatedKeys (appConfig = {}, targetConfig) {
   return Object.keys(targetConfig).filter(key => {
     // 如果原对象类型和新的类型不一致直接返回true
     if (protoString(appConfig[key]) !== protoString(value)) {
@@ -180,7 +180,7 @@ export function clone (obj, deep = false) {
     case OBJECT_PROTOTYPE:
       const r = {}
       for (const key in obj) {
-        r[key] = deep ? clone(obj[key]) : obj[key]
+        r[key] = deep ? clone(obj[key], deep) : obj[key]
       }
       return r
     default:
@@ -306,8 +306,15 @@ export function isSubscribeContentValid (content) {
   if (!configs.length) {
     return [false]
   } else {
-    const group = configs[0].group
-    const inOneGroup = configs.slice(1).every(config => config.group === group)
-    return [inOneGroup, inOneGroup ? configs : []]
+    const groupConfigs = {}
+    configs.forEach(config => {
+      if (groupConfigs.hasOwnProperty(config.group)) {
+        groupConfigs[config.group].push(config)
+      } else {
+        groupConfigs[config.group] = [config]
+      }
+    })
+    const groupCount = Object.keys(groupConfigs).length
+    return [groupCount, groupCount > 0 ? groupConfigs : {}]
   }
 }

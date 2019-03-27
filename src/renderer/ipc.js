@@ -79,3 +79,10 @@ export function toggleMenu () {
 export function hideWindow () {
   ipcRenderer.send(events.EVENT_APP_HIDE_WINDOW)
 }
+
+/**
+ * 打开本地文件/目录
+ */
+export function openDialog (options) {
+  return ipcRenderer.sendSync(events.EVENT_APP_OPEN_DIALOG, options)
+}

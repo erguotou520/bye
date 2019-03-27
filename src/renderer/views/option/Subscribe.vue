@@ -68,17 +68,31 @@ export default {
               nativeOn: {
                 keyup (e) {
                   if (e.keyCode === 13) {
+                    const url = self.editingRowUrl
+                    // 未发生改变
+                    if (url === self.appConfig.serverSubscribes[params.index].URL) {
+                      self.cancelEditing()
+                      return
+                    }
                     self.loading = true
-                    if (URL_REGEX.test(self.editingRowUrl)) {
-                      const url = self.editingRowUrl
+                    if (URL_REGEX.test(url)) {
                       self.requestSubscribeUrl(url).then(res => {
                         self.loading = false
-                        const [valid, configs] = isSubscribeContentValid(res)
-                        if (valid) {
+                        const [groupCount, groupConfigs] = isSubscribeContentValid(res)
+                        if (groupCount > 0) {
                           const clone = self.appConfig.serverSubscribes.slice()
                           clone.splice(params.index, 1)
-                          clone.splice(params.index, 0, { URL: url, Group: configs[0].group })
-                          self.updateConfig({ serverSubscribes: clone, configs })
+                          let groups = ''
+                          let configs = []
+                          for (const groupName in groupConfigs) {
+                            groups = groups + groupName + '|'
+                            configs = configs.concat(groupConfigs[groupName])
+                          }
+                          clone.splice(params.index, 0, { URL: url, Group: groups.slice(0, -1) })
+                          self.updateConfig({
+                            serverSubscribes: clone,
+                            configs: self.appConfig.configs.concat(configs)
+                          })
                         }
                       }).catch(() => {
                         self.loading = false
@@ -210,17 +224,33 @@ export default {
       if (URL_REGEX.test(this.url)) {
         this.loading = true
         const url = this.url
-        this.requestSubscribeUrl(url).then(res => {
+        // 未发生改变
+        if (this.appConfig.serverSubscribes.every(serverSubscribe => {
+          return serverSubscribe.URL !== url
+        })) {
+          this.requestSubscribeUrl(url).then(res => {
+            this.loading = false
+            const [groupCount, groupConfigs] = isSubscribeContentValid(res)
+            if (groupCount > 0) {
+              const clone = this.appConfig.serverSubscribes.slice()
+              let groups = ''
+              let configs = []
+              for (const groupName in groupConfigs) {
+                groups = groups + groupName + '|'
+                configs = configs.concat(groupConfigs[groupName])
+              }
+              clone.push({ URL: url, Group: groups.slice(0, -1) })
+              this.updateConfig({
+                serverSubscribes: clone,
+                configs: this.appConfig.configs.concat(configs)
+              })
+            }
+          }).catch(() => {
+            this.loading = false
+          })
+        } else {
           this.loading = false
-          const [valid, configs] = isSubscribeContentValid(res)
-          if (valid) {
-            const clone = this.appConfig.serverSubscribes.slice()
-            clone.push({ URL: url, Group: configs[0].group })
-            this.updateConfig({ serverSubscribes: clone, configs })
-          }
-        }).catch(() => {
-          this.loading = false
-        })
+        }
         this.cancel()
       } else {
         this.urlError = true
@@ -231,9 +261,9 @@ export default {
     // 支持初始化打开新增输入框
     if (this.$store.state.view.active) {
       this.showNewUrl = true
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.$refs.input.focus()
-      })
+      }, 300)
     }
   }
 }

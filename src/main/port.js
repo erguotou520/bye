@@ -1,4 +1,5 @@
 import { createServer } from 'net'
+import logger from './logger'
 
 /**
  * 判断要监听的host和port是否可用
@@ -9,10 +10,8 @@ export function isHostPortValid (host, port) {
   return new Promise((resolve, reject) => {
     const tester = createServer().listen(port, host)
       .once('error', err => {
-        if (process.env.NODE_ENV === 'development') {
-          console.log(err)
-        }
-        reject()
+        logger.debug(err)
+        reject(err)
       })
       .once('listening', () => {
         let closed = false
@@ -25,7 +24,7 @@ export function isHostPortValid (host, port) {
         })
         const timeout = setTimeout(() => {
           if (!closed) {
-            reject()
+            reject('Timeout when release port.')
           }
         }, 5000)
       })

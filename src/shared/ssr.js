@@ -121,7 +121,7 @@ function isSSRLinkValid (link) {
       return [false]
     }
     const otherSplit = {}
-    others.split('&').forEach(item => {
+    others && others.split('&').forEach(item => {
       const _params = item.split('=')
       otherSplit[_params[0]] = _params[1]
     })

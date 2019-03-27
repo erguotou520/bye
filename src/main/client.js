@@ -4,11 +4,9 @@ import { execFile } from 'child_process'
 import { dialog } from 'electron'
 import { appConfig$ } from './data'
 import { isHostPortValid } from './port'
-import logger, { clientLog } from './logger'
+import logger from './logger'
 import { isConfigEqual } from '../shared/utils'
 import { showNotification } from './notification'
-// import { pythonPromise } from './python'
-
 let child
 
 /**
@@ -18,25 +16,10 @@ let child
 export function runCommand (command, params) {
   if (command && params.length) {
     const commandStr = `${command} ${params.join(' ')}`
-    if (process.env.NODE_ENV === 'development') {
-      console.log('run command: %s', commandStr)
-    } else {
-      logger.debug('run command: %s', commandStr.replace(/-k [\d\w]* /, ''))
-    }
+    logger.info('run command: %s', commandStr.replace(/-k [\d\w]* /, '-k ****** '))
     child = execFile(command, params)
-    child.stdout.on('data', clientLog.log)
-    child.stderr.on('data', clientLog.error)
-    // pythonPromise.then(() => {
-    //   const commandStr = `${command} ${params.join(' ')}`
-    //   if (process.env.NODE_ENV === 'development') {
-    //     console.log('run command: %s', commandStr)
-    //   } else {
-    //     logger.debug('run command: %s', commandStr)
-    //   }
-    //   child = execFile(command, params)
-    //   child.stdout.on('data', logger.log)
-    //   child.stderr.on('data', logger.error)
-    // })
+    child.stdout.on('data', logger.info)
+    child.stderr.on('data', logger.error)
   }
 }
 
@@ -46,65 +29,62 @@ export function runCommand (command, params) {
  * @param {*String} ssrPath local.py的路径
  * @param {*[Number|String]} localPort 本地共享端口
  */
-export function run (appConfig) {
+export async function run (appConfig) {
   const listenHost = appConfig.shareOverLan ? '0.0.0.0' : '127.0.0.1'
   // 先结束之前的
-  return stop().then(() => {
-    return isHostPortValid(listenHost, appConfig.localPort || 1080)
-  }).then(() => {
-    const config = appConfig.configs[appConfig.index]
-    // 参数
-    const params = [path.join(appConfig.ssrPath, 'local.py')]
-    params.push('-s')
-    params.push(config.server)
-    params.push('-p')
-    params.push(config.server_port)
-    params.push('-k')
-    params.push(config.password)
-    params.push('-m')
-    params.push(config.method)
-    params.push('-O')
-    params.push(config.protocol)
-    if (config.protocolparam) {
-      params.push('-G')
-      params.push(config.protocolparam)
-    }
-    if (config.obfs) {
-      params.push('-o')
-      params.push(config.obfs)
-    }
-    if (config.obfsparam) {
-      params.push('-g')
-      params.push(config.obfsparam)
-    }
-    params.push('-b')
-    params.push(listenHost)
-    params.push('-l')
-    params.push(appConfig.localPort || 1080)
-    if (config.timeout) {
-      params.push('-t')
-      params.push(config.timeout)
-    }
-    runCommand('python', params)
-  }).catch(() => {
+  await stop()
+  try {
+    await isHostPortValid(listenHost, appConfig.localPort || 1080)
+  } catch (e) {
+    logger.error(e)
     dialog.showMessageBox({
       type: 'warning',
       title: '警告',
-      message: `ssr端口 ${appConfig.localPort} 被占用`
+      message: `端口 ${appConfig.localPort} 被占用`
     })
-  })
+  }
+  const config = appConfig.configs[appConfig.index]
+  // 参数
+  const params = [path.join(appConfig.ssrPath, 'local.py')]
+  params.push('-s')
+  params.push(config.server)
+  params.push('-p')
+  params.push(config.server_port)
+  params.push('-k')
+  params.push(config.password)
+  params.push('-m')
+  params.push(config.method)
+  params.push('-O')
+  params.push(config.protocol)
+  if (config.protocolparam) {
+    params.push('-G')
+    params.push(config.protocolparam)
+  }
+  if (config.obfs) {
+    params.push('-o')
+    params.push(config.obfs)
+  }
+  if (config.obfsparam) {
+    params.push('-g')
+    params.push(config.obfsparam)
+  }
+  params.push('-b')
+  params.push(listenHost)
+  params.push('-l')
+  params.push(appConfig.localPort || 1080)
+  if (config.timeout) {
+    params.push('-t')
+    params.push(config.timeout)
+  }
+  runCommand('python', params)
 }
 
 /**
  * 结束command的后台运行
  */
-export async function stop (force = false) {
+export function stop (force = false) {
   if (child && child.pid) {
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Kill python client')
-    } else {
-      logger.log('Kill python client')
-    }
+    logger.log('Kill client')
     return new Promise((resolve, reject) => {
       child.once('close', () => {
         child = null
@@ -119,7 +99,8 @@ export async function stop (force = false) {
         !force && showNotification(`进程 ${child.pid} 可能无法关闭，尝试手动关闭`)
         resolve()
       }, 5000)
-      child.kill()
+      process.kill(child.pid, 'SIGKILL')
+      // child.kill()
       // treeKill(child.pid, 'SIGKILL', err => {
       //   if (err) {
       //     reject(err)
@@ -137,7 +118,7 @@ export async function stop (force = false) {
 }
 
 /**
- * 根据配置运行python命令
+ * 根据配置运行SSR命令
  * @param {Object} appConfig 应用配置
  */
 export function runWithConfig (appConfig) {

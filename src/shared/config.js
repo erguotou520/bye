@@ -1,3 +1,4 @@
+import { isLinux, isMac } from './env'
 const defaultConfig = {
   // 配置集合
   configs: [],
@@ -21,6 +22,24 @@ const defaultConfig = {
   serverSubscribes: [],
   // 是否开启http proxy
   httpProxyEnable: true,
+  // 全局快捷键
+  globalShortcuts: {
+    toggleWindow: {
+      key: isLinux ? 'Ctrl+Shift+W' : '',
+      enable: isLinux
+    },
+    switchSystemProxy: {
+      key: '',
+      enable: false
+    }
+  },
+  // 窗口快捷键
+  windowShortcuts: {
+    toggleMenu: {
+      key: isLinux ? `${isMac ? 'Command' : 'Ctrl'}+Shift+B` : '',
+      enable: isLinux
+    }
+  },
   // http proxy端口
   httpProxyPort: 12333,
   // 是否自动更新订阅服务器
@@ -34,8 +53,14 @@ export default defaultConfig
 // 合并默认配置，做好配置升级
 export function mergeConfig (appConfig) {
   Object.keys(defaultConfig).forEach(key => {
-    if (appConfig[key] === undefined) {
+    if (appConfig[key] === undefined || typeof appConfig[key] !== typeof defaultConfig[key]) {
       appConfig[key] = defaultConfig[key]
+    } else if (typeof appConfig[key] === 'object') {
+      for (const index in appConfig[key]) {
+        if (appConfig[key][index] === undefined) {
+          appConfig[key][index] = defaultConfig[key][index]
+        }
+      }
     }
   })
 }

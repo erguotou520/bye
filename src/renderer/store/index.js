@@ -192,35 +192,38 @@ export default new Vuex.Store({
       let updatedCount = 0
       return Promise.all(updateSubscribes.map(subscribe => {
         return somePromise([request(subscribe.URL, true), fetch(subscribe.URL).then(res => res.text())]).then(res => {
-          const [valid, configs] = isSubscribeContentValid(res)
-          if (valid) {
-            const group = configs[0].group
-            // 更新的组下面原来的配置
-            const groupedConfigs = []
-            // 不在更新组里面的配置
-            const notInGroupConfigs = []
-            state.appConfig.configs.forEach(config => {
-              if (config.group === group) {
-                groupedConfigs.push(config)
+          const [groupCount, groupConfigs] = isSubscribeContentValid(res)
+          if (groupCount > 0) {
+            for (const groupName in groupConfigs) {
+              const configs = groupConfigs[groupName]
+              const group = configs[0].group
+              // 更新的组下面原来的配置
+              const groupedConfigs = []
+              // 不在更新组里面的配置
+              const notInGroupConfigs = []
+              state.appConfig.configs.forEach(config => {
+                if (config.group === group) {
+                  groupedConfigs.push(config)
+                } else {
+                  notInGroupConfigs.push(config)
+                }
+              })
+              // 原组中没有发生变更的节点
+              const oldNotChangedConfigs = groupedConfigs.filter(config => {
+                const i = configs.findIndex(_config => isConfigEqual(config, _config))
+                if (i > -1) {
+                  // 未发生实际更新的节点删除
+                  configs.splice(i, 1)
+                  return true
+                }
+                return false
+              })
+              if (configs.length) {
+                dispatch('updateConfigs', oldNotChangedConfigs.concat(configs).concat(notInGroupConfigs))
+                updatedCount += configs.length
               } else {
-                notInGroupConfigs.push(config)
+                console.log('订阅节点并未发生变更')
               }
-            })
-            // 原组中没有发生变更的节点
-            const oldNotChangedConfigs = groupedConfigs.filter(config => {
-              const i = configs.findIndex(_config => isConfigEqual(config, _config))
-              if (i > -1) {
-                // 未发生实际更新的节点删除
-                configs.splice(i, 1)
-                return true
-              }
-              return false
-            })
-            if (configs.length) {
-              dispatch('updateConfigs', oldNotChangedConfigs.concat(configs).concat(notInGroupConfigs))
-              updatedCount += configs.length
-            } else {
-              console.log('订阅节点并未发生变更')
             }
           }
         })

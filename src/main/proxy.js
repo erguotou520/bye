@@ -5,9 +5,15 @@
 import { execSync } from 'child_process'
 import { pathExistsSync } from 'fs-extra'
 import { winToolPath, macToolPath } from './bootstrap'
-import { currentConfig, appConfig$ } from './data'
+import { currentConfig, appConfig$, updateAppConfig } from './data'
+import logger from './logger'
 import { isWin, isMac, isLinux, isOldMacVersion } from '../shared/env'
 
+// linux的gsettings命令是否可用
+let isGsettingsAvaliable = false
+try {
+  isGsettingsAvaliable = /gsettings$/.test(execSync('which gsettings').toString().trim())
+} catch (e) {}
 let isProxyChanged = false
 
 /**
@@ -17,7 +23,11 @@ let isProxyChanged = false
 function runCommand (command) {
   if (command) {
     isProxyChanged = true
-    execSync(command)
+    try {
+      execSync(command)
+    } catch (error) {
+      logger.error(error)
+    }
   }
 }
 
@@ -31,7 +41,7 @@ export function setProxyToNone (force = true) {
       command = `${winToolPath} pac ""`
     } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
       command = `"${macToolPath}" -m off`
-    } else if (isLinux) {
+    } else if (isLinux && isGsettingsAvaliable) {
       command = `gsettings set org.gnome.system.proxy mode 'none'`
     }
     runCommand(command)
@@ -47,14 +57,14 @@ export function setProxyToGlobal (host, port) {
     command = `${winToolPath} global ${host}:${port}`
   } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m global -p ${port}`
-  } else if (isLinux) {
+  } else if (isLinux && isGsettingsAvaliable) {
     command = `gsettings set org.gnome.system.proxy mode 'manual' && gsettings set org.gnome.system.proxy.socks host '${host}' && gsettings set org.gnome.system.proxy.socks port ${port}`
   }
   runCommand(command)
 }
 
 /**
- * 设置代理为全局
+ * 设置代理为PAC代理
  */
 export function setProxyToPac (pacUrl) {
   let command
@@ -62,17 +72,13 @@ export function setProxyToPac (pacUrl) {
     command = `${winToolPath} pac ${pacUrl}`
   } else if (isMac && pathExistsSync(macToolPath) && !isOldMacVersion) {
     command = `"${macToolPath}" -m auto -u ${pacUrl}`
-  } else if (isLinux) {
+  } else if (isLinux && isGsettingsAvaliable) {
     command = `gsettings set org.gnome.system.proxy mode 'auto' && gsettings set org.gnome.system.proxy autoconfig-url ${pacUrl}`
   }
   runCommand(command)
 }
 
-// 启用代理
-export function startProxy (mode) {
-  if (mode === undefined) {
-    mode = currentConfig.sysProxyMode
-  }
+function setProxyByMode (mode) {
   if (mode === 0) {
     setProxyToNone()
   } else if (mode === 1) {
@@ -82,6 +88,23 @@ export function startProxy (mode) {
   }
 }
 
+/**
+ * 切换系统代理
+ */
+export function switchSystemProxy () {
+  const nextMode = (currentConfig.sysProxyMode + 1) % 3
+  updateAppConfig({ sysProxyMode: nextMode })
+  setProxyByMode(nextMode)
+}
+
+// 启用代理
+export function startProxy (mode) {
+  if (mode === undefined) {
+    mode = currentConfig.sysProxyMode
+  }
+  setProxyByMode(mode)
+}
+
 // 监听配置变化
 appConfig$.subscribe(data => {
   const [appConfig, changed, , isProxyStarted] = data
@@ -89,11 +112,11 @@ appConfig$.subscribe(data => {
   if (isProxyStarted) {
     if (!changed.length) {
       startProxy(appConfig.sysProxyMode)
-    } else if (isProxyStarted) {
+    } else {
       if (appConfig.sysProxyMode === 1 && changed.indexOf('pacPort') > -1) {
         // pacPort变更时
         startProxy(1)
-      } else if (appConfig.sysProxyMode === 2 && changed.indexOf('localPort')) {
+      } else if (appConfig.sysProxyMode === 2 && changed.indexOf('localPort') > -1) {
         // localPort变更时
         startProxy(2)
       }

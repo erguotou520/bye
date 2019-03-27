@@ -24,7 +24,7 @@ export async function downloadPac (force = false) {
   const pacExisted = await pathExists(pacPath)
   if (force || !pacExisted) {
     logger.debug('start download pac')
-    const pac = await request('https://softs.fun/Other/pac.txt')
+    const pac = await request('https://raw.githubusercontent.com/erguotou520/pac.txt/pac/pac.txt')
     pacContent = pac
     return await writeFile(pacPath, pac)
   }
@@ -66,18 +66,10 @@ export async function serverPac (appConfig, isProxyStarted) {
         }
       }).withShutdown().listen(port, host)
         .on('listening', () => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('pac server listen at: %s:%s', host, port)
-          } else {
-            logger.debug(`pac server listen at: ${host}:${port}`)
-          }
+          logger.info(`pac server listen at: ${host}:${port}`)
         })
         .once('error', err => {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('pac server error: ', err)
-          } else {
-            logger.debug(`pac server error: ${err}`)
-          }
+          logger.error(`pac server error: ${err}`)
           pacServer.shutdown()
         })
     }).catch(() => {
@@ -98,18 +90,10 @@ export async function stopPacServer () {
     return new Promise((resolve, reject) => {
       pacServer.shutdown(err => {
         if (err) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log(err)
-          } else {
-            logger.warn(`close pac server error: ${err}`)
-          }
+          logger.warn(`close pac server error: ${err}`)
           reject()
         } else {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('pac server closed.')
-          } else {
-            logger.debug('pac server closed.')
-          }
+          logger.info('pac server closed.')
           resolve()
         }
       })
