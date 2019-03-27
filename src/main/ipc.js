@@ -51,7 +51,7 @@ ipcMain.on(events.EVENT_APP_ERROR_RENDERER, e => {
     logger.debug('start download ssr')
   }
   // 自动下载ssr项目
-  downloadGitRepo('shadowsocksr-backup/shadowsocksr#dev', defaultSSRDownloadDir, err => {
+  downloadGitRepo('shadowsocksrr/shadowsocksr#akkariiin/dev', defaultSSRDownloadDir, err => {
     if (process.env.NODE_ENV === 'development') {
       console.log('ssr download', err ? 'error' : 'success')
     } else {
